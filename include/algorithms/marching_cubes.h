@@ -87,18 +87,15 @@ public:
 		corner[i] = grid_.point_idx( _cidx, i );
 
 
-	std::cout << "tu som" << std::endl;
 
 	// determine cube type
 	for ( i=0; i<8; ++i )
 		if ( grid_.scalar_distance( corner[i] ) > iso_ )
 		{
-			std::cout << "nejebe::" << grid_.scalar_distance( corner[i] ) << "(" << grid_.scalar_distance( corner[i] ) + 0.1f  << ")" << std::endl;
 			cubetype |= ( 1<<i );
 		}
 		else
 		{
-			std::cout << "jebe::" << grid_.scalar_distance( corner[i] ) << std::endl;
 		}
 
 
