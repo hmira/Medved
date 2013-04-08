@@ -47,13 +47,13 @@ OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 1, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
-200,
-200,
-200 
+5,
+5,
+5 
 );
 
 
-	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.0f,0.5f,0.5f), 0.5f);
+	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.f,0.f,0.5f), 0.5f);
 
 	sg.sample(ims);
 
@@ -80,6 +80,20 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 	std::cout << std::endl;
 	std::cout << "pocitam vertices: " << pocitam << std::endl;
 	std::cout << "pocitam faces: " << pocitam_faces << std::endl;
+
+	//advanced_mesh_traits<OpenMeshExtended>::flip_face_normal_t<int>();
+
+	//mesh.update_face_normals();
+	flip_normals<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);	
+
+	/*auto ff_face_pair = mesh_traits<OpenMeshExtended>::get_all_faces(mesh);
+	for (auto i = ff_face_pair.first; i != ff_face_pair.second; ++i)
+	{
+		auto old_face = *i;
+		OpenMeshExtended::Normal n = mesh.calc_face_normal(old_face);
+		std::cout << "norm:" << n << std::endl;
+		std::cout << "n_normal:" << mesh.normal(old_face) << std::endl;
+	} */
 
 	if (!OpenMesh::IO::write_mesh(mesh, "my_mesh.obj")) 
 	{

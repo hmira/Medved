@@ -12,10 +12,15 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <vector>
 
+#include <boost/type_traits/is_array.hpp>
+#include <boost/utility/enable_if.hpp>
+
+#include <utility>
+
 struct MyTraits : public OpenMesh::DefaultTraits
 {
   VertexAttributes(OpenMesh::Attributes::Status);
-  FaceAttributes(OpenMesh::Attributes::Status);
+  FaceAttributes(OpenMesh::Attributes::Status | OpenMesh::Attributes::Normal);
   EdgeAttributes(OpenMesh::Attributes::Status);
 };
 
@@ -128,12 +133,31 @@ public:
 		face_descriptor f);
 
 #if 1
+	
+	template<
+		typename Traits ,
+		typename B = typename std::enable_if
+			< Traits::FaceAttributes & OpenMesh::Attributes::Normal>::type
+		>
+	static bool 
+	flip_face_normal_t(
+		OpenMeshExtended& m_,
+		face_descriptor& f)
+        {
 
-//BOOST_CHECK(MyTraits::);
+                typedef OpenMeshExtended Mesh;
+                Mesh& m = const_cast<Mesh&>(m_);
+
+                auto n = m.normal(f);
+                m.set_normal(f, -n);
+                return true;
+	}
+
+
 	static bool
 	flip_face_normal(
 		OpenMeshExtended& m_,
-		face_descriptor& f);
+		face_descriptor& f)	{ return flip_face_normal_t<MyTraits>(m_, f); }
 #endif
 
 };

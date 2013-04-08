@@ -1,6 +1,17 @@
 #ifdef OPENMESHX_H_
 #define OPENMESHX_H_
 
+#include <OpenMesh/Core/Utils/GenProg.hh>
+
+#include <boost/preprocessor/control/if.hpp>
+#include <boost/preprocessor/comparison/equal.hpp>
+#include <boost/preprocessor/logical/and.hpp>
+
+#include <boost/mpl/assert.hpp>
+#include <boost/mpl/logical.hpp>
+#include <boost/mpl/or.hpp>
+#include <boost/mpl/bool.hpp>
+
 
 class mesh_traits<OpenMeshExtended>::my_ve_iterator : public OpenMeshExtended::VEIter
 {
@@ -254,41 +265,47 @@ advanced_mesh_traits<OpenMeshExtended>::get_face_normal(
 		return m.calc_face_normal(f);
 	}
 
-#if 1
+int FAttrs =  MyTraits::FaceAttributes;
+int Normal_Attr = OpenMesh::Attributes::Normal;
 
+enum SetAttribs {
+	VAttribs = MyTraits::VertexAttributes,
+	HAttribs = MyTraits::HalfedgeAttributes,
+	EAttribs = MyTraits::EdgeAttributes,
+	//FAttribs = MyTraits::FaceAttributes
+	FAttribs = 1
+};
+
+enum Attrib_Consts {
+	//NormalAttribs = OpenMesh::Attributes::Normal
+	NormalAttribs = 9
+};
+
+
+
+#if 1
+//#if BOOST_PP_AND(FAttribs, NormalAttribs)
+/*
 bool
-advanced_mesh_traits<OpenMeshExtended>::flip_face_normal(
+advanced_mesh_traits<OpenMeshExtended>::flip_face_normal_t(
 	OpenMeshExtended& m_,
 	face_descriptor& f)
 	{
-		std::vector<OpenMeshExtended::VertexHandle> face_vhandles;
-		std::deque<OpenMeshExtended::VertexHandle> vdx_vector;
-		
+
+		//BOOST_MPL_ASSERT((MyTraits::FaceAttributes & OpenMesh::Attributes::Normal))
+
+		std::cout << NormalAttribs << " " << FAttribs << std::endl;
+		//static_assert(MyTraits::FaceAttributes & OpenMesh::Attributes::Normal,
+	//"**********\n**********\nerror: method flip_face_normal() requires \nOpenMesh::Attributes::Normal\nin Traits::FaceAttributes\n**********");
+
 		typedef OpenMeshExtended Mesh;
 		Mesh& m = const_cast<Mesh&>(m_);
 
-		auto fv1 = m.fv_begin(f);
-		auto fv2 = m.fv_end(f);
-
-        	for (auto vdx = fv1; vdx != fv2; ++vdx)
-        	{
-                	vdx_vector.push_front(vdx.handle());
-        	}
-
-		face_vhandles.clear();        
-
-		for (auto i : vdx_vector)
-        	{
-                	face_vhandles.push_back(i);
-        	}
-
-        	m.delete_face(f, false);
-		m.garbage_collection();
-
-		f = m.add_face(face_vhandles);
+		auto n = m.normal(f);
+		m.set_normal(f, -n);
 		return true;
 	}
-
+*/
 #endif // CIKULOVINA
 
 
