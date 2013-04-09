@@ -8,7 +8,7 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Geometry/VectorT.hh>
-
+#include <OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh>
 
 //#include "MedV4D/Imaging/ImageTools.h"
 
@@ -40,25 +40,74 @@ enum {A,B,C,D,N};
 int main(int argc, char **argv)
 {
 	OpenMeshExtended mesh;
-
+/*
+  OpenMeshExtended::VertexHandle vhandle[8];
+  vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
+  vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1,  1));
+  vhandle[2] = mesh.add_vertex(OpenMeshExtended::Point( 1,  1,  1));
+  vhandle[3] = mesh.add_vertex(OpenMeshExtended::Point(-1,  1,  1));
+  vhandle[4] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1, -1));
+  vhandle[5] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1, -1));
+  vhandle[6] = mesh.add_vertex(OpenMeshExtended::Point( 1,  1, -1));
+  vhandle[7] = mesh.add_vertex(OpenMeshExtended::Point(-1,  1, -1));
+  // generate (quadrilateral) faces
+  std::vector<OpenMeshExtended::VertexHandle>  face_vhandles;
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[0]);
+  face_vhandles.push_back(vhandle[1]);
+  face_vhandles.push_back(vhandle[2]);
+  face_vhandles.push_back(vhandle[3]);
+  mesh.add_face(face_vhandles);
+ 
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[7]);
+  face_vhandles.push_back(vhandle[6]);
+  face_vhandles.push_back(vhandle[5]);
+  face_vhandles.push_back(vhandle[4]);
+  mesh.add_face(face_vhandles);
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[1]);
+  face_vhandles.push_back(vhandle[0]);
+  face_vhandles.push_back(vhandle[4]);
+  face_vhandles.push_back(vhandle[5]);
+  mesh.add_face(face_vhandles);
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[2]);
+  face_vhandles.push_back(vhandle[1]);
+  face_vhandles.push_back(vhandle[5]);
+  face_vhandles.push_back(vhandle[6]);
+  mesh.add_face(face_vhandles);
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[3]);
+  face_vhandles.push_back(vhandle[2]);
+  face_vhandles.push_back(vhandle[6]);
+  face_vhandles.push_back(vhandle[7]);
+  mesh.add_face(face_vhandles);
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[0]);
+  face_vhandles.push_back(vhandle[3]);
+  face_vhandles.push_back(vhandle[7]);
+  face_vhandles.push_back(vhandle[4]);
+  mesh.add_face(face_vhandles);
+*/
 
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
 OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 1, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
-5,
-5,
-5 
+20,
+20,
+20 
 );
 
 
-	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.f,0.f,0.5f), 0.5f);
+	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.5f,0.5f,0.5f), 0.6f);
 
 	sg.sample(ims);
 
-	MarchingCubes<OpenMeshExtended> mc = MarchingCubes<OpenMeshExtended>(sg, mesh);
-	
+	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended>(sg, mesh);
+	mesh.update_face_normals();	
 
 	std::cout << "norma: c++0x" << std::endl;
 
@@ -75,16 +124,26 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 		pocitam++;
 	}
 	for (auto i = my_pair_ff.first; i != my_pair_ff.second; ++i) {
+		mesh.set_color(i.handle(), OpenMeshExtended::Color(1,0,0));
 		pocitam_faces++;
 	}
 	std::cout << std::endl;
 	std::cout << "pocitam vertices: " << pocitam << std::endl;
 	std::cout << "pocitam faces: " << pocitam_faces << std::endl;
 
+
+	OpenMesh::Subdivider::Uniform::CatmullClarkT<OpenMeshExtended> catmull;
+	
+
+ 	catmull.attach(mesh);
+//	catmull( 2 );
+	catmull.detach();
+
+
 	//advanced_mesh_traits<OpenMeshExtended>::flip_face_normal_t<int>();
 
 	//mesh.update_face_normals();
-	flip_normals<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);	
+	//flip_normals<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);	
 
 	/*auto ff_face_pair = mesh_traits<OpenMeshExtended>::get_all_faces(mesh);
 	for (auto i = ff_face_pair.first; i != ff_face_pair.second; ++i)

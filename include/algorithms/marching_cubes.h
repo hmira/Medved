@@ -1,32 +1,30 @@
-#include <grids/Grid.hh>
 #include <grids/MCTablesIsoEx.hh>
 #include <iostream>
+#include <vector>
+#include <tuple>
+#include <algorithm>
 
-
-template <class PointIdx, class VertexHandle>
-class Edge2VertexMapT;
-
-
-template <typename TMesh, typename TMesh_Traits = mesh_traits<TMesh>>
+template <typename TGrid, typename TMesh, typename TMesh_Traits = mesh_traits<TMesh>>
 class MarchingCubes
 {
 
 public:
-	typedef IsoEx::Grid::PointIdx      PointIdx;
-	typedef IsoEx::Grid::CubeIdx       CubeIdx;
-	typedef IsoEx::Grid::CubeIterator  CubeIterator;
+	typedef TGrid			Grid;
+	typedef typename TGrid::PointIdx	PointIdx;
+	typedef typename TGrid::CubeIdx		CubeIdx;
+	typedef typename TGrid::CubeIterator	CubeIterator;
 
 	typedef typename TMesh::Point         Point;
 	typedef typename TMesh::VertexHandle  VertexHandle;
 	typedef typename TMesh::FaceHandle    FaceHandle;
 
-	const IsoEx::Grid&      grid_;
+	const Grid&	grid_;
 	TMesh&            mesh_;
 	float            iso_;
 
-	Edge2VertexMapT<PointIdx, VertexHandle> edge2vertex_;
+	std::vector<std::tuple<PointIdx, PointIdx, VertexHandle>> vertices_;
 
-	MarchingCubes( const IsoEx::Grid& _grid, TMesh& _mesh, float _iso = 0.0f, const std::string &_vprop_v2edge_name = "")
+	MarchingCubes( const Grid& _grid, TMesh& _mesh, float _iso = 0.0f)
 		: grid_( _grid ),
 		mesh_( _mesh ),
 		iso_( _iso )
@@ -36,32 +34,48 @@ public:
 			process_cube( *cube_it );
 	}
 
-	int marching_cubes(IsoEx::Grid& g, TMesh& m)
+	int marching_cubes(Grid& g, TMesh& m)
 	{
 		CubeIterator cube_it( grid_.begin() ), cube_end( grid_.end() );
 		for ( ; cube_it!=cube_end; ++cube_it )
 			process_cube( *cube_it );
 	}
 
-	OpenMesh::VertexHandle
+	VertexHandle
 	add_vertex( PointIdx _p0, PointIdx _p1)
 	{
-		// find vertex if it has been computed already
-		VertexHandle   vh = edge2vertex_.find( _p0, _p1 );
-		if ( vh.is_valid() )  return vh;
-		// generate new vertex
-		const OpenMeshExtended::Point&  p0( grid_.point( _p0 ) );
-		const OpenMeshExtended::Point&  p1( grid_.point( _p1 ) );
-		
+		const Point&  p0( grid_.point( _p0 ) );
+		const Point&  p1( grid_.point( _p1 ) );
+
+		VertexHandle vh;		
 	
+
 		float s0 = grid_.scalar_distance( _p0 );
 		float s1 = grid_.scalar_distance( _p1 );
 
-		if ( fabs( s1-s0 ) > 0.00000001 )
+		if ( fabs( s1-s0 ) > 0.0001f )
 		{
 			float t  = ( iso_-s0 ) / ( s1-s0 );
-			//vh = mesh_.add_vertex( OpenMesh::Vec3f(p0 + ( p1-p0 )*t) );
-			vh = mesh_.add_vertex( OpenMeshExtended::Point((p0 + ( p1-p0 )*t)));
+			Point p = Point((p0 + ( p1-p0 )*t));
+
+			if (_p1 < _p0) std::swap(_p0, _p1);
+
+			for (auto itr = vertices_.cbegin(); itr != vertices_.cend(); ++itr)
+				if ( 	
+					((std::get<0>(*itr) == _p0)) &&
+					((std::get<1>(*itr) == _p1)) &&
+					std::get<2>(*itr).is_valid()
+				)
+				{	
+					return std::get<2>(*itr);
+				}
+
+
+			vh = mesh_.add_vertex( p );
+			if (p0 < p1)
+				vertices_.push_back( std::make_tuple(_p0, _p1, vh) );
+			else
+				vertices_.push_back( std::make_tuple(_p1, _p0, vh) );
 
 			return vh;
 		}
@@ -128,59 +142,3 @@ public:
 };
 
 
-template <class PointIdx, class VertexHandle>
-class Edge2VertexMapT
-{
-public:
-   
-  /// Constructor
-  Edge2VertexMapT() {}
-
-
-  /// clear the map
-  void clear() { map_.clear(); }
-
-  /// Store vertex in map
-  void insert(PointIdx _p0, PointIdx _p1, VertexHandle _vhnd)
-  {
-    map_[EdgeKey(_p0, _p1)] = _vhnd;
-  }
-
-  /// Get vertex handle from map. Returns invalid handle if not found.
-  VertexHandle find(PointIdx _p0, PointIdx _p1) const 
-  {
-    MyMapIterator it = map_.find(EdgeKey(_p0, _p1));
-    if (it != map_.end())  return it->second;
-    else return VertexHandle();
-  }
-
-
-private:
-
-  class EdgeKey 
-  {
-  public:
-
-    EdgeKey(PointIdx _p0, PointIdx _p1) {
-      if (_p0 < _p1)  { p0_ = _p0;  p1_ = _p1; }
-      else            { p0_ = _p1;  p1_ = _p0; }
-    }
-
-    bool operator<(const EdgeKey& _rhs) const 
-    {
-      if (p0_ != _rhs.p0_)
-	return (p0_ < _rhs.p0_);
-      else
-	return (p1_ < _rhs.p1_);
-    }
-
-  private:
-    PointIdx p0_, p1_;
-  };
-
-
-  typedef std::map<EdgeKey, VertexHandle>  MyMap;
-  typedef typename MyMap::const_iterator   MyMapIterator;
-
-  MyMap  map_;
-};
