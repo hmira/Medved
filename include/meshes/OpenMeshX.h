@@ -11,10 +11,6 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <vector>
-
-#include <boost/type_traits/is_array.hpp>
-#include <boost/utility/enable_if.hpp>
-
 #include <utility>
 
 struct MyTraits : public OpenMesh::DefaultTraits
@@ -132,8 +128,6 @@ public:
 		const OpenMeshExtended& m_,
 		face_descriptor f);
 
-#if 1
-	
 	template<
 		typename Traits ,
 		typename B = typename std::enable_if
@@ -158,7 +152,6 @@ public:
 	flip_face_normal(
 		OpenMeshExtended& m_,
 		face_descriptor& f)	{ return flip_face_normal_t<MyTraits>(m_, f); }
-#endif
 
 };
 

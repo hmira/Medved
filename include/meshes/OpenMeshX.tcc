@@ -3,14 +3,6 @@
 
 #include <OpenMesh/Core/Utils/GenProg.hh>
 
-#include <boost/preprocessor/control/if.hpp>
-#include <boost/preprocessor/comparison/equal.hpp>
-#include <boost/preprocessor/logical/and.hpp>
-
-#include <boost/mpl/assert.hpp>
-#include <boost/mpl/logical.hpp>
-#include <boost/mpl/or.hpp>
-#include <boost/mpl/bool.hpp>
 
 
 class mesh_traits<OpenMeshExtended>::my_ve_iterator : public OpenMeshExtended::VEIter
@@ -55,10 +47,6 @@ class mesh_traits<OpenMeshExtended>::my_fv_iterator : public OpenMesh::Iterators
 {
         public:
                 typedef OpenMesh::PolyConnectivity& mesh_ref;
-
-/*      TODO prekonzultovať 
-*       constructor inheritance v norme c++0x 
-*/
 
                 my_fv_iterator() :
                         OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >() {};
@@ -136,29 +124,6 @@ OpenMeshXTraits::get_surrounding_vertices(const OpenMeshExtended& m_, OpenMeshXT
 	return std::make_pair(m.fv_begin(fd), m.fv_end(fd));
 }
 
-//=================CONCEPTS======================
-/*
-template<unsigned tEnumDefined>
-bool removeVertexImpl(
-					  OpenMeshXTraits::vertex_descriptor v,
-		  	  	  OpenMeshExtended &m);
-
-template<>
-bool removeVertexImpl<EnumDefined>(
-					  OpenMeshXTraits::vertex_descriptor v,
-		  	  	  OpenMeshExtended &m)
-{
-	 m.delete_vertex(v);
-}
-
-template<>
-bool removeVertexImpl<EnumNotDefined>(
-					  OpenMeshXTraits::vertex_descriptor v,
-		  	  	  OpenMeshExtended &m)
-{
-	throw Error;
-}
-*/
 
 bool 
 OpenMeshXTraits::remove_vertex(
@@ -265,48 +230,6 @@ advanced_mesh_traits<OpenMeshExtended>::get_face_normal(
 		return m.calc_face_normal(f);
 	}
 
-int FAttrs =  MyTraits::FaceAttributes;
-int Normal_Attr = OpenMesh::Attributes::Normal;
-
-enum SetAttribs {
-	VAttribs = MyTraits::VertexAttributes,
-	HAttribs = MyTraits::HalfedgeAttributes,
-	EAttribs = MyTraits::EdgeAttributes,
-	//FAttribs = MyTraits::FaceAttributes
-	FAttribs = 1
-};
-
-enum Attrib_Consts {
-	//NormalAttribs = OpenMesh::Attributes::Normal
-	NormalAttribs = 9
-};
-
-
-
-#if 1
-//#if BOOST_PP_AND(FAttribs, NormalAttribs)
-/*
-bool
-advanced_mesh_traits<OpenMeshExtended>::flip_face_normal_t(
-	OpenMeshExtended& m_,
-	face_descriptor& f)
-	{
-
-		//BOOST_MPL_ASSERT((MyTraits::FaceAttributes & OpenMesh::Attributes::Normal))
-
-		std::cout << NormalAttribs << " " << FAttribs << std::endl;
-		//static_assert(MyTraits::FaceAttributes & OpenMesh::Attributes::Normal,
-	//"**********\n**********\nerror: method flip_face_normal() requires \nOpenMesh::Attributes::Normal\nin Traits::FaceAttributes\n**********");
-
-		typedef OpenMeshExtended Mesh;
-		Mesh& m = const_cast<Mesh&>(m_);
-
-		auto n = m.normal(f);
-		m.set_normal(f, -n);
-		return true;
-	}
-*/
-#endif // CIKULOVINA
 
 
 #endif // OPENMESHX_H_
