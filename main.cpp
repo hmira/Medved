@@ -40,7 +40,7 @@ enum {A,B,C,D,N};
 int main(int argc, char **argv)
 {
 	OpenMeshExtended mesh;
-/*
+
   OpenMeshExtended::VertexHandle vhandle[8];
   vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
   vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1,  1));
@@ -89,16 +89,34 @@ int main(int argc, char **argv)
   face_vhandles.push_back(vhandle[7]);
   face_vhandles.push_back(vhandle[4]);
   mesh.add_face(face_vhandles);
-*/
+
+	OpenMesh::EPropHandleT< OpenMeshExtended::Point > ep_pos;
+	mesh.add_property(ep_pos);
+	auto e_itr   = mesh.edges_begin();
+	auto e_end   = mesh.edges_end();
+	for ( ; e_itr != e_end; ++e_itr)
+	{
+		auto fst = mesh.halfedge_handle( e_itr.handle(), 0);
+		auto snd = mesh.halfedge_handle( e_itr.handle(), 1);
+
+		auto fst_pt = mesh.point( mesh.to_vertex_handle(fst));
+		fst_pt += mesh.point( mesh.to_vertex_handle(snd));
+		fst_pt *= 0.5;
+
+		mesh.property(ep_pos, e_itr.handle()) = fst_pt;
+	}
+
+
+
 
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
 OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 1, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
-20,
-20,
-20 
+5,
+5,
+5 
 );
 
 
@@ -106,7 +124,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 
 	sg.sample(ims);
 
-	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended>(sg, mesh);
+//	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended>(sg, mesh);
 	mesh.update_face_normals();	
 
 	std::cout << "norma: c++0x" << std::endl;
@@ -136,9 +154,11 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 	
 
  	catmull.attach(mesh);
-//	catmull( 2 );
+	catmull( 2 );
 	catmull.detach();
 
+
+//	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
 
 	//advanced_mesh_traits<OpenMeshExtended>::flip_face_normal_t<int>();
 

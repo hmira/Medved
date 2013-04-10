@@ -12,12 +12,8 @@ int triangulate(TMesh& m)
 
 	for (auto i = all_faces.first; i != all_faces.second; ++i)
 	{
-		//std::cout << "a" << std::endl;
 		face_descriptor fd = *i;
-		auto surrounding_vertices = TMesh_Traits::get_surrounding_vertices( m, fd);
-		for (auto fvi = surrounding_vertices.first; fvi != surrounding_vertices.second; ++i)
-		{
-		}
+		TMesh_Traits::triangulate_face(m, fd);
 	}
 
 	return 0;

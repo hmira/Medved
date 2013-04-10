@@ -153,6 +153,18 @@ public:
 		OpenMeshExtended& m_,
 		face_descriptor& f)	{ return flip_face_normal_t<MyTraits>(m_, f); }
 
+	static bool
+	triangulate_face(
+		OpenMeshExtended& m_,
+		face_descriptor& f
+	)
+	{
+                typedef OpenMeshExtended Mesh;
+                Mesh& m = const_cast<Mesh&>(m_);
+
+		m.triangulate(f);
+	}
+
 };
 
 
