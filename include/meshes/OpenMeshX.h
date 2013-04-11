@@ -170,6 +170,18 @@ public:
 		m.triangulate(f);
 	}
 
+	static Point
+	calc_middle_point(
+		Point p1,
+		Point p2
+	)
+	{
+		auto middle_point = p1;
+		middle_point += p2;
+		middle_point *= 0.5;
+		return middle_point;
+	}
+
 	static vertex_descriptor
 	calc_middle_vertex(
 		OpenMeshExtended& m_,
@@ -275,6 +287,10 @@ public:
 		auto he_5 = m.next_halfedge_handle(he_4);
 		auto he_6 = m.opposite_halfedge_handle(he_5);
 
+		auto fin_center = calc_middle_point(
+			m.point(v),
+			m.point(m.to_vertex_handle(he_5)));
+
 		if (m.next_halfedge_handle(he_6) != he_1)
 			return false;
 /*
@@ -305,16 +321,15 @@ public:
 		auto new_he_2 = m.new_edge(v1, v2);
 		auto new_he_3 = m.new_edge(v2, v);
 
-		m.set_halfedge_handle(v1, he_1);
-		m.set_halfedge_handle(v2, he_3);
-
 		m.set_next_halfedge_handle(he_6, new_he_1);
 		m.set_next_halfedge_handle(new_he_1, he_1);
 		m.set_next_halfedge_handle(he_2, new_he_2);
 		m.set_next_halfedge_handle(new_he_2, he_3);
 		m.set_next_halfedge_handle(he_4, new_he_3);
-		m.set_next_halfedge_handle(new_he_3, he_6);
+		m.set_next_halfedge_handle(new_he_3, he_5);
 
+		m.set_halfedge_handle(v1, he_1);
+		m.set_halfedge_handle(v2, he_3);
 
 		m.set_face_handle( new_he_1, m.face_handle(he_1));
 		m.set_face_handle( new_he_2, m.face_handle(he_3));
@@ -323,6 +338,26 @@ public:
 		m.set_halfedge_handle( m.face_handle(he_1), new_he_1);
 		m.set_halfedge_handle( m.face_handle(he_3), new_he_2);
 		m.set_halfedge_handle( m.face_handle(he_5), new_he_3);
+
+std::cout << "1:" << m.face_handle(he_6) << std::endl;
+std::cout << "1:" << m.face_handle(he_1) << std::endl;
+std::cout << "1:" << m.face_handle(new_he_1) << std::endl;
+
+std::cout << "2:" << m.face_handle(he_2) << std::endl;
+std::cout << "2:" << m.face_handle(he_3) << std::endl;
+std::cout << "2:" << m.face_handle(new_he_2) << std::endl;
+
+std::cout << "3:" << m.face_handle(he_4) << std::endl;
+std::cout << "3:" << m.face_handle(he_5) << std::endl;
+std::cout << "3:" << m.face_handle(new_he_3) << std::endl;
+
+			for (
+				auto t_heh = new_he_3;
+				m.next_halfedge_handle(t_heh) != new_he_3;
+				t_heh = m.next_halfedge_handle(t_heh) )
+			{std::cout << "chuj" << t_heh << std::endl;}
+
+		m.set_point(v, fin_center);
 
 		std::cout << "eoo" << std::endl;
 //Never forget when playing with topology

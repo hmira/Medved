@@ -94,7 +94,8 @@ int main(int argc, char **argv)
 	std::cout << mesh.to_vertex_handle(mesh.halfedge_handle(vhandle[0])) << std::endl;
 	std::cout << mesh.to_vertex_handle(mesh.opposite_halfedge_handle(mesh.halfedge_handle(vhandle[0]))) << std::endl;
 
-//	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, vhandle[0]);
+	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, vhandle[0]);
+
 /*
 	auto e_itr   = mesh.edges_begin();
 	auto e_end   = mesh.edges_end();
@@ -158,7 +159,6 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 	std::cout << std::endl;
 	std::cout << "pocitam vertices: " << pocitam << std::endl;
 	std::cout << "pocitam faces: " << pocitam_faces << std::endl;
-
 
 	OpenMesh::Subdivider::Uniform::CatmullClarkT<OpenMeshExtended> catmull;
 	
