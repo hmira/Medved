@@ -90,25 +90,27 @@ int main(int argc, char **argv)
   face_vhandles.push_back(vhandle[4]);
   mesh.add_face(face_vhandles);
 
-	OpenMesh::EPropHandleT< OpenMeshExtended::Point > ep_pos;
-	mesh.add_property(ep_pos);
+	std::cout << vhandle[0] << std::endl;
+	std::cout << mesh.to_vertex_handle(mesh.halfedge_handle(vhandle[0])) << std::endl;
+	std::cout << mesh.to_vertex_handle(mesh.opposite_halfedge_handle(mesh.halfedge_handle(vhandle[0]))) << std::endl;
+
+//	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, vhandle[0]);
+/*
 	auto e_itr   = mesh.edges_begin();
 	auto e_end   = mesh.edges_end();
 	for ( ; e_itr != e_end; ++e_itr)
-	{
-		auto fst = mesh.halfedge_handle( e_itr.handle(), 0);
-		auto snd = mesh.halfedge_handle( e_itr.handle(), 1);
-
-		auto fst_pt = mesh.point( mesh.to_vertex_handle(fst));
-		fst_pt += mesh.point( mesh.to_vertex_handle(snd));
-		fst_pt *= 0.5;
-
-		mesh.property(ep_pos, e_itr.handle()) = fst_pt;
-	}
+		advanced_mesh_traits<OpenMeshExtended>::split_edge(mesh, e_itr.handle());
 
 
+	e_itr   = mesh.edges_begin();
+	e_end   = mesh.edges_end();
+	for ( ; e_itr != e_end; ++e_itr)
+		advanced_mesh_traits<OpenMeshExtended>::split_edge(mesh, e_itr.handle());
 
 
+	for ( ; e_itr != e_end; ++e_itr)
+		std::cout << mesh.is_boundary(e_itr.handle());
+*/
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
 OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
@@ -125,7 +127,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 	sg.sample(ims);
 
 //	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended>(sg, mesh);
-	mesh.update_face_normals();	
+//	mesh.update_face_normals();	
 
 	std::cout << "norma: c++0x" << std::endl;
 
@@ -138,13 +140,21 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 	int pocitam = 0;
 	int pocitam_faces = 0;
 	for (auto i = my_pair_ww.first; i != my_pair_ww.second; ++i) {
-//		std::cout << "aleluja" << ", ";
 		pocitam++;
 	}
 	for (auto i = my_pair_ff.first; i != my_pair_ff.second; ++i) {
 		mesh.set_color(i.handle(), OpenMeshExtended::Color(1,0,0));
 		pocitam_faces++;
+		int fv_count = 0;
+		auto fv_pair = OpenMeshXTraits::get_surrounding_vertices
+			(mesh, 
+			i.handle());
+		for (auto j = fv_pair.first; j!=fv_pair.second; ++j)
+			fv_count++;
+
+		std::cout << "vrcholov: " << fv_count << std::endl;
 	}
+
 	std::cout << std::endl;
 	std::cout << "pocitam vertices: " << pocitam << std::endl;
 	std::cout << "pocitam faces: " << pocitam_faces << std::endl;
@@ -154,7 +164,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 	
 
  	catmull.attach(mesh);
-	catmull( 2 );
+//	catmull( 2 );
 	catmull.detach();
 
 
