@@ -281,6 +281,9 @@ public:
 		Mesh& m = const_cast<Mesh&>(m_);
 
 		auto he_1 = m.halfedge_handle(v);
+
+//		while (true)
+//		{
 		auto he_2 = m.opposite_halfedge_handle(he_1);
 		auto he_3 = m.next_halfedge_handle(he_2);
 		auto he_4 = m.opposite_halfedge_handle(he_3);
@@ -291,19 +294,9 @@ public:
 			m.point(v),
 			m.point(m.to_vertex_handle(he_5)));
 
-		if (m.next_halfedge_handle(he_6) != he_1)
-			return false;
-/*
-		std::cout
-		<< he_1 << ":1\n" 
-		<< he_2 << ":2\n"
-		<< he_3 << ":3\n"
-		<< he_4 << ":4\n"
-		<< he_5 << ":5\n"
-		<< he_6 << ":6\n" 
-		<< m.next_halfedge_handle(he_6) << ":6_opp\n" << std::endl;
-*/
-
+//		if (m.next_halfedge_handle(he_6) != he_1)
+//			break;
+//		}
 		auto v1 = calc_middle_vertex(
 			m,
 			v,
@@ -320,6 +313,10 @@ public:
 		auto new_he_1 = m.new_edge(v, v1);
 		auto new_he_2 = m.new_edge(v1, v2);
 		auto new_he_3 = m.new_edge(v2, v);
+
+		auto opp_new_he_1 = m.opposite_halfedge_handle(new_he_1);
+		auto opp_new_he_2 = m.opposite_halfedge_handle(new_he_2);
+		auto opp_new_he_3 = m.opposite_halfedge_handle(new_he_3);
 
 		m.set_next_halfedge_handle(he_6, new_he_1);
 		m.set_next_halfedge_handle(new_he_1, he_1);
@@ -339,17 +336,6 @@ public:
 		m.set_halfedge_handle( m.face_handle(he_3), new_he_2);
 		m.set_halfedge_handle( m.face_handle(he_5), new_he_3);
 
-std::cout << "1:" << m.face_handle(he_6) << std::endl;
-std::cout << "1:" << m.face_handle(he_1) << std::endl;
-std::cout << "1:" << m.face_handle(new_he_1) << std::endl;
-
-std::cout << "2:" << m.face_handle(he_2) << std::endl;
-std::cout << "2:" << m.face_handle(he_3) << std::endl;
-std::cout << "2:" << m.face_handle(new_he_2) << std::endl;
-
-std::cout << "3:" << m.face_handle(he_4) << std::endl;
-std::cout << "3:" << m.face_handle(he_5) << std::endl;
-std::cout << "3:" << m.face_handle(new_he_3) << std::endl;
 
 			for (
 				auto t_heh = new_he_3;
@@ -359,11 +345,24 @@ std::cout << "3:" << m.face_handle(new_he_3) << std::endl;
 
 		m.set_point(v, fin_center);
 
+
 		std::cout << "eoo" << std::endl;
 //Never forget when playing with topology
 		m.adjust_outgoing_halfedge( v );
 		m.adjust_outgoing_halfedge( v1 );
 		m.adjust_outgoing_halfedge( v2 );
+
+		auto f = m.new_face();
+
+		m.set_next_halfedge_handle(opp_new_he_1, opp_new_he_3);
+		m.set_next_halfedge_handle(opp_new_he_3, opp_new_he_2);
+		m.set_next_halfedge_handle(opp_new_he_2, opp_new_he_1);
+
+		m.set_face_handle(opp_new_he_1, f);
+		m.set_face_handle(opp_new_he_2, f);
+		m.set_face_handle(opp_new_he_3, f);
+
+		m.set_halfedge_handle(f, opp_new_he_1);
 
 		return true;
 	}	
