@@ -94,7 +94,8 @@ int main(int argc, char **argv)
 	std::cout << mesh.to_vertex_handle(mesh.halfedge_handle(vhandle[0])) << std::endl;
 	std::cout << mesh.to_vertex_handle(mesh.opposite_halfedge_handle(mesh.halfedge_handle(vhandle[0]))) << std::endl;
 
-	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, vhandle[0]);
+//	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, vhandle[6], 0.2f);
+//	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, (OpenMeshExtended::VertexHandle)8);
 
 /*
 	auto e_itr   = mesh.edges_begin();
@@ -140,10 +141,18 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 	auto my_pair_ff = OpenMeshXTraits::get_all_faces(mesh);
 	int pocitam = 0;
 	int pocitam_faces = 0;
-	for (auto i = my_pair_ww.first; i != my_pair_ww.second; ++i) {
-		pocitam++;
+
+	advanced_mesh_traits<OpenMeshExtended>::bevel(mesh, (OpenMeshExtended::EdgeHandle)1, 0.2f);
+	advanced_mesh_traits<OpenMeshExtended>::bevel(mesh, (OpenMeshExtended::EdgeHandle)6, 0.2f);
+
+/*	for (auto i = my_pair_ww.first; i != my_pair_ww.second; ++i) {
+		advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, i.handle());
 	}
-	for (auto i = my_pair_ff.first; i != my_pair_ff.second; ++i) {
+	my_pair_ww = OpenMeshXTraits::get_all_vertices(mesh);
+	for (auto i = my_pair_ww.first; i != my_pair_ww.second; ++i) {
+		advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, i.handle());
+	}
+*/	for (auto i = my_pair_ff.first; i != my_pair_ff.second; ++i) {
 		mesh.set_color(i.handle(), OpenMeshExtended::Color(1,0,0));
 		pocitam_faces++;
 		int fv_count = 0;
@@ -183,6 +192,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 		std::cout << "norm:" << n << std::endl;
 		std::cout << "n_normal:" << mesh.normal(old_face) << std::endl;
 	} */
+
 
 	if (!OpenMesh::IO::write_mesh(mesh, "my_mesh.obj")) 
 	{

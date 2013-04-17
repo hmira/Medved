@@ -12,6 +12,7 @@
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <vector>
 #include <utility>
+#include <tuple>
 
 struct MyTraits : public OpenMesh::DefaultTraits
 {
@@ -173,29 +174,34 @@ public:
 	static Point
 	calc_middle_point(
 		Point p1,
-		Point p2
+		Point p2,
+		float coeff = 0.5f
 	)
 	{
-		auto middle_point = p1;
-		middle_point += p2;
-		middle_point *= 0.5;
-		return middle_point;
+		auto diff = p2;
+		diff -= p1;
+		diff *= coeff;
+		diff += p2;
+		return diff;
 	}
 
 	static vertex_descriptor
 	calc_middle_vertex(
 		OpenMeshExtended& m_,
 		vertex_descriptor v1,
-		vertex_descriptor v2)
+		vertex_descriptor v2,
+		float coeff = 0.5f)
 	{
 		typedef OpenMeshExtended Mesh;
 		Mesh& m = const_cast<Mesh&>(m_);
 
-		auto middle_point = m.point( v1 );
-		middle_point += m.point( v2 );
-		middle_point *= 0.5;
+		auto diff = m.point( v2 );
+		diff -= m.point( v1 );
+		diff *= coeff;
+		diff += m.point( v1 );
 
-		return m.new_vertex( middle_point );
+
+		return m.new_vertex( diff );
 	}
 
 	static bool
@@ -275,97 +281,254 @@ public:
 	static bool
 	truncate(
 		OpenMeshExtended& m_,
-		vertex_descriptor v)
+		vertex_descriptor v,
+		float coeff = 0.5f)
 	{
 		typedef OpenMeshExtended Mesh;
 		Mesh& m = const_cast<Mesh&>(m_);
 
-		auto he_1 = m.halfedge_handle(v);
+		typedef std::tuple<
+			vertex_descriptor,	//vertex V
+			h_edge_descriptor,	//HE1 incoming halfedge to V
+			h_edge_descriptor,	//HE2 next halfedge directed by HE1
+			h_edge_descriptor>	//HE3 opposite halfedge to HE1 pointing to V
+				Vertex_Halfedge_Relation;
 
-//		while (true)
-//		{
-		auto he_2 = m.opposite_halfedge_handle(he_1);
-		auto he_3 = m.next_halfedge_handle(he_2);
-		auto he_4 = m.opposite_halfedge_handle(he_3);
-		auto he_5 = m.next_halfedge_handle(he_4);
-		auto he_6 = m.opposite_halfedge_handle(he_5);
+		typedef std::vector<Vertex_Halfedge_Relation> Relational_List;
+		Relational_List r_l;
+
+
+		auto he_start = m.halfedge_handle(v);
+
+		auto he_1 = m.halfedge_handle(v);
+		auto prev_he_1 = get_previous_halfedge(m, he_1);
+		auto opp_he_1 = m.opposite_halfedge_handle(he_1);
+		auto v_last = v;
+		auto v_new = v;
+
+		do
+		{
+			if (he_1 != he_start)
+			v_new = calc_middle_vertex(
+					m,
+					v,
+					m.to_vertex_handle(he_1),
+					coeff);
+
+			prev_he_1 = opp_he_1;
+			he_1 = m.next_halfedge_handle(opp_he_1);
+			opp_he_1 = m.opposite_halfedge_handle(he_1);
+
+			r_l.push_back(std::make_tuple(v_new, prev_he_1, he_1, opp_he_1));
+
+		}
+		while (he_1 != he_start);
 
 		auto fin_center = calc_middle_point(
 			m.point(v),
-			m.point(m.to_vertex_handle(he_5)));
-
-//		if (m.next_halfedge_handle(he_6) != he_1)
-//			break;
-//		}
-		auto v1 = calc_middle_vertex(
-			m,
-			v,
-			m.to_vertex_handle(he_1));
-
-		auto v2 = calc_middle_vertex(
-			m,
-			v,
-			m.to_vertex_handle(he_3));
-
-		m.set_vertex_handle(he_2, v1);
-		m.set_vertex_handle(he_4, v2);
-
-		auto new_he_1 = m.new_edge(v, v1);
-		auto new_he_2 = m.new_edge(v1, v2);
-		auto new_he_3 = m.new_edge(v2, v);
-
-		auto opp_new_he_1 = m.opposite_halfedge_handle(new_he_1);
-		auto opp_new_he_2 = m.opposite_halfedge_handle(new_he_2);
-		auto opp_new_he_3 = m.opposite_halfedge_handle(new_he_3);
-
-		m.set_next_halfedge_handle(he_6, new_he_1);
-		m.set_next_halfedge_handle(new_he_1, he_1);
-		m.set_next_halfedge_handle(he_2, new_he_2);
-		m.set_next_halfedge_handle(new_he_2, he_3);
-		m.set_next_halfedge_handle(he_4, new_he_3);
-		m.set_next_halfedge_handle(new_he_3, he_5);
-
-		m.set_halfedge_handle(v1, he_1);
-		m.set_halfedge_handle(v2, he_3);
-
-		m.set_face_handle( new_he_1, m.face_handle(he_1));
-		m.set_face_handle( new_he_2, m.face_handle(he_3));
-		m.set_face_handle( new_he_3, m.face_handle(he_5));
-
-		m.set_halfedge_handle( m.face_handle(he_1), new_he_1);
-		m.set_halfedge_handle( m.face_handle(he_3), new_he_2);
-		m.set_halfedge_handle( m.face_handle(he_5), new_he_3);
-
-
-			for (
-				auto t_heh = new_he_3;
-				m.next_halfedge_handle(t_heh) != new_he_3;
-				t_heh = m.next_halfedge_handle(t_heh) )
-			{std::cout << "chuj" << t_heh << std::endl;}
+			m.point(m.to_vertex_handle(he_1)),
+			-1.f * (1.f - coeff));
 
 		m.set_point(v, fin_center);
+		m.adjust_outgoing_halfedge(v);
 
+		auto f_a = m.new_face();
 
-		std::cout << "eoo" << std::endl;
-//Never forget when playing with topology
-		m.adjust_outgoing_halfedge( v );
-		m.adjust_outgoing_halfedge( v1 );
-		m.adjust_outgoing_halfedge( v2 );
+		std::vector<h_edge_descriptor> inside_face_he;
 
-		auto f = m.new_face();
+		for (int i=0;i<r_l.size();i++)
+		{
+			auto vx_rel = r_l[i];
+			auto vx_rel_b = r_l[(i+1) % r_l.size()];
 
-		m.set_next_halfedge_handle(opp_new_he_1, opp_new_he_3);
-		m.set_next_halfedge_handle(opp_new_he_3, opp_new_he_2);
-		m.set_next_halfedge_handle(opp_new_he_2, opp_new_he_1);
+			auto v_a = std::get<0>(vx_rel);
+			auto v_b = std::get<0>(vx_rel_b);
+			auto prev_he_a = std::get<1>(vx_rel);
+			auto he_a = std::get<2>(vx_rel);
+			auto opp_he_a = std::get<3>(vx_rel);
 
-		m.set_face_handle(opp_new_he_1, f);
-		m.set_face_handle(opp_new_he_2, f);
-		m.set_face_handle(opp_new_he_3, f);
+			auto he_new = m.new_edge(v_a, v_b);
+			m.set_face_handle(m.opposite_halfedge_handle(he_new), f_a);
+			m.set_halfedge_handle(f_a, m.opposite_halfedge_handle(he_new));
 
-		m.set_halfedge_handle(f, opp_new_he_1);
+			inside_face_he.push_back(m.opposite_halfedge_handle(he_new));
+
+			m.set_face_handle(he_new, m.face_handle(he_1));
+			m.set_next_halfedge_handle(prev_he_a, he_new);
+			m.set_next_halfedge_handle(he_new, he_a);
+			m.set_vertex_handle(opp_he_a, v_b);
+		
+			m.set_halfedge_handle(v_a, he_new);
+			m.adjust_outgoing_halfedge(v_a);
+		}
+
+		for (int i=0; i<inside_face_he.size(); i++)
+		{
+			auto hx_a = inside_face_he[ i ];
+			auto hx_b = inside_face_he[ (i+1) % inside_face_he.size()];
+
+			m.set_next_halfedge_handle(hx_b, hx_a);
+		}
 
 		return true;
 	}	
+
+
+	static bool
+	bevel(
+		OpenMeshExtended& m_,
+		edge_descriptor e,
+		float coeff = 0.5f)
+	{
+		
+		typedef OpenMeshExtended Mesh;
+		Mesh& m = const_cast<Mesh&>(m_);
+
+		typedef std::tuple<
+			vertex_descriptor,	//vertex V
+			h_edge_descriptor,	//HE1 incoming halfedge to V
+			h_edge_descriptor,	//HE2 next halfedge directed by HE1
+			h_edge_descriptor>	//HE3 opposite halfedge to HE1 pointing to V
+				Vertex_Halfedge_Relation;
+
+		typedef std::vector<Vertex_Halfedge_Relation> Relational_List;
+		Relational_List r_l;
+
+		auto he_a = m.halfedge_handle(e, 0);
+		auto he_b = m.halfedge_handle(e, 1);
+		auto v_a = m.to_vertex_handle(he_a);
+		auto v_b = m.to_vertex_handle(he_b);
+
+		auto prev_he_1 = he_a;
+		auto he_1 = m.next_halfedge_handle(prev_he_1);
+		auto opp_he_1 = m.opposite_halfedge_handle(he_1);
+		auto v_new = v_a;
+
+		r_l.push_back(std::make_tuple(v_new, prev_he_1, he_1, opp_he_1));
+
+		do
+		{
+			prev_he_1 = opp_he_1;
+			he_1 = m.next_halfedge_handle(opp_he_1);
+			opp_he_1 = m.opposite_halfedge_handle(he_1);
+			v_new = calc_middle_vertex(
+					m,
+					v_a,
+					m.to_vertex_handle(he_1),
+					coeff);
+
+			r_l.push_back(std::make_tuple(v_new, prev_he_1, he_1, opp_he_1));
+
+		}
+		while (m.next_halfedge_handle(opp_he_1) != he_b);
+
+		prev_he_1 = he_b;
+		he_1 = m.next_halfedge_handle(prev_he_1);
+		opp_he_1 = m.opposite_halfedge_handle(he_1);
+		v_new = calc_middle_vertex(
+			m,
+			v_b,
+			m.to_vertex_handle(he_1),
+			coeff);
+
+		r_l.push_back(std::make_tuple(v_new, prev_he_1, he_1, opp_he_1));
+
+		do
+		{	
+			prev_he_1 = opp_he_1;
+			he_1 = m.next_halfedge_handle(opp_he_1);
+			opp_he_1 = m.opposite_halfedge_handle(he_1);
+
+			if (m.next_halfedge_handle(opp_he_1) != he_a)
+				v_new = calc_middle_vertex(
+					m,
+					v_b,
+					m.to_vertex_handle(he_1),
+					coeff);
+			else
+				v_new = v_b;
+
+
+			r_l.push_back(std::make_tuple(v_new, prev_he_1, he_1, opp_he_1));
+		}
+		while (m.next_halfedge_handle(opp_he_1) != he_a);
+
+		auto f_a = m.new_face();
+
+		std::vector<h_edge_descriptor> inside_face_he;
+
+		for (int i=0; i<r_l.size() - 1; i++)
+		{
+			auto vx_rel = r_l[i];
+			auto vx_rel_b = r_l[(i+1)];
+
+			auto vx_a = std::get<0>(vx_rel);
+			auto vx_b = std::get<0>(vx_rel_b);
+			auto prev_hex_a = std::get<1>(vx_rel);
+			auto prev_hex_b = std::get<1>(vx_rel_b);
+			auto hex_a = std::get<2>(vx_rel);
+			auto hex_b = std::get<2>(vx_rel_b);
+			auto opp_hex_a = std::get<3>(vx_rel);
+			auto opp_hex_b = std::get<3>(vx_rel_b);
+
+			auto he_new = m.new_edge(vx_a, vx_b);
+
+			m.set_face_handle(m.opposite_halfedge_handle(he_new), f_a);
+			m.set_halfedge_handle(f_a, m.opposite_halfedge_handle(he_new));
+
+			inside_face_he.push_back(m.opposite_halfedge_handle(he_new));
+
+			m.set_face_handle(he_new, m.face_handle(opp_hex_a));
+			m.set_next_halfedge_handle(opp_hex_a, he_new);
+			m.set_next_halfedge_handle(he_new, hex_b);
+			m.set_vertex_handle(opp_hex_b, vx_b);
+		
+			m.set_halfedge_handle(vx_a, he_new);
+			m.adjust_outgoing_halfedge(vx_a);
+		}
+
+		m.set_face_handle(he_a, f_a);
+		inside_face_he.push_back(he_b);
+
+		for (int i=0; i<inside_face_he.size(); i++)
+		{
+			auto hx_a = inside_face_he[ i ];
+			auto hx_b = inside_face_he[ (i+1) % inside_face_he.size()];
+			m.set_next_halfedge_handle(hx_b, hx_a);
+		}
+
+		auto v_2a = m.to_vertex_handle(m.next_halfedge_handle(he_a));
+		auto v_2b = m.from_vertex_handle(get_previous_halfedge(m, he_a));
+
+		auto mid_p_a = calc_middle_point(m.point(v_a), m.point(v_2a), -1.f * (1.f - coeff));
+
+		auto mid_p_b = calc_middle_point(m.point(v_b), m.point(v_2b), -1.f * (1.f - coeff));
+
+		m.set_point(v_a, mid_p_a);
+		m.adjust_outgoing_halfedge(v_a);
+
+		m.set_point(v_b, mid_p_b);
+		m.adjust_outgoing_halfedge(v_b);
+
+		return true;
+	}
+
+	static
+	h_edge_descriptor
+	get_previous_halfedge(
+		OpenMeshExtended& m,
+		h_edge_descriptor heh)
+	{
+		auto t_heh = heh;
+
+			for (t_heh = m.next_halfedge_handle(t_heh);
+                        m.next_halfedge_handle(t_heh) != heh;
+                        t_heh = m.next_halfedge_handle(t_heh) )
+                        {}
+
+		return t_heh;
+
+	}
 
 };
 
