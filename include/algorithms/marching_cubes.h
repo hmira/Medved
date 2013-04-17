@@ -68,7 +68,8 @@ public:
 				}
 
 
-			vh = mesh_.add_vertex( p );
+			//vh = mesh_.add_vertex( p );
+			vh = TMesh_Traits::create_vertex(p, mesh_);
 			if (p0 < p1)
 				vertices_.push_back( std::make_tuple(_p0, _p1, vh) );
 			else
@@ -123,10 +124,12 @@ public:
 
 
    // connect samples by triangles
-   for ( i=0; triTable[cubetype][0][i] != -1; i+=3 )
-      mesh_.add_face( samples[triTable[cubetype][0][i  ]],
-                      samples[triTable[cubetype][0][i+1]],
-                      samples[triTable[cubetype][0][i+2]] );
+	for ( i=0; triTable[cubetype][0][i] != -1; i+=3 )
+	TMesh_Traits::create_face(
+		samples[triTable[cubetype][0][i  ]],
+		samples[triTable[cubetype][0][i+1]],
+		samples[triTable[cubetype][0][i+2]],
+		mesh_ );
 	}
 };
 

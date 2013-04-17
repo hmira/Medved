@@ -40,7 +40,7 @@ enum {A,B,C,D,N};
 int main(int argc, char **argv)
 {
 	OpenMeshExtended mesh;
-
+/*
   OpenMeshExtended::VertexHandle vhandle[8];
   vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
   vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1,  1));
@@ -88,7 +88,7 @@ int main(int argc, char **argv)
   face_vhandles.push_back(vhandle[3]);
   face_vhandles.push_back(vhandle[7]);
   face_vhandles.push_back(vhandle[4]);
-  mesh.add_face(face_vhandles);
+ // mesh.add_face(face_vhandles);
 
 	std::cout << vhandle[0] << std::endl;
 	std::cout << mesh.to_vertex_handle(mesh.halfedge_handle(vhandle[0])) << std::endl;
@@ -97,10 +97,10 @@ int main(int argc, char **argv)
 //	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, vhandle[6], 0.2f);
 //	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, (OpenMeshExtended::VertexHandle)8);
 
-/*
+
 	auto e_itr   = mesh.edges_begin();
-	auto e_end   = mesh.edges_end();
-	for ( ; e_itr != e_end; ++e_itr)
+	auto e_end   = mesh.edges_end();*/
+/*	for ( ; e_itr != e_end; ++e_itr)
 		advanced_mesh_traits<OpenMeshExtended>::split_edge(mesh, e_itr.handle());
 
 
@@ -109,18 +109,20 @@ int main(int argc, char **argv)
 	for ( ; e_itr != e_end; ++e_itr)
 		advanced_mesh_traits<OpenMeshExtended>::split_edge(mesh, e_itr.handle());
 
-
-	for ( ; e_itr != e_end; ++e_itr)
-		std::cout << mesh.is_boundary(e_itr.handle());
 */
+/*	for ( ; e_itr != e_end; ++e_itr)
+		std::cout << "e: " << e_itr.handle() << " " << mesh.is_boundary(e_itr.handle()) << std::endl;
+	advanced_mesh_traits<OpenMeshExtended>::fill_ring(mesh, (OpenMeshExtended::EdgeHandle)7);
+*/
+
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
 OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 1, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
-5,
-5,
-5 
+15,
+15,
+15 
 );
 
 
@@ -128,8 +130,17 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 
 	sg.sample(ims);
 
-//	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended>(sg, mesh);
-//	mesh.update_face_normals();	
+	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended>(sg, mesh);
+	mesh.update_face_normals();	
+
+	auto e_itr   = mesh.edges_begin();
+	auto e_end   = mesh.edges_end();/*
+	for ( ; e_itr != e_end; ++e_itr)
+		std::cout << "e: " << e_itr.handle() << " " << mesh.is_boundary(e_itr.handle()) << std::endl;
+*/
+	for ( ; e_itr != e_end; ++e_itr)
+		if (mesh.is_boundary(e_itr.handle())) advanced_mesh_traits<OpenMeshExtended>::fill_ring(mesh, e_itr.handle());
+
 
 	std::cout << "norma: c++0x" << std::endl;
 
@@ -142,9 +153,9 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 	int pocitam = 0;
 	int pocitam_faces = 0;
 
-	advanced_mesh_traits<OpenMeshExtended>::bevel(mesh, (OpenMeshExtended::EdgeHandle)1, 0.2f);
+/*	advanced_mesh_traits<OpenMeshExtended>::bevel(mesh, (OpenMeshExtended::EdgeHandle)1, 0.2f);
 	advanced_mesh_traits<OpenMeshExtended>::bevel(mesh, (OpenMeshExtended::EdgeHandle)6, 0.2f);
-
+*/
 /*	for (auto i = my_pair_ww.first; i != my_pair_ww.second; ++i) {
 		advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, i.handle());
 	}
@@ -152,7 +163,9 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 	for (auto i = my_pair_ww.first; i != my_pair_ww.second; ++i) {
 		advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, i.handle());
 	}
-*/	for (auto i = my_pair_ff.first; i != my_pair_ff.second; ++i) {
+*/
+
+/*	for (auto i = my_pair_ff.first; i != my_pair_ff.second; ++i) {
 		mesh.set_color(i.handle(), OpenMeshExtended::Color(1,0,0));
 		pocitam_faces++;
 		int fv_count = 0;
@@ -164,7 +177,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 
 		std::cout << "vrcholov: " << fv_count << std::endl;
 	}
-
+*/
 	std::cout << std::endl;
 	std::cout << "pocitam vertices: " << pocitam << std::endl;
 	std::cout << "pocitam faces: " << pocitam_faces << std::endl;
