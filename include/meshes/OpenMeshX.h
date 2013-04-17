@@ -13,6 +13,7 @@
 #include <vector>
 #include <utility>
 #include <tuple>
+#include <algorithm>
 
 struct MyTraits : public OpenMesh::DefaultTraits
 {
@@ -513,6 +514,70 @@ public:
 		return true;
 	}
 
+	static bool
+	fill_ring(
+		OpenMeshExtended& m_,
+		edge_descriptor e)
+	{
+		typedef OpenMeshExtended Mesh;
+		Mesh& m = const_cast<Mesh&>(m_);
+
+		std::vector<h_edge_descriptor> inside_face_he;
+
+		auto he_a = m.halfedge_handle(e, 0);
+		auto he_b = m.halfedge_handle(e, 1);
+		if (m.is_boundary(he_b))
+			std::swap(he_a, he_b);
+
+		auto f_a = m.new_face();
+
+		auto he_n = get_previous_halfedge(m, he_b);
+		auto he_o = m.opposite_halfedge_handle(he_n);
+		auto he_m = get_previous_halfedge(m, he_o);
+		auto he_next = m.opposite_halfedge_handle(he_m);
+
+			while (!m.is_boundary(he_next))
+			{
+				he_m = get_previous_halfedge(m, he_next);
+				he_next = m.opposite_halfedge_handle(he_m);
+			}
+
+		std::cout << "fujara:" << m.is_boundary(he_next) << std::endl;
+		inside_face_he.push_back(he_next);
+		m.set_face_handle(he_next, f_a);
+		m.set_halfedge_handle(f_a, he_next);
+
+		do
+		{
+			he_n = get_previous_halfedge(m, he_m);
+			he_o = m.opposite_halfedge_handle(he_n);
+			he_m = get_previous_halfedge(m, he_o);
+			he_next = m.opposite_halfedge_handle(he_m);
+
+			while (!m.is_boundary(he_next))
+			{
+				he_m = get_previous_halfedge(m, he_next);
+				he_next = m.opposite_halfedge_handle(he_m);
+			}
+
+			std::cout << "fujara:" << m.is_boundary(he_next) << std::endl;
+			inside_face_he.push_back(he_next);
+			m.set_face_handle(he_next, f_a);
+		}
+		while (he_next != he_a);
+
+		for (int i=0; i<inside_face_he.size(); i++)
+		{
+			auto hx_a = inside_face_he[ i ];
+			auto hx_b = inside_face_he[ (i+1) % inside_face_he.size()];
+			m.set_next_halfedge_handle(hx_a, hx_b);
+		}
+
+		return true;
+	}
+
+
+
 	static
 	h_edge_descriptor
 	get_previous_halfedge(
@@ -527,7 +592,6 @@ public:
                         {}
 
 		return t_heh;
-
 	}
 
 };

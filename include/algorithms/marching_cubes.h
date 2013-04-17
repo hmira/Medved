@@ -14,41 +14,38 @@ public:
 	typedef typename TGrid::CubeIdx		CubeIdx;
 	typedef typename TGrid::CubeIterator	CubeIterator;
 
-	typedef typename TMesh::Point         Point;
-	typedef typename TMesh::VertexHandle  VertexHandle;
-	typedef typename TMesh::FaceHandle    FaceHandle;
+	typedef typename TMesh_Traits::Point			Point;
+	typedef typename TMesh_Traits::vertex_descriptor	Vertex_descriptor;
+	typedef typename TMesh_Traits::face_descriptor		Face_descriptor;
 
 	const Grid&	grid_;
 	TMesh&            mesh_;
 	float            iso_;
 
-	std::vector<std::tuple<PointIdx, PointIdx, VertexHandle>> vertices_;
+	std::vector<std::tuple<PointIdx, PointIdx, Vertex_descriptor>> vertices_;
 
 	MarchingCubes( const Grid& _grid, TMesh& _mesh, float _iso = 0.0f)
 		: grid_( _grid ),
 		mesh_( _mesh ),
 		iso_( _iso )
 	{
-		CubeIterator cube_it( _grid.begin() ), cube_end( _grid.end() );
-		for ( ; cube_it!=cube_end; ++cube_it )
-			process_cube( *cube_it );
+		for ( auto cube : grid_ )
+			process_cube( cube );
 	}
 
 	int marching_cubes(Grid& g, TMesh& m)
 	{
-		CubeIterator cube_it( grid_.begin() ), cube_end( grid_.end() );
-		for ( ; cube_it!=cube_end; ++cube_it )
-			process_cube( *cube_it );
+		for ( auto cube : grid_ )
+			process_cube( cube );
 	}
 
-	VertexHandle
+	Vertex_descriptor
 	add_vertex( PointIdx _p0, PointIdx _p1)
 	{
 		const Point&  p0( grid_.point( _p0 ) );
 		const Point&  p1( grid_.point( _p1 ) );
 
-		VertexHandle vh;		
-	
+		Vertex_descriptor vh;		
 
 		float s0 = grid_.scalar_distance( _p0 );
 		float s1 = grid_.scalar_distance( _p1 );
@@ -60,14 +57,14 @@ public:
 
 			if (_p1 < _p0) std::swap(_p0, _p1);
 
-			for (auto itr = vertices_.cbegin(); itr != vertices_.cend(); ++itr)
+			for (auto itr : vertices_)
 				if ( 	
-					((std::get<0>(*itr) == _p0)) &&
-					((std::get<1>(*itr) == _p1)) &&
-					std::get<2>(*itr).is_valid()
+					((std::get<0>(itr) == _p0)) &&
+					((std::get<1>(itr) == _p1)) &&
+					std::get<2>(itr).is_valid()
 				)
 				{	
-					return std::get<2>(*itr);
+					return std::get<2>(itr);
 				}
 
 
@@ -90,46 +87,38 @@ public:
 	process_cube( CubeIdx _cidx )
 	{
 
-	PointIdx           corner[8];
-	VertexHandle       samples[12];
-	unsigned char      cubetype( 0 );
-	unsigned int       i;
+	PointIdx		corner[8];
+	Vertex_descriptor	samples[12];
+	unsigned char		cubetype( 0 );
+	unsigned int		i;
 
 
 	// get point indices of corner vertices
 	for ( i=0; i<8; ++i )
 		corner[i] = grid_.point_idx( _cidx, i );
 
-
-
 	// determine cube type
 	for ( i=0; i<8; ++i )
 		if ( grid_.scalar_distance( corner[i] ) > iso_ )
-		{
 			cubetype |= ( 1<<i );
-		}
-		else
-		{
-		}
-
 
 	// trivial reject ?
 	if ( cubetype == 0 || cubetype == 255 )
 		return;
 
-   // compute samples on cube's edges
-   if ( edgeTable[cubetype]&1 )    samples[0]  = add_vertex( corner[0], corner[1] );
-   if ( edgeTable[cubetype]&2 )    samples[1]  = add_vertex( corner[1], corner[2] );
-   if ( edgeTable[cubetype]&4 )    samples[2]  = add_vertex( corner[3], corner[2] );
-   if ( edgeTable[cubetype]&8 )    samples[3]  = add_vertex( corner[0], corner[3] );
-   if ( edgeTable[cubetype]&16 )   samples[4]  = add_vertex( corner[4], corner[5] );
-   if ( edgeTable[cubetype]&32 )   samples[5]  = add_vertex( corner[5], corner[6] );
-   if ( edgeTable[cubetype]&64 )   samples[6]  = add_vertex( corner[7], corner[6] );
-   if ( edgeTable[cubetype]&128 )  samples[7]  = add_vertex( corner[4], corner[7] );
-   if ( edgeTable[cubetype]&256 )  samples[8]  = add_vertex( corner[0], corner[4] );
-   if ( edgeTable[cubetype]&512 )  samples[9]  = add_vertex( corner[1], corner[5] );
-   if ( edgeTable[cubetype]&1024 ) samples[10] = add_vertex( corner[2], corner[6] );
-   if ( edgeTable[cubetype]&2048 ) samples[11] = add_vertex( corner[3], corner[7] );
+	// compute samples on cube's edges
+	if ( edgeTable[cubetype]&1 )    samples[0]  = add_vertex( corner[0], corner[1] );
+	if ( edgeTable[cubetype]&2 )    samples[1]  = add_vertex( corner[1], corner[2] );
+	if ( edgeTable[cubetype]&4 )    samples[2]  = add_vertex( corner[3], corner[2] );
+	if ( edgeTable[cubetype]&8 )    samples[3]  = add_vertex( corner[0], corner[3] );
+	if ( edgeTable[cubetype]&16 )   samples[4]  = add_vertex( corner[4], corner[5] );
+	if ( edgeTable[cubetype]&32 )   samples[5]  = add_vertex( corner[5], corner[6] );
+	if ( edgeTable[cubetype]&64 )   samples[6]  = add_vertex( corner[7], corner[6] );
+	if ( edgeTable[cubetype]&128 )  samples[7]  = add_vertex( corner[4], corner[7] );
+	if ( edgeTable[cubetype]&256 )  samples[8]  = add_vertex( corner[0], corner[4] );
+	if ( edgeTable[cubetype]&512 )  samples[9]  = add_vertex( corner[1], corner[5] );
+	if ( edgeTable[cubetype]&1024 ) samples[10] = add_vertex( corner[2], corner[6] );
+	if ( edgeTable[cubetype]&2048 ) samples[11] = add_vertex( corner[3], corner[7] );
 
 
 
