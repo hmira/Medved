@@ -31,38 +31,34 @@ typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> OpenMeshExtended;
  * 
  * \ingroup OpenMeshX
  */
-//template<typename TTraits>
-//class mesh_traits< OpenMesh::PolyMesh_ArrayKernelT<TTraits> /*OpenMeshExtended*/>
-
-template<>
-class mesh_traits<OpenMeshExtended>
+template<typename TTraits>
+class mesh_traits< OpenMesh::PolyMesh_ArrayKernelT<TTraits> /*OpenMeshExtended*/>
 
 {
 public:
-	//typedef OpenMesh::PolyMesh_ArrayKernelT<TTraits> OpenMeshExtended;
+	typedef OpenMesh::PolyMesh_ArrayKernelT<TTraits> OpenMeshExtended;
 
 	typedef OpenMesh::DefaultTraits original_traits;
 
 	typedef typename OpenMeshExtended::Point Point;
-
 	typedef typename OpenMeshExtended::Normal normal;
 
 
 	typedef typename OpenMeshExtended::HalfedgeHandle h_edge_descriptor;//consider moving to advanced traits
 	typedef typename OpenMeshExtended::HalfedgeIter h_edge_iterator;
-	typedef typename std::vector<OpenMeshExtended::Halfedge>::size_type h_edges_size_type;
+	//typedef typename std::vector<OpenMeshExtended::Halfedge>::size_type h_edges_size_type;
 
 	typedef typename OpenMeshExtended::VertexHandle vertex_descriptor;
 	typedef typename OpenMeshExtended::VertexIter vertex_iterator;
-	typedef typename std::vector<OpenMeshExtended::Vertex>::size_type vertices_size_type;
+	//typedef typename std::vector<OpenMeshExtended::Vertex>::size_type vertices_size_type;
 
 	typedef typename OpenMeshExtended::EdgeHandle edge_descriptor;
 	typedef typename OpenMeshExtended::EdgeIter edge_iterator;
-	typedef typename std::vector<OpenMeshExtended::Edge>::size_type edges_size_type;
+	//typedef typename std::vector<OpenMeshExtended::Edge>::size_type edges_size_type;
 
 	typedef typename OpenMeshExtended::FaceHandle face_descriptor;
 	typedef typename OpenMeshExtended::FaceIter face_iterator;
-	typedef typename std::vector<OpenMeshExtended::Face>::size_type faces_size_type;
+	//typedef typename std::vector<OpenMeshExtended::Face>::size_type faces_size_type;
 
 	class my_fv_iterator;
 	class my_vv_iterator;
@@ -128,11 +124,38 @@ get_adjacent_edges(
  
 };
 
-template<>
-class advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>> : public mesh_traits<OpenMeshExtended>
+template<typename TTraits>
+class advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>> : public mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>>
 {
 public:
-	static mesh_traits<OpenMeshExtended>::normal 
+
+	typedef OpenMesh::PolyMesh_ArrayKernelT<TTraits> OpenMeshExtended;
+
+	typedef OpenMesh::DefaultTraits original_traits;
+	typedef mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>> parent_traits;
+
+	typedef typename parent_traits::Point Point;
+	typedef typename parent_traits::normal normal;
+
+
+	typedef typename parent_traits::h_edge_descriptor h_edge_descriptor;
+	typedef typename parent_traits::h_edge_iterator h_edge_iterator;
+
+	typedef typename parent_traits::vertex_descriptor vertex_descriptor;
+	typedef typename parent_traits::vertex_iterator vertex_iterator;
+
+	typedef typename parent_traits::edge_descriptor edge_descriptor;
+	typedef typename parent_traits::edge_iterator edge_iterator;
+
+	typedef typename parent_traits::face_descriptor face_descriptor;
+	typedef typename parent_traits::face_iterator face_iterator;
+
+	typedef typename parent_traits::fv_iterator fv_iterator;
+	typedef typename parent_traits::vv_iterator vv_iterator;
+	typedef typename parent_traits::ve_iterator ve_iterator;
+
+  
+	static typename mesh_traits<OpenMeshExtended>::normal 
 	get_face_normal(
 		const OpenMeshExtended& m_,
 		face_descriptor f);
@@ -148,12 +171,12 @@ public:
 		face_descriptor& f)
         {
 
-                typedef OpenMeshExtended Mesh;
-                Mesh& m = const_cast<Mesh&>(m_);
+		typedef OpenMeshExtended Mesh;
+		Mesh& m = const_cast<Mesh&>(m_);
 
-                auto n = m.normal(f);
-                m.set_normal(f, -n);
-                return true;
+		auto n = m.normal(f);
+		m.set_normal(f, -n);
+		return true;
 	}
 
 
@@ -187,12 +210,6 @@ public:
 
 //=========== HELPERS ==============
 	
-	static
-	h_edge_descriptor
-	get_previous_halfedge(
-		OpenMeshExtended& m,
-		h_edge_descriptor heh);
-	
 		static Point
 	calc_middle_point(
 		Point p1,
@@ -210,7 +227,18 @@ public:
 	split_edge(
 		OpenMeshExtended& m_,
 		edge_descriptor e);
+	
+	static bool
+	is_boundary(
+		OpenMeshExtended& m_,
+		edge_descriptor e)	{return m_.is_boundary(e);}
 
+	static
+	h_edge_descriptor
+	get_previous_halfedge(
+		OpenMeshExtended& m,
+		h_edge_descriptor heh);
+	
 };
 
 

@@ -56,7 +56,7 @@ public:
     }
 
     /// Destructor
-    virtual ~ScalarGridT() { std::cout << "eeej" << std::endl; }
+    virtual ~ScalarGridT() {}
 
     /// function to initialize the grid
     void initialize( const Vec3&  _origin,

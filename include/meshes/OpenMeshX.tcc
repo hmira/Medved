@@ -3,9 +3,8 @@
 
 #include <OpenMesh/Core/Utils/GenProg.hh>
 
-
-
-class mesh_traits<OpenMeshExtended>::my_ve_iterator : public OpenMeshExtended::VEIter
+template<>
+class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_ve_iterator : public OpenMesh::PolyMesh_ArrayKernelT<MyTraits>::VEIter
 {
 	public: 
                 typedef OpenMesh::PolyConnectivity& mesh_ref;
@@ -42,8 +41,8 @@ class mesh_traits<OpenMeshExtended>::my_ve_iterator : public OpenMeshExtended::V
 
 };
                  
-
-class mesh_traits<OpenMeshExtended>::my_fv_iterator : public OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >
+template<>
+class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_fv_iterator : public OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >
 {
         public:
                 typedef OpenMesh::PolyConnectivity& mesh_ref;
@@ -78,8 +77,8 @@ class mesh_traits<OpenMeshExtended>::my_fv_iterator : public OpenMesh::Iterators
                 vertex_descriptor operator->() { return this->handle(); }
 };
              
-
-class mesh_traits<OpenMeshExtended>::my_vv_iterator : public OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >
+template <>
+class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_vv_iterator : public OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >
 {
         public:
                 typedef OpenMesh::PolyConnectivity& mesh_ref;
@@ -115,20 +114,25 @@ class mesh_traits<OpenMeshExtended>::my_vv_iterator : public OpenMesh::Iterators
 
 };
 
-
-std::pair<OpenMeshXTraits::fv_iterator, OpenMeshXTraits::fv_iterator>
-OpenMeshXTraits::get_surrounding_vertices(const OpenMeshExtended& m_, OpenMeshXTraits::face_descriptor fd)
+template<>
+std::pair
+<
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::fv_iterator,
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::fv_iterator
+>
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_surrounding_vertices(const OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_, mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::face_descriptor fd)
 {
-	typedef OpenMeshExtended Mesh;
+	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	Mesh& m = const_cast<Mesh&>(m_);
 	return std::make_pair(m.fv_begin(fd), m.fv_end(fd));
 }
 
 
+template<>
 bool 
-OpenMeshXTraits::remove_vertex(
-					  OpenMeshXTraits::vertex_descriptor v,
-		  	  	  OpenMeshExtended &m)
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::remove_vertex(
+		mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v,
+		OpenMesh::PolyMesh_ArrayKernelT<MyTraits> &m)
 {
 //	static_assert(TTraits::VertexAttributes != 0);
 	 m.delete_vertex(v);
@@ -136,13 +140,14 @@ OpenMeshXTraits::remove_vertex(
 }
 
 
-bool OpenMeshXTraits::create_face(
-				  typename OpenMeshXTraits::vertex_descriptor a,
-				  typename OpenMeshXTraits::vertex_descriptor b,
-				  typename OpenMeshXTraits::vertex_descriptor c,
-		  	  	  OpenMeshExtended& m)
+template<>
+bool mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::create_face(
+				  typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor a,
+				  typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor b,
+				  typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor c,
+		  	  	  OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m)
 {
-	std::vector<OpenMeshXTraits::vertex_descriptor>  face_vhandles;
+	std::vector<mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor>  face_vhandles;
 
 	face_vhandles.clear();
 	face_vhandles.push_back(a);
@@ -152,101 +157,181 @@ bool OpenMeshXTraits::create_face(
 	return true;
 }
 
-bool OpenMeshXTraits::remove_face(
-				  typename OpenMeshXTraits::face_descriptor f,
-		  	  	  OpenMeshExtended &m)
+template<>
+bool mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::remove_face(
+				  typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::face_descriptor f,
+		  	  	  OpenMesh::PolyMesh_ArrayKernelT<MyTraits> &m)
 {
 	  m.delete_face(f);
 	  return true;
 }
 
-std::pair<typename OpenMeshXTraits::vertex_iterator,
-	  	  	typename OpenMeshXTraits::vertex_iterator>
-OpenMeshXTraits::get_all_vertices(const OpenMeshExtended& m_)
+template<>
+std::pair<typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_iterator,
+	  	  	typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_iterator>
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_all_vertices(const OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_)
 {
-	  typedef OpenMeshExtended Mesh;
+	  typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	  Mesh& m = const_cast<Mesh&>(m_);
 	  return std::make_pair(m.vertices_begin(), m.vertices_end());
 }
 
-std::pair<typename OpenMeshXTraits::edge_iterator,
-	  	  	typename OpenMeshXTraits::edge_iterator>
-OpenMeshXTraits::get_all_edges(const OpenMeshExtended& m_)
+template<>
+std::pair<typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::edge_iterator,
+	  	  	typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::edge_iterator>
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_all_edges(const OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_)
 {
-	  typedef OpenMeshExtended Mesh;
+	  typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	  Mesh& m = const_cast<Mesh&>(m_);
 	  return std::make_pair(m.edges_begin(), m.edges_end());
 }
 
 
-std::pair<typename OpenMeshXTraits::face_iterator,
-	  	  	typename OpenMeshXTraits::face_iterator>
-OpenMeshXTraits::get_all_faces(const OpenMeshExtended& m_)
+template<>
+std::pair<typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::face_iterator,
+	  	  	typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::face_iterator>
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_all_faces(const OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_)
 {
-	  typedef OpenMeshExtended Mesh;
+	  typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	  Mesh& m = const_cast<Mesh&>(m_);
 	  return std::make_pair(m.faces_begin(), m.faces_end());
 }
 
 //=========== VERTEX ADJACENCY CONCEPT ===========
 
-bool OpenMeshXTraits::is_isolated(const OpenMeshExtended& m_,
-		OpenMeshXTraits::vertex_descriptor v)
+template<>
+bool mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::is_isolated(const OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+		mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v)
 {
-	  typedef OpenMeshExtended Mesh;
+	  typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	  Mesh& m = const_cast<Mesh&>(m_);
 	  return m.is_isolated(v);
 }
 
-std::pair<typename OpenMeshXTraits::vv_iterator,
-	  	  	typename OpenMeshXTraits::vv_iterator>
-OpenMeshXTraits::get_adjacent_vertices(
-		const OpenMeshExtended& m_,
-		  OpenMeshXTraits::vertex_descriptor v)
+template<>
+std::pair<typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vv_iterator,
+	  	  	typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vv_iterator>
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_adjacent_vertices(
+		const OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+		  mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v)
 		  {
-	  typedef OpenMeshExtended Mesh;
+	  typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	  Mesh& m = const_cast<Mesh&>(m_);
 	  return std::make_pair(m.vv_begin(v), m.vv_end(v));
 		  }
 
-std::pair<typename OpenMeshXTraits::ve_iterator,typename OpenMeshXTraits::ve_iterator>
-OpenMeshXTraits::get_adjacent_edges(
-		const OpenMeshExtended& m_,
-		OpenMeshXTraits::vertex_descriptor v)
+template<>
+std::pair<typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ve_iterator,typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ve_iterator>
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_adjacent_edges(
+		const OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+		mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v)
 		  {
 
-	  typedef OpenMeshExtended Mesh;
+	  typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	  Mesh& m = const_cast<Mesh&>(m_);
 	  return std::make_pair(m.ve_begin(v),m.ve_end(v));
 		  }
 
-advanced_mesh_traits<OpenMeshExtended>::normal
-advanced_mesh_traits<OpenMeshExtended>::get_face_normal(
-	const OpenMeshExtended& m_,
-	OpenMeshXTraits::face_descriptor f)
+//=========== HELPERS ==============
+
+
+template<>
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::h_edge_descriptor
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_previous_halfedge(
+	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m,
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::h_edge_descriptor heh)
+{
+	auto t_heh = heh;
+
+		for (t_heh = m.next_halfedge_handle(t_heh);
+		m.next_halfedge_handle(t_heh) != heh;
+		t_heh = m.next_halfedge_handle(t_heh) )
+		{}
+
+	return t_heh;
+}
+
+
+template<>
+bool
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::triangulate_face(
+	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::face_descriptor& f
+)
+{
+	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
+	Mesh& m = const_cast<Mesh&>(m_);
+
+	m.triangulate(f);
+}
+
+
+template<>
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_point(
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point p1,
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point p2,
+	float coeff)
+{
+	auto diff = p2;
+	diff -= p1;
+	diff *= coeff;
+	diff += p2;
+	return diff;
+}
+
+
+template<>
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_vertex(
+	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v1,
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v2,
+	float coeff)
+{
+	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
+	Mesh& m = const_cast<Mesh&>(m_);
+
+	auto diff = m.point( v2 );
+	diff -= m.point( v1 );
+	diff *= coeff;
+	diff += m.point( v1 );
+
+
+	return m.new_vertex( diff );
+}
+
+//=========== MESH TOPOLOGY OPERATIONS ===========
+		  
+template<>
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::normal
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_face_normal(
+	const OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+	mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::face_descriptor f)
 	{
-		typedef OpenMeshExtended Mesh;
+		typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 		Mesh& m = const_cast<Mesh&>(m_);
 		return m.calc_face_normal(f);
 	}
 
+template<>
 bool
-advanced_mesh_traits<OpenMeshExtended>::split_edge(
-	OpenMeshExtended& m_,
-	advanced_mesh_traits<OpenMeshExtended>::edge_descriptor e)
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::split_edge(
+	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::edge_descriptor e)
 {
-	typedef OpenMeshExtended Mesh;
+	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	Mesh& m = const_cast<Mesh&>(m_);
 
 	auto heh     = m.halfedge_handle(e, 0);
 	auto opp_heh = m.halfedge_handle(e, 1);
 
-	advanced_mesh_traits<OpenMeshExtended>::h_edge_descriptor new_heh, opp_new_heh, t_heh;
-	advanced_mesh_traits<OpenMeshExtended>::vertex_descriptor   vh;
-	advanced_mesh_traits<OpenMeshExtended>::vertex_descriptor   vh1( m.to_vertex_handle(heh));
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::h_edge_descriptor new_heh, opp_new_heh, t_heh;
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor   vh;
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor   vh1( m.to_vertex_handle(heh));
 
 	// new vertex
-	vh                = advanced_mesh_traits<OpenMeshExtended>::calc_middle_vertex
+	vh                = advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_vertex
 		(m,
 		m.to_vertex_handle(heh),
 		m.to_vertex_handle(opp_heh));
@@ -304,14 +389,15 @@ advanced_mesh_traits<OpenMeshExtended>::split_edge(
 	return true;
 }
 	
-	
+
+template<>	
 bool
-advanced_mesh_traits<OpenMeshExtended>::truncate(
-	OpenMeshExtended& m_,
-	advanced_mesh_traits<OpenMeshExtended>::vertex_descriptor v,
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::truncate(
+	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v,
 	float coeff)
 {
-	typedef OpenMeshExtended Mesh;
+	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	Mesh& m = const_cast<Mesh&>(m_);
 
 	typedef std::tuple<
@@ -399,15 +485,17 @@ advanced_mesh_traits<OpenMeshExtended>::truncate(
 
 	return true;
 }	
-	
+
+
+template<>
 bool
-advanced_mesh_traits<OpenMeshExtended>::bevel(
-		OpenMeshExtended& m_,
-		advanced_mesh_traits<OpenMeshExtended>::edge_descriptor e,
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::bevel(
+		OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+		advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::edge_descriptor e,
 		float coeff)
 {
 	
-	typedef OpenMeshExtended Mesh;
+	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	Mesh& m = const_cast<Mesh&>(m_);
 
 	typedef std::tuple<
@@ -539,12 +627,14 @@ advanced_mesh_traits<OpenMeshExtended>::bevel(
 	return true;
 }
 
+
+template<>
 bool
-advanced_mesh_traits<OpenMeshExtended>::fill_ring(
-	OpenMeshExtended& m_,
-	advanced_mesh_traits<OpenMeshExtended>::edge_descriptor e)
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::fill_ring(
+	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::edge_descriptor e)
 {
-	typedef OpenMeshExtended Mesh;
+	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	Mesh& m = const_cast<Mesh&>(m_);
 
 	std::vector<h_edge_descriptor> inside_face_he;
@@ -599,65 +689,5 @@ advanced_mesh_traits<OpenMeshExtended>::fill_ring(
 	return true;
 }
 
-//=========== HELPERS ==============
-
-advanced_mesh_traits<OpenMeshExtended>::h_edge_descriptor
-advanced_mesh_traits<OpenMeshExtended>::get_previous_halfedge(
-	OpenMeshExtended& m,
-	advanced_mesh_traits<OpenMeshExtended>::h_edge_descriptor heh)
-{
-	auto t_heh = heh;
-
-		for (t_heh = m.next_halfedge_handle(t_heh);
-		m.next_halfedge_handle(t_heh) != heh;
-		t_heh = m.next_halfedge_handle(t_heh) )
-		{}
-
-	return t_heh;
-}
-
-bool
-advanced_mesh_traits<OpenMeshExtended>::triangulate_face(
-	OpenMeshExtended& m_,
-	advanced_mesh_traits<OpenMeshExtended>::face_descriptor& f
-)
-{
-	typedef OpenMeshExtended Mesh;
-	Mesh& m = const_cast<Mesh&>(m_);
-
-	m.triangulate(f);
-}
-
-advanced_mesh_traits<OpenMeshExtended>::Point
-advanced_mesh_traits<OpenMeshExtended>::calc_middle_point(
-	advanced_mesh_traits<OpenMeshExtended>::Point p1,
-	advanced_mesh_traits<OpenMeshExtended>::Point p2,
-	float coeff)
-{
-	auto diff = p2;
-	diff -= p1;
-	diff *= coeff;
-	diff += p2;
-	return diff;
-}
-
-advanced_mesh_traits<OpenMeshExtended>::vertex_descriptor
-advanced_mesh_traits<OpenMeshExtended>::calc_middle_vertex(
-	OpenMeshExtended& m_,
-	advanced_mesh_traits<OpenMeshExtended>::vertex_descriptor v1,
-	advanced_mesh_traits<OpenMeshExtended>::vertex_descriptor v2,
-	float coeff)
-{
-	typedef OpenMeshExtended Mesh;
-	Mesh& m = const_cast<Mesh&>(m_);
-
-	auto diff = m.point( v2 );
-	diff -= m.point( v1 );
-	diff *= coeff;
-	diff += m.point( v1 );
-
-
-	return m.new_vertex( diff );
-}
 
 #endif // OPENMESHX_H_

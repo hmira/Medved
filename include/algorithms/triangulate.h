@@ -1,4 +1,3 @@
-#include <iostream>
 
 template <typename TMesh, typename TMesh_Traits = mesh_traits<TMesh>>
 int triangulate(TMesh& m)

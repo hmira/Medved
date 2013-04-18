@@ -25,11 +25,13 @@ typedef OpenMesh::PolyMesh_ArrayKernelT<> MyMesh;
 #include "algorithms/triangulate.h"
 
 #include "algorithms/marching_cubes.h"
+#include "algorithms/fill_holes.h"
 
 #include "meshes/OpenMeshX.h"
 #include "traits.h"
 
 #include <grids/ScalarGridT.hh>
+#include <grids/ScalarGrid_traits.h>
 #include <grids/ImplicitSphere.hh>
 
 typedef winged_edge_mesh<triangleMesh> my_mesh;
@@ -96,33 +98,17 @@ int main(int argc, char **argv)
 
 //	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, vhandle[6], 0.2f);
 //	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, (OpenMeshExtended::VertexHandle)8);
-
-
-	auto e_itr   = mesh.edges_begin();
-	auto e_end   = mesh.edges_end();*/
-/*	for ( ; e_itr != e_end; ++e_itr)
-		advanced_mesh_traits<OpenMeshExtended>::split_edge(mesh, e_itr.handle());
-
-
-	e_itr   = mesh.edges_begin();
-	e_end   = mesh.edges_end();
-	for ( ; e_itr != e_end; ++e_itr)
-		advanced_mesh_traits<OpenMeshExtended>::split_edge(mesh, e_itr.handle());
-
 */
-/*	for ( ; e_itr != e_end; ++e_itr)
-		std::cout << "e: " << e_itr.handle() << " " << mesh.is_boundary(e_itr.handle()) << std::endl;
-	advanced_mesh_traits<OpenMeshExtended>::fill_ring(mesh, (OpenMeshExtended::EdgeHandle)7);
-*/
+
 
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
 OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 1, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
-15,
-15,
-15 
+25,
+25,
+25 
 );
 
 
@@ -130,83 +116,14 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 
 	sg.sample(ims);
 
-	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended>(sg, mesh);
+	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
 	mesh.update_face_normals();	
 
-	auto e_itr   = mesh.edges_begin();
-	auto e_end   = mesh.edges_end();/*
-	for ( ; e_itr != e_end; ++e_itr)
-		std::cout << "e: " << e_itr.handle() << " " << mesh.is_boundary(e_itr.handle()) << std::endl;
-*/
-	for ( ; e_itr != e_end; ++e_itr)
-		if (mesh.is_boundary(e_itr.handle())) advanced_mesh_traits<OpenMeshExtended>::fill_ring(mesh, e_itr.handle());
-
-
-	std::cout << "norma: c++0x" << std::endl;
-
-	std::cout << sg.n_cubes() << " aa " << sg.n_points() << std::endl;
-
-
-
-	auto my_pair_ww = OpenMeshXTraits::get_all_vertices(mesh);
-	auto my_pair_ff = OpenMeshXTraits::get_all_faces(mesh);
-	int pocitam = 0;
-	int pocitam_faces = 0;
-
-/*	advanced_mesh_traits<OpenMeshExtended>::bevel(mesh, (OpenMeshExtended::EdgeHandle)1, 0.2f);
-	advanced_mesh_traits<OpenMeshExtended>::bevel(mesh, (OpenMeshExtended::EdgeHandle)6, 0.2f);
-*/
-/*	for (auto i = my_pair_ww.first; i != my_pair_ww.second; ++i) {
-		advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, i.handle());
-	}
-	my_pair_ww = OpenMeshXTraits::get_all_vertices(mesh);
-	for (auto i = my_pair_ww.first; i != my_pair_ww.second; ++i) {
-		advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, i.handle());
-	}
-*/
-
-/*	for (auto i = my_pair_ff.first; i != my_pair_ff.second; ++i) {
-		mesh.set_color(i.handle(), OpenMeshExtended::Color(1,0,0));
-		pocitam_faces++;
-		int fv_count = 0;
-		auto fv_pair = OpenMeshXTraits::get_surrounding_vertices
-			(mesh, 
-			i.handle());
-		for (auto j = fv_pair.first; j!=fv_pair.second; ++j)
-			fv_count++;
-
-		std::cout << "vrcholov: " << fv_count << std::endl;
-	}
-*/
-	std::cout << std::endl;
-	std::cout << "pocitam vertices: " << pocitam << std::endl;
-	std::cout << "pocitam faces: " << pocitam_faces << std::endl;
-
-	OpenMesh::Subdivider::Uniform::CatmullClarkT<OpenMeshExtended> catmull;
+	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
+	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
 	
-
- 	catmull.attach(mesh);
-//	catmull( 2 );
-	catmull.detach();
-
-
-//	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
-
-	//advanced_mesh_traits<OpenMeshExtended>::flip_face_normal_t<int>();
-
-	//mesh.update_face_normals();
-	//flip_normals<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);	
-
-	/*auto ff_face_pair = mesh_traits<OpenMeshExtended>::get_all_faces(mesh);
-	for (auto i = ff_face_pair.first; i != ff_face_pair.second; ++i)
-	{
-		auto old_face = *i;
-		OpenMeshExtended::Normal n = mesh.calc_face_normal(old_face);
-		std::cout << "norm:" << n << std::endl;
-		std::cout << "n_normal:" << mesh.normal(old_face) << std::endl;
-	} */
-
-
+	std::cout << "norma: c++0x" << std::endl;
+	
 	if (!OpenMesh::IO::write_mesh(mesh, "my_mesh.obj")) 
 	{
 		std::cerr << "write error\n";
