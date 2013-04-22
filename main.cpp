@@ -12,7 +12,6 @@
 
 //#include "MedV4D/Imaging/ImageTools.h"
 
-
 typedef OpenMesh::PolyMesh_ArrayKernelT<> MyMesh;
 
 #include <iostream>
@@ -34,6 +33,13 @@ typedef OpenMesh::PolyMesh_ArrayKernelT<> MyMesh;
 #include <grids/ScalarGrid_traits.h>
 #include <grids/ImplicitSphere.hh>
 
+template <typename T>
+constexpr auto has_x_method(T& t) -> decltype(t.add_vertex(), OpenMeshExtended::VertexHandle())
+{
+	return true;
+}
+
+
 typedef winged_edge_mesh<triangleMesh> my_mesh;
 typedef winged_edge_mesh_traits<triangleMesh> my_mesh_traits;
 
@@ -42,6 +48,9 @@ enum {A,B,C,D,N};
 int main(int argc, char **argv)
 {
 	OpenMeshExtended mesh;
+
+	std::cout << std::boolalpha << std::is_member_function_pointer<decltype(&OpenMeshExtended::add_vertex)>::value << std::endl;
+
 /*
   OpenMeshExtended::VertexHandle vhandle[8];
   vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
@@ -106,9 +115,9 @@ OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 1, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
-25,
-25,
-25 
+5,
+5,
+5 
 );
 
 
