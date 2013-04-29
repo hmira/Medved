@@ -16,17 +16,16 @@ typedef OpenMesh::PolyMesh_ArrayKernelT<> MyMesh;
 
 #include <iostream>
 #include <deque>
-#include <boost/graph/adjacency_matrix.hpp>
-#include "meshes/winged_edge.h"
+#include "meshes/winged_edge.hpp"
 
-#include "algorithms/compute_components.h"
-#include "algorithms/flip_normals.h"
-#include "algorithms/triangulate.h"
+#include "algorithms/compute_components.hpp"
+#include "algorithms/flip_normals.hpp"
+#include "algorithms/triangulate.hpp"
 
-#include "algorithms/marching_cubes.h"
-#include "algorithms/fill_holes.h"
+#include "algorithms/marching_cubes.hpp"
+#include "algorithms/fill_holes.hpp"
 
-#include "meshes/OpenMeshX.h"
+#include "meshes/OpenMeshX.hpp"
 #include "traits.h"
 
 #include <grids/ScalarGridT.hh>
@@ -110,6 +109,8 @@ int main(int argc, char **argv)
 
 //	scale.rescale(0.8f);
 	scale.rescale_by_unit(1.0f);;
+	scale.rescale_by_unit(-1.0f);;
+	scale.rescale_by_unit(-0.3f);;
 
 //	scale.rescale_by_unit(0.5f);
 //	scale.rescale_by_unit(0.5f);

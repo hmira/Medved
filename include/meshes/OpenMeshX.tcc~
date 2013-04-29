@@ -248,10 +248,10 @@ mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_face_normal(
 
 
 template<>
-advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::h_edge_descriptor
-advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_previous_halfedge(
+helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::h_edge_descriptor
+helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_previous_halfedge(
 	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m,
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::h_edge_descriptor heh)
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::h_edge_descriptor heh)
 {
 	auto t_heh = heh;
 
@@ -279,10 +279,10 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::triangulate_fac
 
 
 template<>
-advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point
-advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_point(
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point p1,
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point p2,
+helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point
+helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_point(
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point p1,
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point p2,
 	float coeff)
 {
 	auto diff = p2;
@@ -293,10 +293,10 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_poi
 }
 
 template<>
-advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point
-advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_translated_point(
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point p,
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point dir,
+helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point
+helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_translated_point(
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point p,
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point dir,
 	float dist)
 {
 	auto diff = dir.normalize();
@@ -308,11 +308,11 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_translated
 
 
 template<>
-advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor
-advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_vertex(
+helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor
+helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_vertex(
 	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v1,
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v2,
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v1,
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v2,
 	float coeff)
 {
 	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
@@ -332,9 +332,9 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_ver
 
 template<>
 bool
-advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::split_edge(
+helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::split_edge(
 	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::edge_descriptor e)
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::edge_descriptor e)
 {
 	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	Mesh& m = const_cast<Mesh&>(m_);
@@ -342,12 +342,12 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::split_edge(
 	auto heh     = m.halfedge_handle(e, 0);
 	auto opp_heh = m.halfedge_handle(e, 1);
 
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::h_edge_descriptor new_heh, opp_new_heh, t_heh;
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor   vh;
-	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor   vh1( m.to_vertex_handle(heh));
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::h_edge_descriptor new_heh, opp_new_heh, t_heh;
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor   vh;
+	helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor   vh1( m.to_vertex_handle(heh));
 
 	// new vertex
-	vh                = advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_vertex
+	vh = helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_vertex
 		(m,
 		m.to_vertex_handle(heh),
 		m.to_vertex_handle(opp_heh));

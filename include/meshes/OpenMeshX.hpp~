@@ -121,6 +121,13 @@ get_adjacent_edges(
 		const OpenMeshExtended& m_,
 		vertex_descriptor v);
 
+//============ NORMAL ===================
+ 
+static typename mesh_traits<OpenMeshExtended>::normal 
+get_face_normal(
+	const OpenMeshExtended& m_,
+	face_descriptor f);
+
 //============ PROPERTIES ==================
 template <typename TProperty>
 static
@@ -130,14 +137,14 @@ set_property(
 	vertex_descriptor v,
 	TProperty p){}
   
- 
+
 };
 
 template<typename TTraits>
-class advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>> : public mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>>
+class helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>> : public mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>>
 {
 public:
-
+	
 	typedef OpenMesh::PolyMesh_ArrayKernelT<TTraits> OpenMeshExtended;
 
 	typedef OpenMesh::DefaultTraits original_traits;
@@ -162,66 +169,6 @@ public:
 	typedef typename parent_traits::fv_iterator fv_iterator;
 	typedef typename parent_traits::vv_iterator vv_iterator;
 	typedef typename parent_traits::ve_iterator ve_iterator;
-
- 
-	static typename mesh_traits<OpenMeshExtended>::normal 
-	get_face_normal(
-		const OpenMeshExtended& m_,
-		face_descriptor f);
-
-	template<
-		typename Traits ,
-		typename B = typename std::enable_if
-			< Traits::FaceAttributes & OpenMesh::Attributes::Normal>::type
-		>
-	static bool 
-	flip_face_normal_t(
-		OpenMeshExtended& m_,
-		face_descriptor& f)
-        {
-
-		typedef OpenMeshExtended Mesh;
-		Mesh& m = const_cast<Mesh&>(m_);
-
-		auto n = m.normal(f);
-		m.set_normal(f, -n);
-		return true;
-	}
-
-
-	static bool
-	flip_face_normal(
-		OpenMeshExtended& m_,
-		face_descriptor& f)	{ return flip_face_normal_t<MyTraits>(m_, f); }
-
-	static bool
-	triangulate_face(
-		OpenMeshExtended& m_,
-		face_descriptor& f);
-
-
-	class scalable_face_truncate;
-	class scalable_face_bevel;
-
-	static scalable_face_truncate
-	truncate(
-		OpenMeshExtended& m_,
-		vertex_descriptor v,
-		float coeff = 0.5f);
-
-
-	static scalable_face_bevel
-	bevel(
-		OpenMeshExtended& m_,
-		edge_descriptor e,
-		  float coeff = 0.5f);
-
-	static bool
-	fill_ring(
-		OpenMeshExtended& m_,
-		edge_descriptor e);
-
-//=========== HELPERS ==============
 	
 	static Point
 	calc_middle_point(
@@ -258,6 +205,96 @@ public:
 	get_previous_halfedge(
 		OpenMeshExtended& m,
 		h_edge_descriptor heh);
+};
+
+
+template<typename TTraits>
+class advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>> : public helpers_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>>
+{
+public:
+
+	typedef OpenMesh::PolyMesh_ArrayKernelT<TTraits> OpenMeshExtended;
+
+	typedef OpenMesh::DefaultTraits original_traits;
+	typedef mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<TTraits>> parent_traits;
+
+	typedef typename parent_traits::Point Point;
+	typedef typename parent_traits::normal normal;
+
+
+	typedef typename parent_traits::h_edge_descriptor h_edge_descriptor;
+	typedef typename parent_traits::h_edge_iterator h_edge_iterator;
+
+	typedef typename parent_traits::vertex_descriptor vertex_descriptor;
+	typedef typename parent_traits::vertex_iterator vertex_iterator;
+
+	typedef typename parent_traits::edge_descriptor edge_descriptor;
+	typedef typename parent_traits::edge_iterator edge_iterator;
+
+	typedef typename parent_traits::face_descriptor face_descriptor;
+	typedef typename parent_traits::face_iterator face_iterator;
+
+	typedef typename parent_traits::fv_iterator fv_iterator;
+	typedef typename parent_traits::vv_iterator vv_iterator;
+	typedef typename parent_traits::ve_iterator ve_iterator;
+
+
+
+	template<
+		typename Traits ,
+		typename B = typename std::enable_if
+			< Traits::FaceAttributes & OpenMesh::Attributes::Normal>::type
+		>
+	static bool 
+	flip_face_normal_t(
+		OpenMeshExtended& m_,
+		face_descriptor& f)
+        {
+
+		typedef OpenMeshExtended Mesh;
+		Mesh& m = const_cast<Mesh&>(m_);
+
+		auto n = m.normal(f);
+		m.set_normal(f, -n);
+		return true;
+	}
+
+
+	static bool
+	flip_face_normal(
+		OpenMeshExtended& m_,
+		face_descriptor& f)	{ return flip_face_normal_t<MyTraits>(m_, f); }
+
+	static bool
+	triangulate_face(
+		OpenMeshExtended& m_,
+		face_descriptor& f);
+
+
+	class Scalable_face;
+	class Scalable_face_truncate;
+	class Scalable_face_bevel;
+
+	static Scalable_face_truncate
+	truncate(
+		OpenMeshExtended& m_,
+		vertex_descriptor v,
+		float coeff = 0.5f);
+
+
+	static Scalable_face_bevel
+	bevel(
+		OpenMeshExtended& m_,
+		edge_descriptor e,
+		  float coeff = 0.5f);
+
+	static bool
+	fill_ring(
+		OpenMeshExtended& m_,
+		edge_descriptor e);
+
+//=========== HELPERS ==============
+
 
 };
 
