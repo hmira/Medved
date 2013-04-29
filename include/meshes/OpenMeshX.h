@@ -14,6 +14,7 @@
 #include <utility>
 #include <tuple>
 #include <algorithm>
+#include <memory>
 
 struct MyTraits : public OpenMesh::DefaultTraits
 {
@@ -60,13 +61,13 @@ public:
 	typedef typename OpenMeshExtended::FaceIter face_iterator;
 	//typedef typename std::vector<OpenMeshExtended::Face>::size_type faces_size_type;
 
-	class my_fv_iterator;
-	class my_vv_iterator;
-	class my_ve_iterator; 
+	class ox_fv_iterator;
+	class ox_vv_iterator;
+	class ox_ve_iterator; 
 
-	typedef my_fv_iterator fv_iterator;
-	typedef my_vv_iterator vv_iterator;
-	typedef my_ve_iterator ve_iterator;
+	typedef ox_fv_iterator fv_iterator;
+	typedef ox_vv_iterator vv_iterator;
+	typedef ox_ve_iterator ve_iterator;
 
     static std::pair<fv_iterator, fv_iterator>
     get_surrounding_vertices(const OpenMeshExtended& m_, face_descriptor fd);
@@ -120,7 +121,15 @@ get_adjacent_edges(
 		const OpenMeshExtended& m_,
 		vertex_descriptor v);
 
-
+//============ PROPERTIES ==================
+template <typename TProperty>
+static
+void
+set_property(
+	const OpenMeshExtended& m_,
+	vertex_descriptor v,
+	TProperty p){}
+  
  
 };
 
@@ -154,7 +163,7 @@ public:
 	typedef typename parent_traits::vv_iterator vv_iterator;
 	typedef typename parent_traits::ve_iterator ve_iterator;
 
-  
+ 
 	static typename mesh_traits<OpenMeshExtended>::normal 
 	get_face_normal(
 		const OpenMeshExtended& m_,
@@ -190,14 +199,18 @@ public:
 		OpenMeshExtended& m_,
 		face_descriptor& f);
 
-	static bool
+
+	class scalable_face_truncate;
+	class scalable_face_bevel;
+
+	static scalable_face_truncate
 	truncate(
 		OpenMeshExtended& m_,
 		vertex_descriptor v,
 		float coeff = 0.5f);
 
 
-	static bool
+	static scalable_face_bevel
 	bevel(
 		OpenMeshExtended& m_,
 		edge_descriptor e,
@@ -210,11 +223,18 @@ public:
 
 //=========== HELPERS ==============
 	
-		static Point
+	static Point
 	calc_middle_point(
 		Point p1,
 		Point p2,
 		float coeff = 0.5f);
+
+	static Point
+	calc_translated_point(
+		Point p_from,
+		Point p_to,
+		float dist = 0.5f);
+
 
 	static vertex_descriptor
 	calc_middle_vertex(
@@ -238,8 +258,9 @@ public:
 	get_previous_halfedge(
 		OpenMeshExtended& m,
 		h_edge_descriptor heh);
-	
+
 };
+
 
 
 

@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
 	std::cout << std::boolalpha << std::is_member_function_pointer<decltype(&OpenMeshExtended::add_vertex)>::value << std::endl;
 
-/*
+
   OpenMeshExtended::VertexHandle vhandle[8];
   vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
   vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1,  1));
@@ -105,31 +105,48 @@ int main(int argc, char **argv)
 	std::cout << mesh.to_vertex_handle(mesh.halfedge_handle(vhandle[0])) << std::endl;
 	std::cout << mesh.to_vertex_handle(mesh.opposite_halfedge_handle(mesh.halfedge_handle(vhandle[0]))) << std::endl;
 
-//	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, vhandle[6], 0.2f);
-//	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, (OpenMeshExtended::VertexHandle)8);
-*/
+	auto scale = advanced_mesh_traits<OpenMeshExtended>::bevel(mesh, (advanced_mesh_traits<OpenMeshExtended>::edge_descriptor)0, 0.5f);
+//	advanced_mesh_traits<OpenMeshExtended>::truncate(mesh, vhandle[5], 0.5f);
 
+//	scale.rescale(0.8f);
+	scale.rescale_by_unit(1.0f);;
 
-	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
+//	scale.rescale_by_unit(0.5f);
+//	scale.rescale_by_unit(0.5f);
+
+/*	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
 OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 1, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
-5,
-5,
-5 
+10,
+10,
+10 
 );
 
 
-	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.5f,0.5f,0.5f), 0.6f);
+	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.5f,0.5f,0.5f), 0.5f);
 
 	sg.sample(ims);
 
 	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
 	mesh.update_face_normals();	
-
+*/
 	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
 	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
+
+/*
+	auto all_faces = mesh_traits<OpenMeshExtended>::get_all_faces(mesh);
+	for (auto f = all_faces.first; f != all_faces.second; ++f)
+	{
+		auto my_face = *f;
+		auto surr_v = mesh_traits<OpenMeshExtended>::get_surrounding_vertices(mesh, my_face);
+
+		for (auto it_sv = surr_v.first; it_sv != surr_v.second; ++it_sv)
+		{
+		}
+	}
+*/
 	
 	std::cout << "norma: c++0x" << std::endl;
 	

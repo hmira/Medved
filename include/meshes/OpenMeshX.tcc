@@ -4,24 +4,24 @@
 #include <OpenMesh/Core/Utils/GenProg.hh>
 
 template<>
-class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_ve_iterator : public OpenMesh::PolyMesh_ArrayKernelT<MyTraits>::VEIter
+class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ox_ve_iterator : public OpenMesh::PolyMesh_ArrayKernelT<MyTraits>::VEIter
 {
 	public: 
                 typedef OpenMesh::PolyConnectivity& mesh_ref;
 
-                my_ve_iterator() : 
+                ox_ve_iterator() : 
                         OpenMesh::Iterators::VertexEdgeIterT< OpenMesh::PolyConnectivity >() {};
                 
-                my_ve_iterator (mesh_ref _mesh, OpenMesh::PolyConnectivity::VertexHandle _start, bool _end) :
+                ox_ve_iterator (mesh_ref _mesh, OpenMesh::PolyConnectivity::VertexHandle _start, bool _end) :
                         OpenMesh::Iterators::VertexEdgeIterT< OpenMesh::PolyConnectivity >(_mesh, _start, _end) {};
 
-                my_ve_iterator(mesh_ref _mesh, OpenMesh::PolyConnectivity::HalfedgeHandle _heh, bool _end) : 
+                ox_ve_iterator(mesh_ref _mesh, OpenMesh::PolyConnectivity::HalfedgeHandle _heh, bool _end) : 
                         OpenMesh::Iterators::VertexEdgeIterT< OpenMesh::PolyConnectivity >(_mesh, _heh, _end) {};
 
-                my_ve_iterator(const OpenMesh::Iterators::VertexEdgeIterT< OpenMesh::PolyConnectivity >& _rhs) :
+                ox_ve_iterator(const OpenMesh::Iterators::VertexEdgeIterT< OpenMesh::PolyConnectivity >& _rhs) :
                         OpenMesh::Iterators::VertexEdgeIterT< OpenMesh::PolyConnectivity >(_rhs) {};
 
-                bool operator==(const my_ve_iterator& _rhs) const 
+                bool operator==(const ox_ve_iterator& _rhs) const 
                 {
                         return 
                         ((mesh_   == _rhs.mesh_) &&
@@ -30,7 +30,7 @@ class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_ve_iterator : p
                 }
  
  
-                bool operator!=(const my_ve_iterator& _rhs) const
+                bool operator!=(const ox_ve_iterator& _rhs) const
                 {
                         return !operator==(_rhs);
                 }
@@ -42,33 +42,34 @@ class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_ve_iterator : p
 };
                  
 template<>
-class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_fv_iterator : public OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >
+class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ox_fv_iterator : public OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >
 {
         public:
                 typedef OpenMesh::PolyConnectivity& mesh_ref;
 
-                my_fv_iterator() :
+                ox_fv_iterator() :
                         OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >() {};
 
-                my_fv_iterator (mesh_ref _mesh, OpenMesh::PolyConnectivity::FaceHandle _start, bool _end) :
+                ox_fv_iterator (mesh_ref _mesh, OpenMesh::PolyConnectivity::FaceHandle _start, bool _end) :
                         OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >(_mesh, _start, _end) {};
 
-                my_fv_iterator(mesh_ref _mesh, OpenMesh::PolyConnectivity::HalfedgeHandle _heh, bool _end) :
+                ox_fv_iterator(mesh_ref _mesh, OpenMesh::PolyConnectivity::HalfedgeHandle _heh, bool _end) :
                         OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >(_mesh, _heh, _end) {};
 
-                my_fv_iterator(const OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >& _rhs) :
+                ox_fv_iterator(const OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >& _rhs) :
                         OpenMesh::Iterators::FaceVertexIterT< OpenMesh::PolyConnectivity >(_rhs) {};
 
-                bool operator==(const my_fv_iterator& _rhs) const
+                bool operator==(const ox_fv_iterator& _rhs) const
                 {
                         return
                         ((mesh_   == _rhs.mesh_) &&
                         (start_  == _rhs.start_) &&
-                        (heh_    == _rhs.heh_));
+                        (heh_    == _rhs.heh_) &&
+			(lap_counter_ == _rhs.lap_counter_));
                 }
 
 
-                bool operator!=(const my_fv_iterator& _rhs) const
+                bool operator!=(const ox_fv_iterator& _rhs) const
                 {
                         return !operator==(_rhs);
                 }
@@ -78,24 +79,24 @@ class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_fv_iterator : p
 };
              
 template <>
-class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_vv_iterator : public OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >
+class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ox_vv_iterator : public OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >
 {
         public:
                 typedef OpenMesh::PolyConnectivity& mesh_ref;
 
-                my_vv_iterator() :
+                ox_vv_iterator() :
                         OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >() {};
 
-                my_vv_iterator (mesh_ref _mesh, OpenMesh::PolyConnectivity::VertexHandle _start, bool _end) :
+                ox_vv_iterator (mesh_ref _mesh, OpenMesh::PolyConnectivity::VertexHandle _start, bool _end) :
                         OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >(_mesh, _start, _end) {};
 
-                my_vv_iterator(mesh_ref _mesh, OpenMesh::PolyConnectivity::HalfedgeHandle _heh, bool _end) :
+                ox_vv_iterator(mesh_ref _mesh, OpenMesh::PolyConnectivity::HalfedgeHandle _heh, bool _end) :
                         OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >(_mesh, _heh, _end) {};
 
-                my_vv_iterator(const OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >& _rhs) :
+                ox_vv_iterator(const OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >& _rhs) :
                         OpenMesh::Iterators::VertexVertexIterT< OpenMesh::PolyConnectivity >(_rhs) {};
 
-                bool operator==(const my_vv_iterator& _rhs) const
+                bool operator==(const ox_vv_iterator& _rhs) const
                 {
                         return
                         ((mesh_   == _rhs.mesh_) &&
@@ -104,7 +105,7 @@ class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::my_vv_iterator : p
 		}
 
 
-                bool operator!=(const my_vv_iterator& _rhs) const
+                bool operator!=(const ox_vv_iterator& _rhs) const
 		{
                         return !operator==(_rhs);
 		}
@@ -280,6 +281,20 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_middle_poi
 	return diff;
 }
 
+template<>
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::calc_translated_point(
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point p,
+	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::Point dir,
+	float dist)
+{
+	auto diff = dir.normalize();
+	diff *= dist;
+	diff += p;
+	return diff;
+}
+
+
 
 template<>
 advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor
@@ -390,8 +405,110 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::split_edge(
 }
 	
 
-template<>	
-bool
+template<>
+class advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::scalable_face_truncate
+{
+        public:
+                fv_iterator fv_begin_;
+                fv_iterator fv_end_;
+                Point p_;
+                OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_;
+
+                scalable_face_truncate(
+                        OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& _m,
+                        std::pair<fv_iterator, fv_iterator> _fv_pair,
+                        Point _p) : m_( _m )
+                {
+                        p_ = _p;
+                        fv_begin_ = _fv_pair.first;
+                        fv_end_ = _fv_pair.second;
+                }
+
+                bool rescale(float coeff)
+                {
+                        for (auto fv_i = fv_begin_; fv_i != fv_end_; ++fv_i)
+                        {
+                                auto p_new = calc_middle_point(p_, m_.point(*fv_i), coeff);
+                                m_.set_point(*fv_i, p_new);
+                        }
+                }
+
+                bool rescale_by_unit(float coeff)
+                {
+                        for (auto fv_i = fv_begin_; fv_i != fv_end_; ++fv_i)
+                        {
+                                auto dir= m_.point(*fv_i);
+                                dir -= p_;
+                                auto p_new = calc_translated_point(m_.point(*fv_i), dir, coeff);
+                                m_.set_point(*fv_i, p_new);
+                        }
+
+                }
+        };
+
+template<>
+class advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::scalable_face_bevel
+        {
+        public:
+                Point p1_;
+                Point p2_;
+                std::vector<vertex_descriptor> vector1_;
+                std::vector<vertex_descriptor> vector2_;
+                OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_;
+
+                scalable_face_bevel(
+                        OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& _m,
+                        Point _p1,
+                        Point _p2,
+                        std::vector<vertex_descriptor> _vector1,
+                        std::vector<vertex_descriptor> _vector2
+                        ) :
+                                m_( _m ),
+                                vector1_( _vector1 ),
+                                vector2_( _vector2 )
+                {
+                        p1_ = _p1;
+                        p2_ = _p2;
+                }
+
+                bool rescale(float coeff)
+                {
+                        for (auto vertex : vector1_)
+                        {
+                                auto p_new = calc_middle_point(p1_, m_.point(vertex), coeff);
+                                m_.set_point(vertex, p_new);
+                        }
+                        for (auto vertex : vector2_)
+                        {
+                                auto p_new = calc_middle_point(p2_, m_.point(vertex), coeff);
+                                m_.set_point(vertex, p_new);
+                        }
+                }
+
+                bool rescale_by_unit(float coeff)
+                {
+                        for (auto vertex : vector1_)
+                        {
+                                auto dir = m_.point( vertex );
+                                dir -= p1_;
+                                auto p_new = calc_translated_point(m_.point(vertex), dir, coeff);
+                                m_.set_point(vertex, p_new);
+
+                        }
+                        for (auto vertex : vector2_)
+                        {
+                                auto dir = m_.point( vertex );
+                                dir -= p2_;
+                                auto p_new = calc_translated_point(m_.point( vertex ), dir, coeff);
+                                m_.set_point(vertex, p_new);
+
+                        }
+
+                }
+        };
+
+template<>
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::scalable_face_truncate
 advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::truncate(
 	OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
 	advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor v,
@@ -418,6 +535,8 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::truncate(
 	auto opp_he_1 = m.opposite_halfedge_handle(he_1);
 	auto v_last = v;
 	auto v_new = v;
+
+	auto res_p = m.point(v);
 
 	do
 	{
@@ -483,12 +602,12 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::truncate(
 		m.set_next_halfedge_handle(hx_b, hx_a);
 	}
 
-	return true;
+	return scalable_face_truncate(m_, get_surrounding_vertices(m, f_a), res_p);
 }	
 
 
 template<>
-bool
+advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::scalable_face_bevel
 advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::bevel(
 		OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
 		advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::edge_descriptor e,
@@ -513,12 +632,19 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::bevel(
 	auto v_a = m.to_vertex_handle(he_a);
 	auto v_b = m.to_vertex_handle(he_b);
 
+	auto pv_a = m.point( v_a );
+	auto pv_b = m.point( v_b );
+
 	auto prev_he_1 = he_a;
 	auto he_1 = m.next_halfedge_handle(prev_he_1);
 	auto opp_he_1 = m.opposite_halfedge_handle(he_1);
 	auto v_new = v_a;
 
+	std::vector<vertex_descriptor> vd_list_a;
+	std::vector<vertex_descriptor> vd_list_b;
+
 	r_l.push_back(std::make_tuple(v_new, prev_he_1, he_1, opp_he_1));
+	vd_list_a.push_back(v_new);
 
 	do
 	{
@@ -532,7 +658,7 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::bevel(
 				coeff);
 
 		r_l.push_back(std::make_tuple(v_new, prev_he_1, he_1, opp_he_1));
-
+		vd_list_a.push_back(v_new);
 	}
 	while (m.next_halfedge_handle(opp_he_1) != he_b);
 
@@ -547,6 +673,8 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::bevel(
 
 	r_l.push_back(std::make_tuple(v_new, prev_he_1, he_1, opp_he_1));
 
+	vd_list_b.push_back(v_new);
+
 	do
 	{	
 		prev_he_1 = opp_he_1;
@@ -554,14 +682,19 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::bevel(
 		opp_he_1 = m.opposite_halfedge_handle(he_1);
 
 		if (m.next_halfedge_handle(opp_he_1) != he_a)
+		{
 			v_new = calc_middle_vertex(
 				m,
 				v_b,
 				m.to_vertex_handle(he_1),
 				coeff);
+			vd_list_b.push_back(v_new);
+		}
 		else
+		{
 			v_new = v_b;
-
+			vd_list_b.push_back(v_new);
+		}
 
 		r_l.push_back(std::make_tuple(v_new, prev_he_1, he_1, opp_he_1));
 	}
@@ -624,7 +757,8 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::bevel(
 	m.set_point(v_b, mid_p_b);
 	m.adjust_outgoing_halfedge(v_b);
 
-	return true;
+	return scalable_face_bevel(m, pv_a, pv_b,
+		vd_list_a, vd_list_b);
 }
 
 
@@ -688,6 +822,7 @@ advanced_mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::fill_ring(
 
 	return true;
 }
+
 
 
 #endif // OPENMESHX_H_
