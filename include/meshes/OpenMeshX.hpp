@@ -16,6 +16,10 @@
 #include <algorithm>
 #include <memory>
 
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/bitand.hpp>
+#include <boost/mpl/int.hpp>
+
 struct MyTraits : public OpenMesh::DefaultTraits
 {
   VertexAttributes(OpenMesh::Attributes::Status);
@@ -63,7 +67,7 @@ public:
 
 	class ox_fv_iterator;
 	class ox_vv_iterator;
-	class ox_ve_iterator; 
+	class ox_ve_iterator;
 
 	typedef ox_fv_iterator fv_iterator;
 	typedef ox_vv_iterator vv_iterator;
@@ -170,17 +174,23 @@ public:
 	typedef typename parent_traits::vv_iterator vv_iterator;
 	typedef typename parent_traits::ve_iterator ve_iterator;
 
+	struct Face_has_normal_tag {};
+	struct Face_has_no_normal_tag {};
+	typedef typename boost::mpl::if_<
+		boost::mpl::bitand_<
+			boost::mpl::int_<TTraits::FaceAttributes>,
+			boost::mpl::int_<OpenMesh::Attributes::Normal>
+		>, 
+		Face_has_normal_tag, 
+		Face_has_no_normal_tag
+	>::type Face_normal_tag;
 
-
-	template<
-		typename Traits ,
-		typename B = typename std::enable_if
-			< Traits::FaceAttributes & OpenMesh::Attributes::Normal>::type
-		>
 	static bool 
 	flip_face_normal_t(
 		OpenMeshExtended& m_,
-		face_descriptor& f)
+		face_descriptor f,
+		Face_has_normal_tag
+  			)
         {
 
 		typedef OpenMeshExtended Mesh;
@@ -191,11 +201,25 @@ public:
 		return true;
 	}
 
+	static bool 
+	flip_face_normal_t(
+		OpenMeshExtended& m_,
+		face_descriptor f,
+		Face_has_no_normal_tag
+  			)
+        {
+		std::cerr << "NO NORMAL ATTRIBUTES SET" << std::endl;
+		return false;
+	}
 
 	static bool
 	flip_face_normal(
 		OpenMeshExtended& m_,
-		face_descriptor& f)	{ return flip_face_normal_t<MyTraits>(m_, f); }
+		face_descriptor f)
+	{
+		Face_normal_tag tag;
+		return flip_face_normal_t(m_, f, tag);
+	}
 
 	static bool
 	triangulate_face(

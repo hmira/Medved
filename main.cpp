@@ -5,12 +5,14 @@
  *      Author: hmirap
  */
 
+#include <boost/mpl/if.hpp>
+#include <boost/mpl/bitand.hpp>
+#include <boost/mpl/int.hpp>
+
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Geometry/VectorT.hh>
 #include <OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh>
-
-//#include "MedV4D/Imaging/ImageTools.h"
 
 typedef OpenMesh::PolyMesh_ArrayKernelT<> MyMesh;
 
@@ -38,14 +40,12 @@ constexpr auto has_x_method(T& t) -> decltype(t.add_vertex(), OpenMeshExtended::
 	return true;
 }
 
-
 typedef winged_edge_mesh<triangleMesh> my_mesh;
 typedef winged_edge_mesh_traits<triangleMesh> my_mesh_traits;
 
-enum {A,B,C,D,N};
-
 int main(int argc, char **argv)
 {
+
 	OpenMeshExtended mesh;
 
 	std::cout << std::boolalpha << std::is_member_function_pointer<decltype(&OpenMeshExtended::add_vertex)>::value << std::endl;
@@ -135,6 +135,11 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 */
 	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
 	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
+	
+	advanced_mesh_traits<OpenMeshExtended>::flip_face_normal(
+		mesh,
+		(advanced_mesh_traits<OpenMeshExtended>::face_descriptor)0
+								);
 
 /*
 	auto all_faces = mesh_traits<OpenMeshExtended>::get_all_faces(mesh);
