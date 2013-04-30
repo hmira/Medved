@@ -86,7 +86,7 @@ static bool remove_vertex(
 				vertex_descriptor v,
 		  	  	OpenMeshExtended &m);
 
-static bool create_face(
+inline static bool create_face(
 				  vertex_descriptor a,
 				  vertex_descriptor b,
 				  vertex_descriptor c,

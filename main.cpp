@@ -12,7 +12,7 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Geometry/VectorT.hh>
-#include <OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh>
+//#include <OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh>
 
 typedef OpenMesh::PolyMesh_ArrayKernelT<> MyMesh;
 
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 
 	std::cout << std::boolalpha << std::is_member_function_pointer<decltype(&OpenMeshExtended::add_vertex)>::value << std::endl;
 
-
+/*
   OpenMeshExtended::VertexHandle vhandle[8];
   vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
   vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1,  1));
@@ -114,15 +114,17 @@ int main(int argc, char **argv)
 
 //	scale.rescale_by_unit(0.5f);
 //	scale.rescale_by_unit(0.5f);
+// */
 
-/*	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
+
+	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
 OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 1, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
-10,
-10,
-10 
+30,
+30,
+30 
 );
 
 
@@ -132,7 +134,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
 
 	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
 	mesh.update_face_normals();	
-*/
+
 	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
 	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
 	
