@@ -12,7 +12,7 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Geometry/VectorT.hh>
-#include <OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh>
+//#include <OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh>
 
 typedef OpenMesh::PolyMesh_ArrayKernelT<> MyMesh;
 
@@ -77,6 +77,7 @@ int main(int argc, char **argv)
 
 	std::cout << std::boolalpha << std::is_member_function_pointer<decltype(&OpenMeshExtended::add_vertex)>::value << std::endl;
 
+<<<<<<< HEAD
 	auto point1 = OpenMeshExtended::Point(-1,-1,1);
 	auto point2 = OpenMeshExtended::Point(-2,1,0.2);
 	auto res = cross(point1, point2);
@@ -144,6 +145,56 @@ int main(int argc, char **argv)
 //   face_vhandles.push_back(vhandle[3]);
 //   face_vhandles.push_back(vhandle[7]);
 //   face_vhandles.push_back(vhandle[4]);
+=======
+/*
+  OpenMeshExtended::VertexHandle vhandle[8];
+  vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
+  vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1,  1));
+  vhandle[2] = mesh.add_vertex(OpenMeshExtended::Point( 1,  1,  1));
+  vhandle[3] = mesh.add_vertex(OpenMeshExtended::Point(-1,  1,  1));
+  vhandle[4] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1, -1));
+  vhandle[5] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1, -1));
+  vhandle[6] = mesh.add_vertex(OpenMeshExtended::Point( 1,  1, -1));
+  vhandle[7] = mesh.add_vertex(OpenMeshExtended::Point(-1,  1, -1));
+  // generate (quadrilateral) faces
+  std::vector<OpenMeshExtended::VertexHandle>  face_vhandles;
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[0]);
+  face_vhandles.push_back(vhandle[1]);
+  face_vhandles.push_back(vhandle[2]);
+  face_vhandles.push_back(vhandle[3]);
+  mesh.add_face(face_vhandles);
+ 
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[7]);
+  face_vhandles.push_back(vhandle[6]);
+  face_vhandles.push_back(vhandle[5]);
+  face_vhandles.push_back(vhandle[4]);
+  mesh.add_face(face_vhandles);
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[1]);
+  face_vhandles.push_back(vhandle[0]);
+  face_vhandles.push_back(vhandle[4]);
+  face_vhandles.push_back(vhandle[5]);
+  mesh.add_face(face_vhandles);
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[2]);
+  face_vhandles.push_back(vhandle[1]);
+  face_vhandles.push_back(vhandle[5]);
+  face_vhandles.push_back(vhandle[6]);
+  mesh.add_face(face_vhandles);
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[3]);
+  face_vhandles.push_back(vhandle[2]);
+  face_vhandles.push_back(vhandle[6]);
+  face_vhandles.push_back(vhandle[7]);
+  mesh.add_face(face_vhandles);
+  face_vhandles.clear();
+  face_vhandles.push_back(vhandle[0]);
+  face_vhandles.push_back(vhandle[3]);
+  face_vhandles.push_back(vhandle[7]);
+  face_vhandles.push_back(vhandle[4]);
+>>>>>>> 30d3b21ed3781ae60c4b815f9df849fd6318078d
  // mesh.add_face(face_vhandles);
 /*
 	std::cout << vhandle[0] << std::endl;
@@ -160,6 +211,7 @@ int main(int argc, char **argv)
 
 //	scale.rescale_by_unit(0.5f);
 //	scale.rescale_by_unit(0.5f);
+<<<<<<< HEAD
 */
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
 //OpenMesh::VectorT<float, 3>( -2.2, -2.2, -2.2 ),
@@ -170,6 +222,19 @@ OpenMesh::VectorT<float, 3>( 0, 0, 4 ),
 101,
 101,
 101 
+=======
+// */
+
+
+	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
+OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
+OpenMesh::VectorT<float, 3>( 1, 0, 0 ),
+OpenMesh::VectorT<float, 3>( 0, 1, 0 ),
+OpenMesh::VectorT<float, 3>( 0, 0, 1 ),
+30,
+30,
+30 
+>>>>>>> 30d3b21ed3781ae60c4b815f9df849fd6318078d
 );
 	
 	auto vx = Voxelize<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
@@ -178,12 +243,20 @@ OpenMesh::VectorT<float, 3>( 0, 0, 4 ),
 	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.5f,0.5f,0.5f), 0.5f);
 
 	sg.sample(ims);
+<<<<<<< HEAD
 */
 	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh2);
 //	mesh.update_face_normals();	
 
 	
 /*	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
+=======
+
+	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
+	mesh.update_face_normals();	
+
+	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
+>>>>>>> 30d3b21ed3781ae60c4b815f9df849fd6318078d
 	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
 	
 	advanced_mesh_traits<OpenMeshExtended>::flip_face_normal(

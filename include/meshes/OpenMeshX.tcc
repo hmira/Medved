@@ -142,19 +142,21 @@ mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::remove_vertex(
 
 
 template<>
-bool mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::create_face(
+inline bool mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::create_face(
 				  typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor a,
 				  typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor b,
 				  typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor c,
 		  	  	  OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m)
 {
-	std::vector<mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor>  face_vhandles;
+	/*std::vector<mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vertex_descriptor>  face_vhandles;
+
 
 	face_vhandles.clear();
 	face_vhandles.push_back(a);
 	face_vhandles.push_back(b);
-	face_vhandles.push_back(c);
-	m.add_face(face_vhandles);
+	face_vhandles.push_back(c);*/
+	m.add_face(a, b, c);
+	//m.add_face(face_vhandles);
 	return true;
 }
 

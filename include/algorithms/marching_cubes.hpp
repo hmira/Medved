@@ -39,8 +39,8 @@ struct VertexPairHash {
 	size_t operator() (const std::pair<Point_descriptor, Point_descriptor>& points) const { 
 		auto k1 = points.first;
 		auto k2 = points.second;
-		auto result = 0.5f * (k1 + k2) * (k1 + k2 + 1) + k2;
-		return result;
+		//auto result = 0.5f * (k1 + k2) * (k1 + k2 + 1) + k2;
+		return (k1 << 32) + k2;//result;
 	}
 };
 
