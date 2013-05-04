@@ -79,6 +79,11 @@ public:
         return values_[_pidx];
     }
 
+    virtual void set_scalar_distance ( PointIdx _pidx, real _value)
+    {
+	values_[_pidx] = _value;
+    }
+    
     virtual bool is_inside( PointIdx _pidx ) const
     {
         return values_[_pidx] < 0.0;

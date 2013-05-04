@@ -140,7 +140,13 @@ set_property(
 	const OpenMeshExtended& m_,
 	vertex_descriptor v,
 	TProperty p){}
-  
+
+//=============== COORDINATES =============
+static
+inline Point
+get_coordinates(
+	const OpenMeshExtended& m_,
+	vertex_descriptor v)	{ return m_.point(v); }
 
 };
 

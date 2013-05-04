@@ -21,9 +21,9 @@ class MarchingCubes
 public:
 	typedef TGrid						Grid;
 
-	typedef typename TGrid_Traits::Point_descriptor		Point_descriptor;
+	typedef typename TGrid_Traits::Point_descriptor	Point_descriptor;
 	typedef typename TGrid_Traits::Point_scalar_type	Point_scalar_type;
-	typedef typename TGrid_Traits::Point_properties		Point_properties;
+	typedef typename TGrid_Traits::Point_properties	Point_properties;
 	typedef typename TGrid_Traits::Cube_descriptor		Cube_descriptor;
 	typedef typename TGrid_Traits::Cube_iterator		Cube_iterator;
 
@@ -85,7 +85,7 @@ struct VertexPairEqual {
 		auto s1 = TGrid_Traits::scalar_value( grid_, _p1 );
 
 		//no scalar type exists
-		if ( (s0 == 0) && (s1 == 0))
+		//if ( (s0 == 0) && (s1 == 0))
 			return 0.5f;
 
 		return -s0 / (s1 - s0);
@@ -194,15 +194,21 @@ struct VertexPairEqual {
 		unsigned int		i;
 
 
+		bool opp_bound = false;
+		
 		// get point indices of corner vertices
 		for ( i=0; i<8; ++i )
 			corner[i] = TGrid_Traits::get_cube_corner(grid_, _cidx, i );
 
 		// determine cube type
 		for ( i=0; i<8; ++i )
+		{
 			if ( !TGrid_Traits::is_inside( grid_, corner[i] ))
+			{
 				cubetype |= ( 1<<i );
-
+			}
+		}
+		
 		// trivial reject ?
 		if ( cubetype == 0 || cubetype == 255 )
 			return;
