@@ -23,7 +23,7 @@ public:
 	set_scalar_value( GridT<F>& g, Point_descriptor p, Point_scalar_type val )	{ g.set_scalar_distance(p, val);}
 
 	static inline
-	bool is_inside( GridT<F> g, Point_descriptor p )	{return /*g.scalar_distance(p)==0.5*/ /*|| g.scalar_distance(p)==0*/ g.is_inside(p);}
+	bool is_inside( GridT<F> g, Point_descriptor p )	{return g.scalar_distance(p)==0.5 /*|| g.scalar_distance(p)==0 g.is_inside(p)*/;}
 	
 	static inline
 	int get_cube_corner(GridT<F> g, Cube_descriptor c, int i)	{return g.point_idx( c, i );}

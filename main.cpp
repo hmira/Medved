@@ -38,6 +38,9 @@ typedef OpenMesh::PolyMesh_ArrayKernelT<> MyMesh;
 #include <math.h>
 #include <geometry/ray_face_intersection.hpp>
 
+#include <fstream>
+#include <boost/format.hpp>
+
 template <typename T>
 constexpr auto has_x_method(T& t) -> decltype(t.add_vertex(), OpenMeshExtended::VertexHandle())
 {
@@ -225,10 +228,23 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 
 
 	
-//	auto vx = Voxelize<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
+	auto vx = Voxelize<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
 
+	//sg.write("test.dump");
+	{
+		std::ofstream f("test.dump", std::ofstream::out | std::ofstream::binary);
 
-	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.f,0.f,0.f), 1.4f);
+		for ( auto cube : sg ) {
+			f.put((sg.point_idx(cube, 0) > 0.0f) ? 255 : 0);
+		}
+		std::ofstream hdr("test.hdr", std::ofstream::out);
+		
+		hdr << boost::format("%1% %2% %3%\n%4%\n%5% %6% %7%") 
+			% (sg.x_resolution()-1) % (sg.y_resolution()-1)  % (sg.z_resolution()-1) 
+			% 8 
+			% 1 % 1 % 1;
+	}
+	/*IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.f,0.f,0.f), 1.4f);
 
 	sg.sample(ims);
 	
@@ -238,8 +254,8 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 	std::cout << "1pair: " << firstpair.first << " & " << firstpair.second << std::endl;
 	std::cout << "2pair: " << secondpair.first << " & " << secondpair.second  << std::endl;
 	
-	
-	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh2);
+	*/
+//	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh2);
 //	mesh.update_face_normals();	
 
 	
@@ -271,7 +287,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 // 	}
 
 	
-	std::cout << "norma: c++0x" << std::endl;
+/*	std::cout << "norma: c++0x" << std::endl;
 	
 	if (!OpenMesh::IO::write_mesh(mesh, "my_mesh.obj")) 
 	{
@@ -283,7 +299,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 	{
 		std::cerr << "write error\n";
 		exit(1);
-	}
+	}*/
 
 	//M4D::Imaging::AImage::Ptr image = M4D::Imaging::ImageFactory::LoadDumpedImage( path );
 
