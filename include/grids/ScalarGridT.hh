@@ -21,6 +21,8 @@
 #include <vector>
 #include <iostream>
 
+#include <tbb/concurrent_vector.h>
+
 //== NAMESPACES ===============================================================
 
 namespace IsoEx

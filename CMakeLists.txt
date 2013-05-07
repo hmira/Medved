@@ -3,7 +3,7 @@
 #
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8 )
 
-ADD_DEFINITIONS("-std=c++0x")
+ADD_DEFINITIONS("-std=c++0x -fopenmp")
 
 PROJECT ( Hmira )
 
@@ -19,6 +19,32 @@ PROJECT ( Hmira )
 #FIND_PACKAGE( MedV4D REQUIRED )
 
 SET( HMIRA_INCLUDE_DIRECTORY "include" )
+
+
+# Add FindTBB directory to CMake's module path
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}")
+
+find_package(OpenMP)
+if(OPENMP_FOUND)
+message("damn im good")
+endif(OPENMP_FOUND)
+
+
+# Execute the FindTBB macro
+find_package(TBB)
+# If you want FindTBB to fail if TBB is not found, use this form:
+# find_package(TBB REQUIRED)
+
+if(NOT TBB_FOUND)
+        MESSAGE (STATUS "TBB not found. Example project will not be built.")
+else(NOT TBB_FOUND)
+
+# Here goes the actual project
+include_directories(${TBB_INCLUDE_DIRS})
+link_directories(${TBB_LIBRARY_DIRS})
+endif(NOT TBB_FOUND)
+
+
 
 FIND_LIBRARY( OPENMESH_CORE_DEBUG_LIB OpenMeshCored  PATHS "/usr/local/lib/OpenMesh")
 FIND_LIBRARY( OPENMESH_CORE_RELEASE_LIB OpenMeshCore )
@@ -59,6 +85,7 @@ FIND_LIBRARY(OPENMESH_TOOLS_LIBRARY_DEBUG NAMES OpenMeshToolsd PATHS "/usr/local
 
 SUBDIRS( ${HMIRA_INCLUDE_DIRECTORY} )
 
-
+TARGET_LINK_LIBRARIES( main gomp)
+TARGET_LINK_LIBRARIES( main ${TBB_LIBRARIES})
 TARGET_LINK_LIBRARIES( main ${OPENMESH_CORE_LIBRARY_DEBUG} )
 TARGET_LINK_LIBRARIES( main ${OPENMESH_TOOLS_LIBRARY_DEBUG} )

@@ -140,7 +140,7 @@ public:
 		if (result)
 		{
 			auto normal = TMesh_Traits::get_face_normal(mesh_, f);
-			if (dot(normal, c_direction) < 0)
+			if (dot(normal, c_direction) > 0)
 			{
 				TGrid_Traits::set_scalar_value( grid_, corner0, 0.5);
 				if (TGrid_Traits::scalar_value( grid_, corner1) == -0.5)
@@ -221,7 +221,8 @@ public:
 				fill_cube(cube);
 			}*/
 			
-			std::cout << "bound: " << boundary_cube(cube) << " io: " << (inside ? "in" : "out") << std::endl;
+			std::cout << "bound: " << boundary_cube(cube) << " io: " << (inside ? "in" : "out")
+			<< " start: " << (starting_cube(cube) ? " y " : " n ") << " end: " << ( ending_cube(cube) ? " y " : " n " )  << std::endl;
 			if (!boundary_cube(cube) && inside)
 			{
 				to_fill.push_back(cube);
@@ -245,8 +246,33 @@ public:
 		}
 	}
 	
+	bool starting_cube(unsigned int _cidx)
+	{
+		auto corner0 = TGrid_Traits::get_cube_corner(grid_, _cidx, 0 );
+		auto corner1 = TGrid_Traits::get_cube_corner(grid_, _cidx, 1 );
+		auto a = TGrid_Traits::scalar_value( grid_, corner0);
+		auto b = TGrid_Traits::scalar_value( grid_, corner1);
+		
+		return (a == -0.5) && (b == 0.5);
+		
+		return !TGrid_Traits::is_inside( grid_, corner0 ) && TGrid_Traits::is_inside( grid_, corner1 );
+	}
+	
+	bool ending_cube(unsigned int _cidx)
+	{
+		auto corner0 = TGrid_Traits::get_cube_corner(grid_, _cidx, 0 );
+		auto corner1 = TGrid_Traits::get_cube_corner(grid_, _cidx, 1 );
+		auto a = TGrid_Traits::scalar_value( grid_, corner0);
+		auto b = TGrid_Traits::scalar_value( grid_, corner1);
+		
+		return (a == 0.5) && (b == -0.5);
+		
+		return TGrid_Traits::is_inside( grid_, corner0 ) && !TGrid_Traits::is_inside( grid_, corner1 );
+	}
+	
 	bool boundary_cube(unsigned int _cidx)
 	{
+		return starting_cube(_cidx) || ending_cube(_cidx);
 		Point_descriptor	corner[8];
 		unsigned int		cubetype( 0 );
 		int i;
