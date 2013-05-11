@@ -101,7 +101,8 @@ class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ox_vv_iterator : p
 			return
 			((mesh_   == _rhs.mesh_) &&
 			(start_  == _rhs.start_) &&
-			(heh_    == _rhs.heh_));
+			(heh_    == _rhs.heh_) &&
+			(lap_counter_ == _rhs.lap_counter_));
 		}
 
 
@@ -114,6 +115,45 @@ class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ox_vv_iterator : p
 		vertex_descriptor operator->() { return this->handle(); }
 
 };
+             
+template <>
+class mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ox_fe_iterator : public OpenMesh::Iterators::FaceEdgeIterT< OpenMesh::PolyConnectivity >
+{
+	public:
+		typedef OpenMesh::PolyConnectivity& mesh_ref;
+
+		ox_fe_iterator() :
+			OpenMesh::Iterators::FaceEdgeIterT< OpenMesh::PolyConnectivity >() {};
+
+		ox_fe_iterator (mesh_ref _mesh, OpenMesh::PolyConnectivity::FaceHandle _start, bool _end) :
+			OpenMesh::Iterators::FaceEdgeIterT< OpenMesh::PolyConnectivity >(_mesh, _start, _end) {};
+
+		ox_fe_iterator(mesh_ref _mesh, OpenMesh::PolyConnectivity::HalfedgeHandle _heh, bool _end) :
+			OpenMesh::Iterators::FaceEdgeIterT< OpenMesh::PolyConnectivity >(_mesh, _heh, _end) {};
+
+		ox_fe_iterator(const OpenMesh::Iterators::FaceEdgeIterT< OpenMesh::PolyConnectivity >& _rhs) :
+			OpenMesh::Iterators::FaceEdgeIterT< OpenMesh::PolyConnectivity >(_rhs) {};
+
+		bool operator==(const ox_fe_iterator& _rhs) const
+		{
+			return
+			((mesh_   == _rhs.mesh_) &&
+			(start_  == _rhs.start_) &&
+			(heh_    == _rhs.heh_) &&
+			(lap_counter_ == _rhs.lap_counter_));
+		}
+
+
+		bool operator!=(const ox_fe_iterator& _rhs) const
+		{
+			return !operator==(_rhs);
+		}
+
+		edge_descriptor operator*() { return this->handle(); }
+		edge_descriptor operator->() { return this->handle(); }
+
+};
+
 
 template<>
 std::pair
@@ -126,6 +166,22 @@ mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_surrounding_vertices
 	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
 	Mesh& m = const_cast<Mesh&>(m_);
 	return std::make_pair(m.fv_begin(fd), m.fv_end(fd));
+}
+
+
+template<>
+std::pair
+<
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::fe_iterator,
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::fe_iterator
+>
+mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_surrounding_edges(
+	const OpenMesh::PolyMesh_ArrayKernelT<MyTraits>& m_,
+	mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::face_descriptor fd)
+{
+	typedef OpenMesh::PolyMesh_ArrayKernelT<MyTraits> Mesh;
+	Mesh& m = const_cast<Mesh&>(m_);
+	return std::make_pair(m.fe_begin(fd), m.fe_end(fd));
 }
 
 

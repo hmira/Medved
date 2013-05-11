@@ -152,8 +152,8 @@ public:
 		auto s1 = TGrid_Traits::scalar_value( gg, _p1 );
 
 		//no scalar type exists
-		//if ( (s0 == 0) && (s1 == 0))
-		//	return 0.5f;
+		if ( (s0 == 0) && (s1 == 0))
+			return 0.5f;
 
 		return -s0 / (s1 - s0);
 	}
@@ -292,7 +292,6 @@ public:
 		}
 		else
 		{
-		std::cout << "MUTEX" << std::endl;
 		if ( edgeTable[cubetype]&1 )    samples[0]  = add_vertex( corner[0], corner[1] );
 		if ( edgeTable[cubetype]&2 )    samples[1]  = add_vertex( corner[1], corner[2] );
 		if ( edgeTable[cubetype]&4 )    samples[2]  = add_vertex( corner[3], corner[2] );
@@ -313,7 +312,6 @@ public:
 			samples[triTable[cubetype][0][i+1]],
 			samples[triTable[cubetype][0][i+2]],
 			mesh_ );
-		std::cout << "ENDMUTEX" << std::endl;
 		}
 				
 			}

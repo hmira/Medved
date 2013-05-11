@@ -68,14 +68,18 @@ public:
 	class ox_fv_iterator;
 	class ox_vv_iterator;
 	class ox_ve_iterator;
+	class ox_fe_iterator;
 
 	typedef ox_fv_iterator fv_iterator;
 	typedef ox_vv_iterator vv_iterator;
 	typedef ox_ve_iterator ve_iterator;
+	typedef ox_fe_iterator fe_iterator;
 
-    static std::pair<fv_iterator, fv_iterator>
-    get_surrounding_vertices(const OpenMeshExtended& m_, face_descriptor fd);
+	static std::pair<fv_iterator, fv_iterator>
+	get_surrounding_vertices(const OpenMeshExtended& m_, face_descriptor fd);
 
+	static std::pair<fe_iterator, fe_iterator>
+	get_surrounding_edges(const OpenMeshExtended& m_, face_descriptor fd);
 
 //=================CONCEPTS======================
 
@@ -95,6 +99,19 @@ inline static bool create_face(
 static bool remove_face(
 				  typename mesh_traits<OpenMeshExtended>::face_descriptor f,
 		  	  	  OpenMeshExtended& m);
+
+static inline
+std::pair<vertex_descriptor, vertex_descriptor>
+	get_edge_vertices(const OpenMeshExtended& m_, edge_descriptor e)
+	{
+		auto he0 = m_.halfedge_handle(e, 0);
+		auto he1 = m_.halfedge_handle(e, 1);
+		auto v0 = m_.to_vertex_handle(he0);
+		auto v1 = m_.to_vertex_handle(he1);
+		return std::make_pair<vertex_descriptor, vertex_descriptor>(
+			std::move(v0),
+			std::move(v1));
+	}
 
 static std::pair<vertex_iterator,
 	  	  	vertex_iterator>

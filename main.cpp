@@ -12,9 +12,6 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Geometry/VectorT.hh>
-//#include <OpenMesh/Tools/Subdivider/Uniform/CatmullClarkT.hh>
-
-typedef OpenMesh::PolyMesh_ArrayKernelT<> MyMesh;
 
 #include <iostream>
 #include <deque>
@@ -74,6 +71,7 @@ int main(int argc, char **argv)
 	return 0;*/
 	
 	OpenMeshExtended mesh, mesh2;
+	OpenMesh::IO::read_mesh(mesh, "blender2.obj");
 
 	std::cout << std::boolalpha << std::is_member_function_pointer<decltype(&OpenMeshExtended::add_vertex)>::value << std::endl;
 
@@ -82,20 +80,22 @@ int main(int argc, char **argv)
 	auto res = cross(point1, point2);
 	std::cout << res << std::endl;
 
-	OpenMeshExtended::VertexHandle vhandle[4];
-	vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1.1, -1.1,  -1.1));
-	vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 1.1, -1.1,  -1.1));
-	vhandle[2] = mesh.add_vertex(OpenMeshExtended::Point( 0.1, -0.5, 1.1));
-	vhandle[3] = mesh.add_vertex(OpenMeshExtended::Point( 0.1,  1.1,   0.1));
-	auto f0 = mesh.add_face(vhandle[3], vhandle[1], vhandle[0]);
-	auto f1 = mesh.add_face(vhandle[3], vhandle[2], vhandle[1]);
-	auto f2 = mesh.add_face(vhandle[3], vhandle[0], vhandle[2]);
-	auto f3 = mesh.add_face(vhandle[0], vhandle[1], vhandle[2]);
-	
-	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f0) << std::endl;
-	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f1) << std::endl;
-	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f2) << std::endl;
-	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f3) << std::endl;
+// 	OpenMeshExtended::VertexHandle vhandle[4];
+// 	vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point( 0.1, 0.1,  0.1));
+// // 	vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 2.1, 0.1,  0.1));
+// 	vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 2.9, 0.1,  0.1));
+// // 	vhandle[2] = mesh.add_vertex(OpenMeshExtended::Point( 1.1, 0.5,  2.1));
+// 	vhandle[2] = mesh.add_vertex(OpenMeshExtended::Point( 1.4, 0.5,  2.1));
+// 	vhandle[3] = mesh.add_vertex(OpenMeshExtended::Point( 1.1, 2.1,  1.1));
+// 	auto f0 = mesh.add_face(vhandle[3], vhandle[1], vhandle[0]);
+// 	auto f1 = mesh.add_face(vhandle[3], vhandle[2], vhandle[1]);
+// 	auto f2 = mesh.add_face(vhandle[3], vhandle[0], vhandle[2]);
+// 	auto f3 = mesh.add_face(vhandle[0], vhandle[1], vhandle[2]);
+// 	
+// 	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f0) << std::endl;
+// 	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f1) << std::endl;
+// 	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f2) << std::endl;
+// 	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f3) << std::endl;
 	
 //   OpenMeshExtended::VertexHandle vhandle[8];
 //   vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
@@ -193,7 +193,6 @@ int main(int argc, char **argv)
   face_vhandles.push_back(vhandle[3]);
   face_vhandles.push_back(vhandle[7]);
   face_vhandles.push_back(vhandle[4]);
->>>>>>> 30d3b21ed3781ae60c4b815f9df849fd6318078d
  // mesh.add_face(face_vhandles);
 /*
 	std::cout << vhandle[0] << std::endl;
@@ -214,7 +213,7 @@ int main(int argc, char **argv)
 */
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
 //OpenMesh::VectorT<float, 3>( -2.2, -2.2, -2.2 ),
-OpenMesh::VectorT<float, 3>( -1.5, -1.5, -1.5 ),
+OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 3, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 3, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
@@ -225,21 +224,21 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 
 
 	
-//	auto vx = Voxelize<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
+	auto vx = Voxelize<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
 
 
-	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.f,0.f,0.f), 1.4f);
-
-	sg.sample(ims);
+// 	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.f,0.f,0.f), 1.4f);
+// 
+// 	sg.sample(ims);
+// 	
+// 	auto firstpair = ScalarGrid_traits<float, IsoEx::ScalarGridT>::get_bounds(sg, 2, 0);
+// 	auto secondpair = ScalarGrid_traits<float, IsoEx::ScalarGridT>::get_bounds(sg, 2, 1);
+// 
+// 	std::cout << "1pair: " << firstpair.first << " & " << firstpair.second << std::endl;
+// 	std::cout << "2pair: " << secondpair.first << " & " << secondpair.second  << std::endl;
 	
-	auto firstpair = ScalarGrid_traits<float, IsoEx::ScalarGridT>::get_bounds(sg, 2, 0);
-	auto secondpair = ScalarGrid_traits<float, IsoEx::ScalarGridT>::get_bounds(sg, 2, 1);
-
-	std::cout << "1pair: " << firstpair.first << " & " << firstpair.second << std::endl;
-	std::cout << "2pair: " << secondpair.first << " & " << secondpair.second  << std::endl;
 	
-	
-	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh2);
+ 	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh2);
 //	mesh.update_face_normals();	
 
 	
@@ -278,6 +277,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 		std::cerr << "write error\n";
 		exit(1);
 	}
+	
 	
 	if (!OpenMesh::IO::write_mesh(mesh2, "snd_mesh.obj")) 
 	{
