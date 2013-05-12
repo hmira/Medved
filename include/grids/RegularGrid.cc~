@@ -127,7 +127,7 @@ get_proper_cube( const Vec3 &_p)
 	int y = ( int )( pl[1] / dyf );
 	int z = ( int )( pl[2] / dzf );
 
-	return x + y * X + z * X * Y;
+	return x + y * x_res_ + z * x_res_ * y_res_;
 }
 
 //-----------------------------------------------------------------------------

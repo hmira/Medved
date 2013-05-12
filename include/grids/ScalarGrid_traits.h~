@@ -42,7 +42,7 @@ public:
 		for (int i=0; i<8; ++i )
 		{
 			auto corner = g.point_idx( c, i );
-			if (g.scalar_distance(corner) <= 0)
+			if (g.scalar_distance(corner) < 0)
 				return false;
 		}
 		return true;

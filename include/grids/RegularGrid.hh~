@@ -111,7 +111,6 @@ public:
     
     /// Return the nearest grid point
     PointIdx nearest_point( const Vec3 &_p );
-    CubeIdx get_proper_cube( const Vec3 &_p);
 
     const Vec3& origin() const { return origin_; }
     const Vec3& x_axis() const { return x_axis_; }

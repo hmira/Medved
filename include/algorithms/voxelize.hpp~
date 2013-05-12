@@ -379,7 +379,7 @@ public:
 	
 	bool apply_fill(int inside, std::vector<Cube_descriptor>& cubes)
 	{
-		if (inside != 0)
+		if (inside != 0 || inside != 1)
 		{
 			cubes.clear();
 			return false;
