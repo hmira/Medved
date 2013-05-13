@@ -13,7 +13,7 @@ public:
 	typedef std::tuple<float, int>			Point_properties;
 	typedef typename GridT<F>::CubeIdx		Cube_descriptor;
 	typedef typename GridT<F>::CubeIterator	Cube_iterator;
-	typedef typename GridT<F>::Vec3		Coordinates_descriptor;
+	typedef typename GridT<F>::Vec3		Coordinates_type;
 	typedef float					Vector_unit_type;
 
 	static inline
@@ -55,7 +55,7 @@ public:
 	int get_cube_corner(GridT<F> g, Cube_descriptor c, int i)	{return g.point_idx( c, i );}
 	
 	static inline
-	Coordinates_descriptor get_coords(GridT<F> g, Point_descriptor p)	{return g.point( p );}
+	Coordinates_type get_coords(GridT<F> g, Point_descriptor p)	{return g.point( p );}
 
 	static inline
 	Point_properties
@@ -101,6 +101,46 @@ public:
 	{
 		return g.dz().norm();
 // 		return g.z_axis().norm() / g.z_resolution();
+	}
+	
+	static inline
+	int
+	get_x_resolution(const GridT<F> &g)
+	{
+		return g.x_resolution() - 1;
+	}
+
+	static inline
+	int
+	get_y_resolution(const GridT<F> &g)
+	{
+		return g.y_resolution() - 1;
+	}
+
+	static inline
+	int
+	get_z_resolution(const GridT<F> &g)
+	{
+		return g.z_resolution() - 1;
+	}
+	
+	static inline
+	Cube_descriptor
+	get_cube_from_coords(const GridT<F> &g, const Coordinates_type& pt)
+	{
+		unsigned int X( g.x_resolution() -1 ), Y( g.y_resolution() -1 );
+
+// 		Vec3 pl = const_cast<Vec3&>( pt );
+		
+		auto dxf = g.dx().norm();
+		auto dyf = g.dy().norm();
+		auto dzf = g.dz().norm();
+		
+		int x = ( int )( pt[0] / dxf );
+		int y = ( int )( pt[1] / dyf );
+		int z = ( int )( pt[2] / dzf );
+
+		return x + y * X + z * X * Y;
 	}
 
 };

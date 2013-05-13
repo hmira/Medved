@@ -239,8 +239,8 @@ public:
 
 		//check if vertex is already in mesh
 
-		if (vertices_[std::make_pair(_p0, _p1)].is_valid())
-			return vertices_[std::make_pair(_p0, _p1)];
+// 		if (vertices_[std::make_pair(_p0, _p1)].is_valid())
+// 			return vertices_[std::make_pair(_p0, _p1)];
 
 
 

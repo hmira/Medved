@@ -1,4 +1,5 @@
 #include <geometry/ray_face_intersection.hpp>
+#include <boost/concept_check.hpp>
 
 template <
 	typename TGrid,
@@ -12,7 +13,7 @@ public:
 	typedef TGrid						Grid;
 
 	typedef typename TGrid_Traits::Point_descriptor	Point_descriptor;
-	typedef typename TGrid_Traits::Coordinates_descriptor Coordinates_descriptor;
+	typedef typename TGrid_Traits::Coordinates_type	Coordinates_descriptor;
 	typedef typename TGrid_Traits::Point_scalar_type	Point_scalar_type;
 	typedef typename TGrid_Traits::Point_properties	Point_properties;
 	typedef typename TGrid_Traits::Cube_descriptor		Cube_descriptor;
@@ -86,9 +87,11 @@ public:
 				fill_triangle_xy(*f);
 			else if (fabs(dy) < fabs(dx) && fabs(dy) < fabs(dz))
 				fill_triangle_xz(*f);
-			else;
+			else
 				fill_triangle_yz(*f);
 		}
+		
+		fill_space();
 
 // 		for ( auto cube : grid_ )
 // 			process_cube( cube );
@@ -170,7 +173,7 @@ public:
 			auto v0 = v_pair.first;
 			auto v1 = v_pair.second;
 			
-			std::cout << "pair: " << v0 << " : " << v1 << std::endl;
+// 			std::cout << "pair: " << v0 << " : " << v1 << std::endl;
 			rasterize_line(v0, v1);
 			
 		}
@@ -182,7 +185,6 @@ public:
 	{
 		auto p0 = TMesh_Traits::get_coordinates(mesh_, v0);
 		auto p1 = TMesh_Traits::get_coordinates(mesh_, v1);
-		std::cout << p0[0] << p0[1] << p0[2] << std::endl;
 		
 		auto p0x = p0[0];
 		auto p0y = p0[1];
@@ -238,7 +240,7 @@ public:
 		while ( ( x < p1x - elem_x_ ) || (x > p1x + elem_x_ ))
 		{
 			Coordinates_descriptor v(x,y,z);
-			auto pt = grid_.get_proper_cube( v );
+			auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
 			TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
 			
 			x += ninja_constant * elem_x_;
@@ -247,7 +249,7 @@ public:
 		}
 		
 		Coordinates_descriptor v(x,y,z);
-		auto pt = grid_.get_proper_cube( v );
+		auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
 		TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
 	}
 	bool rasterize_line_y(Mesh_Point &p0, Mesh_Point &p1)
@@ -276,7 +278,7 @@ public:
 		while ( (y < p1y - elem_y_) || (y > p1y + elem_y_ ))
 		{
 			Coordinates_descriptor v(x,y,z);
-			auto pt = grid_.get_proper_cube( v );
+			auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
 			TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
 			
 			x += ninja_constant * dxy * elem_y_;
@@ -285,7 +287,7 @@ public:
 		}
 		
 		Coordinates_descriptor v(x,y,z);
-		auto pt = grid_.get_proper_cube( v );
+		auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
 		TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
 	}
 	bool rasterize_line_z(Mesh_Point &p0, Mesh_Point &p1)
@@ -314,7 +316,7 @@ public:
 		while ( (z < p1z - elem_z_) || (z > p1z + elem_z_))
 		{
 			Coordinates_descriptor v(x,y,z);
-			auto pt = grid_.get_proper_cube( v );
+			auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
 			TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
 			
 			x += ninja_constant * dxz * elem_z_;
@@ -323,7 +325,7 @@ public:
 		}
 		
 		Coordinates_descriptor v(x,y,z);
-		auto pt = grid_.get_proper_cube( v );
+		auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
 		TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
 	}
 	
@@ -338,8 +340,9 @@ public:
 		if ((x > 0) && (y > 0) && (z > 0))
 		{
 			Coordinates_descriptor v(x,y,z);
-			auto pt = grid_.get_proper_cube( v );
-			std::cout<<"dnu: "<<TGrid_Traits::is_cube_inside(grid_,pt) << " " << inside << std::endl;
+			auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
+// 			std::cout << "cube: x: " << x << " " << y << " " << z
+// 			<< " inside " << inside << " cube: " << (TGrid_Traits::is_cube_inside(grid_, pt)? "in" : "out") << std::endl;
 			if (TGrid_Traits::is_cube_inside(grid_,pt))
 			{
 				if (inside == 0) //in empty
@@ -350,7 +353,7 @@ public:
 				{
 					inside = 1; //empty space
 				}
-				else if (inside == 2 || inside == 3)
+				else if (/*inside == 2 || */inside == 3)
 				{
 					inside = 1;
 				}
@@ -377,14 +380,51 @@ public:
 		}
 	}
 	
+	bool fill_cube_one(
+		Cube_descriptor cube,
+		int& inside,
+		std::vector<Cube_descriptor>& cubes)
+	{
+		if (TGrid_Traits::is_cube_inside(grid_, cube))
+		{
+			if (inside == 0) //in empty
+			{
+				inside = 2; //awaiting fill
+			}
+			else if (inside == 1) //awaiting empty
+			{
+				inside = 1; //empty space
+			}
+			else if (/*inside == 2 ||*/ inside == 3)
+			{
+				inside = 1;
+			}
+		}
+		else
+		{
+			if (inside == 1)
+			{
+				inside = 0;
+			}
+			else if (inside == 2) //awaiting fill
+			{
+				cubes.push_back(cube);
+				inside = 3; //inside object
+			}
+			else if (inside == 3) //inside object
+			{
+				cubes.push_back(cube);
+			}
+		}
+	}
+	
 	bool apply_fill(int inside, std::vector<Cube_descriptor>& cubes)
 	{
-		if (inside != 0)
+		if (inside == 3)
 		{
 			cubes.clear();
 			return false;
 		}
-		std::cout << "som tu!!" << std::endl;
 		for (auto cube : cubes)
 		{
 			TGrid_Traits::fill_cube_by_value(grid_, cube, 0.5);			
@@ -445,14 +485,10 @@ public:
 		
 		bool parallel_to_axis = (c < 0.00001 && c > -0.00001);
 		
-		if (parallel_to_axis) std::cout << "si v piči: " << norm << " " << d << std::endl;
-		
-// 		if (c == 0) return false;
 		auto rcp_c = 1.f / c;
 		auto z = (parallel_to_axis) ? -1 * d : -1 * (d + a * x + b * y) * rcp_c;
 		int inside = 0;
 		std::vector<Cube_descriptor> cubes;
-		std::cout << "----FBEGIN----" << std::endl;
 		if (dx > dy)
 		{
 			while (( y < maxY - dyx * elem_x_) || (y > maxY + dyx * elem_x_))
@@ -461,16 +497,15 @@ public:
 				x = minX;
 				z = (parallel_to_axis) ? -1 * d : -1 * (d + a * x + b * y) * rcp_c;
 				
-				std::cout << "---ROW_BEGIN----" << std::endl;
 				while (( x < maxX - elem_x_ ) || (x > maxX + elem_x_ ))
 				{
 					fill_cube_one(x,y,z,inside,cubes);
 					x += elem_x_;
 					z = (parallel_to_axis) ? -1 * d : -1 * (d + a * x + b * y) * rcp_c;
 				}
-				y += dyx * elem_x_;
 				fill_cube_one(x,y,z,inside, cubes);
 				apply_fill(inside, cubes);
+				y += dyx * elem_x_;
 			}
 			x = minX;
 			z = (parallel_to_axis) ? -1 * d : -1 * (d + a * x + b * y) * rcp_c;
@@ -490,7 +525,6 @@ public:
 		{
 			while (( x < maxX - dxy * elem_y_) || (x > maxX + dxy * elem_y_))
 			{
-				std::cout << "---ROW_BEGIN----" << std::endl;
 				y = minY;
 				z = (parallel_to_axis) ? -1 * d : -1 * (d + a * x + b * y) * rcp_c;
 				
@@ -505,6 +539,11 @@ public:
 				apply_fill(inside, cubes);
 				x += dxy * elem_y_;
 			}
+			
+			y = minY;
+			z = (parallel_to_axis) ? -1 * d : -1 * (d + a * x + b * y) * rcp_c;
+			
+			inside = 0;
 			while (( y < maxY - elem_y_ ) || (y > maxY + elem_y_ ))
 			{
 				fill_cube_one(x,y,z,inside,cubes);
@@ -515,7 +554,6 @@ public:
 			apply_fill(inside, cubes);
 
 		}
-		std::cout << "--------FEND------" << std::endl;
 	}
 	
 	bool fill_triangle_xz(Face_descriptor f)
@@ -575,13 +613,11 @@ public:
 		int inside = 0;
 		std::vector<Cube_descriptor> cubes;
 		
-		std::cout << "----FBEGIN----" << std::endl;
 		if (dx > dz)
 		{
 			while (( z < maxZ - dzx * elem_x_) || (z > maxZ + dzx * elem_x_))
 			{
 				inside = 0;
-				std::cout << "---ROW_BEGIN----" << std::endl;
 				x = minX;
 				y = (parallel_to_axis) ? -1 * d : -1 * (d + a * x + c * z) * rcp_b;
 				
@@ -615,7 +651,6 @@ public:
 			while (( x < maxX - dxz * elem_z_) || (x > maxX + dxz * elem_z_))
 			{
 				inside = 0;
-				std::cout << "---ROW_BEGIN----" << std::endl;
 				z = minZ;
 				y = (parallel_to_axis) ? -1 * d : -1 * (d + a * x + c * z) * rcp_b;
 				
@@ -642,9 +677,7 @@ public:
 			}
 			fill_cube_one(x,y,z,inside,cubes);
 			apply_fill(inside, cubes);
-			std::cout << "---ROW_BEGIN----" << std::endl;
 		}
-		std::cout << "--------FEND------" << std::endl;
 	}
 	
 	bool fill_triangle_yz(Face_descriptor f)
@@ -703,13 +736,11 @@ public:
 		int inside = 0;
 		std::vector<Cube_descriptor> cubes;
 		
-		std::cout << "----FBEGIN----" << std::endl;
 		if (dz > dy)
 		{
 			while (( y < maxY - dyz * elem_z_) || (y > maxY + dyz * elem_z_))
 			{
 				inside = 0;
-				std::cout << "---ROW_BEGIN----" << std::endl;
 				z = minZ;
 				x = (parallel_to_axis) ? -1 * d : -1 * (d + c * z + b * y) * rcp_a;
 				
@@ -741,7 +772,6 @@ public:
 			while (( z < maxZ - dzy * elem_y_) || (z > maxZ + dzy * elem_y_))
 			{
 				inside = 0;
-				std::cout << "---ROW_BEGIN----" << std::endl;
 				y = minY;
 				x = (parallel_to_axis) ? -1 * d : -1 * (d + c * z + b * y) * rcp_a;
 				
@@ -769,7 +799,32 @@ public:
 			apply_fill(inside, cubes);
 
 		}
-		std::cout << "--------FEND------" << std::endl;
+	}
+	
+	bool
+	fill_space()
+	{
+		int x = 0;
+		int y = 0;
+		int z = 0;
+		
+		auto maxX = TGrid_Traits::get_x_resolution(grid_);
+		auto maxY = TGrid_Traits::get_y_resolution(grid_);
+		auto maxZ = TGrid_Traits::get_z_resolution(grid_);
+		
+		int inside = 0;
+		int i = 0;
+		std::vector<Cube_descriptor> cubes;
+		for (auto cube : grid_)
+		{
+			if ( i % maxX == 0)
+			{
+				apply_fill(inside, cubes);
+				inside = 0;
+			}
+			fill_cube_one(cube, inside, cubes);
+			i++;
+		}
 	}
 	
 	
@@ -808,7 +863,6 @@ public:
 		if ((c0 - c1).length() < distance)
 			result = false;
 		
-// 		std::cout << "intersection: " << result << " & " << (c0 - c1).length() << " & " << distance << " & " << intersection << std::endl;
 		
 		if (result)
 		{
