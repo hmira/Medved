@@ -33,13 +33,19 @@
 namespace po = boost::program_options;
 
 int main(int argc, char **argv)
-{
+{	
 	po::options_description desc("Allowed parameters");
 	desc.add_options()
-	("help","produce help message")
+	("help,h","produce help message")
+	("fill-holes,f","fill holes on the resulting mesh")
 	("input-file,i", po::value<std::string>(), "input file")
-	("output-file,o", po::value<std::string>(), "output file")
-	("x-resolution,x", po::value<int>(), "x resolution");
+	("output-file,o", po::value<std::string>()->default_value("output.obj"), "output file")
+	("x-resolution,x", po::value<int>()->default_value(30), "x resolution")
+	("y-resolution,y", po::value<int>()->default_value(30), "y resolution")
+	("z-resolution,z", po::value<int>()->default_value(30), "z resolution")
+	("x-size,X", po::value<float>()->default_value(3.f), "X size")
+	("y-size,Y", po::value<float>()->default_value(3.f), "Y size")
+	("z-size,Z", po::value<float>()->default_value(3.f), "Z size");
 	
 	po::positional_options_description p;
 	p.add("input-file,i", -1);
@@ -50,9 +56,15 @@ int main(int argc, char **argv)
 	po::notify(vm);
 	
 	std::string input_filename;
-	std::string output_filename;
 	
-	std::cout<<"ty si taký kokot"<<std::endl;
+	int x,y,z;
+	float x_size, y_size, z_size;
+
+	if (vm.count("help"))
+	{
+		std::cerr << desc << std::endl;
+		return 0;
+	}
 	
 	if (vm.count("input-file"))
 	{
@@ -60,26 +72,20 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		return 0;
+		std::cerr << "provide and input file\n" << desc << std::endl;
+		return -1;
 	}
 	
-	if (vm.count("output-file"))
-	{
-		output_filename = vm["output-file"].as<std::string>();
-	}
-	else
-	{
-		return 0;
-	}
+	auto fill = (vm.count("fill-holes"));
 	
-	if (vm.count("x-resolution"))
-	{
-		std::cout << "x:" << vm["x-resolution"].as<int>() << std::endl;
-	}
-	else
-	{
-		std::cout << "dopiči" << std::endl;
-	}
+	auto output_filename = vm["output-file"].as<std::string>();
+
+	x = vm["x-resolution"].as<int>();
+	y = vm["y-resolution"].as<int>();
+	z = vm["z-resolution"].as<int>();
+	x_size = vm["x-size"].as<float>();
+	y_size = vm["y-size"].as<float>();
+	z_size = vm["z-size"].as<float>();
 	
 	OpenMeshExtended input_mesh, output_mesh;
 	if (!OpenMesh::IO::read_mesh(input_mesh, input_filename))
@@ -87,21 +93,32 @@ int main(int argc, char **argv)
 		std::cerr << "error reading file:" << input_filename << std::endl;
 		return 1;
 	}
-
+	
+	std::cerr << 	"[GRID]Buiding empty ScalarGridT<float>\nresolution:\n" <<
+			"x: " << x << " cubes\n" <<
+			"y: " << y << " cubes\n" <<
+			"z: " << z << " cubes" << std::endl;
+	std::cerr << "Grid size:\n" <<
+			"x: " << x_size << " cubes\n" <<
+			"y: " << y_size << " cubes\n" <<
+			"z: " << z_size << " cubes" << std::endl;
 
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
-OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
-OpenMesh::VectorT<float, 3>( 3, 0, 0 ),
-OpenMesh::VectorT<float, 3>( 0, 3, 0 ),
-OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
-30,
-30,
-30);
+		OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
+		OpenMesh::VectorT<float, 3>( x_size, 0, 0 ),
+		OpenMesh::VectorT<float, 3>( 0, y_size, 0 ),
+		OpenMesh::VectorT<float, 3>( 0, 0, z_size ),
+		x,
+		y,
+		z);
 	
 	auto vx = Voxelize<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, input_mesh);	
  	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, output_mesh);
-// 	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh2);
 
+	if (fill)
+	{
+		fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(output_mesh);
+	}
 
 
 	
