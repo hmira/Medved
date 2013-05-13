@@ -239,6 +239,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 	
 	
  	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh2);
+// 	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh2);
 //	mesh.update_face_normals();	
 
 	

@@ -64,7 +64,16 @@ ${HMIRA_INCLUDE_DIRECTORY} ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DI
 
 #INCLUDE( "${MEDV4D_CMAKE_MODULES_DIR}/StandardCompileOptions.cmake" NO_POLICY_SCOPE )
 
+find_package(Boost COMPONENTS program_options REQUIRED)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})                                                                                                                                                                                                                            
+endif()
+
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests )
+
+
 ADD_EXECUTABLE( main "main.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
+add_executable( rasterize_and_triangulate "tests/rasterize_and_triangulate.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
 
 MESSAGE( "${MEDV4D_EXECUTABLE_SOURCES}" )
 MESSAGE( "${MEDV4D_EXECUTABLE_HEADERS}" )
@@ -89,3 +98,6 @@ TARGET_LINK_LIBRARIES( main gomp)
 TARGET_LINK_LIBRARIES( main ${TBB_LIBRARIES})
 TARGET_LINK_LIBRARIES( main ${OPENMESH_CORE_LIBRARY_DEBUG} )
 TARGET_LINK_LIBRARIES( main ${OPENMESH_TOOLS_LIBRARY_DEBUG} )
+
+target_link_libraries( rasterize_and_triangulate gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
+target_link_libraries( rasterize_and_triangulate boost_program_options ${Boost_LIBRARIES})
