@@ -9,12 +9,144 @@
 
 #include <tbb/parallel_invoke.h>
 #include <tbb/task_scheduler_init.h>
-#include <tbb/spin_mutex.h>
-#include <tbb/mutex.h>
-#include <tbb/parallel_for.h>
+#include <tbb/parallel_reduce.h>
 #include <tbb/concurrent_unordered_map.h>
+#include <tbb/blocked_range.h>
+#include <tbb/spin_mutex.h>
+#include <tbb/parallel_for.h>
+#include <tbb/task_scheduler_init.h>
 
 #include "marching_cubes_table.h"
+
+template <
+	typename TGrid,
+	typename TMesh,
+	typename TGrid_Traits,// = grid_traits<TGrid>, 
+	typename TMesh_Traits = mesh_traits<TMesh>
+	>
+class Task
+{
+public:
+	typedef TGrid						Grid;
+
+	typedef typename TGrid_Traits::Point_descriptor	Point_descriptor;
+	typedef typename TGrid_Traits::Point_scalar_type	Point_scalar_type;
+	typedef typename TGrid_Traits::Point_properties	Point_properties;
+	typedef typename TGrid_Traits::Cube_descriptor		Cube_descriptor;
+	typedef typename TGrid_Traits::Cube_iterator		Cube_iterator;
+
+	typedef typename TMesh_Traits::Point			Mesh_Point;
+	typedef typename TMesh_Traits::vertex_descriptor	Vertex_descriptor;
+	typedef typename TMesh_Traits::face_descriptor		Face_descriptor;
+
+	std::vector<std::tuple<Mesh_Point, Mesh_Point, Mesh_Point>>& semi_result;
+	const Grid&	grid_;
+
+	Task(const Grid& _grid,
+	     std::vector<std::tuple<Mesh_Point, Mesh_Point, Mesh_Point>>& _semi_result) : 
+		grid_(_grid),
+		semi_result(_semi_result)
+	{
+	}
+	
+	Task( Task& subtask, tbb::split ) : grid_(subtask.grid_), semi_result(subtask.semi_result)
+	{
+		
+	}
+	
+	void operator()(const tbb::blocked_range<int> &range)
+	{
+// 		std::cout << "teraz tu" << std::endl;
+		for (auto i = range.begin(); i != range.end(); ++i)
+		{
+			Cube_iterator cube_i(i);
+			process_cube(*cube_i);
+		}
+	}
+	
+	void join(Task& t)
+	{
+// 		std::cout << "tu som" << std::endl;
+		semi_result.insert(semi_result.end(), t.semi_result.begin(), t.semi_result.end());
+	}
+
+	Mesh_Point&&
+	add_vertex( Point_descriptor _p0, Point_descriptor _p1) //, TMesh& mm, vertex_hashmap& vertices_, const Grid& gg)
+	{
+		const Mesh_Point&  p0( TGrid_Traits::get_coords(grid_, _p0 ));
+		const Mesh_Point&  p1( TGrid_Traits::get_coords(grid_, _p1 ));
+
+		auto coeff = 0.5f; //interpolate(_p0, _p1, grid_);
+		Mesh_Point p = Mesh_Point((p0 + ( p1-p0 ) * coeff));
+
+// 		std::cout << p0 << " " << p1 << " " << p << std::endl;
+
+		return std::move(p);
+	}
+	
+	void
+	process_cube( Cube_descriptor _cidx)//, const Grid& gg, TMesh& mm,  vertex_hashmap& vertices_, tbb::spin_mutex& Mutex)
+	{
+		Point_descriptor	corner[8];
+		Mesh_Point		samples[12];
+		unsigned int		cubetype( 0 );
+		unsigned int		i;
+
+
+		bool opp_bound = false;
+		
+		// get point indices of corner vertices
+		for ( i=0; i<8; ++i )
+			corner[i] = TGrid_Traits::get_cube_corner(grid_, _cidx, i );
+
+		
+		// determine cube type
+		for ( i=0; i<8; ++i )
+		{
+			if ( !TGrid_Traits::is_inside( grid_, corner[i] ))
+			{
+				cubetype |= ( 1<<i );
+			}
+		}
+		
+		// trivial reject ?
+		if ( cubetype == 0 || cubetype == 255 )
+		{
+			return;
+		}
+		// compute samples on cube's edges
+		
+		if ( cubetype == 0 || cubetype == 255 )
+		{
+			
+		}
+		else
+		{
+			if ( edgeTable[cubetype]&1 )    samples[0]  = add_vertex( corner[0], corner[1] );
+			if ( edgeTable[cubetype]&2 )    samples[1]  = add_vertex( corner[1], corner[2] );
+			if ( edgeTable[cubetype]&4 )    samples[2]  = add_vertex( corner[3], corner[2] );
+			if ( edgeTable[cubetype]&8 )    samples[3]  = add_vertex( corner[0], corner[3] );
+			if ( edgeTable[cubetype]&16 )   samples[4]  = add_vertex( corner[4], corner[5] );
+			if ( edgeTable[cubetype]&32 )   samples[5]  = add_vertex( corner[5], corner[6] );
+			if ( edgeTable[cubetype]&64 )   samples[6]  = add_vertex( corner[7], corner[6] );
+			if ( edgeTable[cubetype]&128 )  samples[7]  = add_vertex( corner[4], corner[7] );
+			if ( edgeTable[cubetype]&256 )  samples[8]  = add_vertex( corner[0], corner[4] );
+			if ( edgeTable[cubetype]&512 )  samples[9]  = add_vertex( corner[1], corner[5] );
+			if ( edgeTable[cubetype]&1024 ) samples[10] = add_vertex( corner[2], corner[6] );
+			if ( edgeTable[cubetype]&2048 ) samples[11] = add_vertex( corner[3], corner[7] );
+
+			
+			for ( i=0; triTable[cubetype][0][i] != -1; i+=3 )
+			{
+				semi_result.push_back(std::make_tuple(
+					samples[triTable[cubetype][0][i  ]],
+					samples[triTable[cubetype][0][i+1]],
+					samples[triTable[cubetype][0][i+2]]));
+			}
+		}
+	}
+	
+};
 
 template <
 	typename TGrid,
@@ -71,25 +203,6 @@ struct VertexPairEqual {
 		> vertex_hashmap; 
 
 	vertex_hashmap vertices_;
-
-	MarchingCubes( const Grid& _grid, TMesh& _mesh)
-		: grid_( _grid ),
-		mesh_( _mesh )
-	{
-// 		int n = tbb::task_scheduler_init::default_num_threads();
-// 		tbb::task_scheduler_init init(n);
-// 		init.initialize();
-// 		
-// 		auto Mutex = tbb::spin_mutex();
-		
-// 		auto firstpair = TGrid_Traits::get_bounds(grid_, 2, 0);
-// 		auto secondpair = TGrid_Traits::get_bounds(grid_, 2, 1);
-		/*tbb::parallel_invoke( 
-			[&]{process_grid_part(firstpair.first, firstpair.second, _grid, _mesh, Mutex);},
-			[&]{process_grid_part(secondpair.first, secondpair.second, _grid, _mesh, Mutex);} 
-		);*/
-// 		process_grid_part(firstpair.first, firstpair.second, _grid, _mesh, Vertices_, Mutex);
-	}
 	
 	void process()
 	{
@@ -100,22 +213,33 @@ struct VertexPairEqual {
 		}
 	}
 	
-/*	
-class ProcessCube {
-// 	Cube_descriptor cidx_;
-	const Grid& gg_;
-	TMesh& mm_;
-	tbb::spin_mutex& Mutex_;
-public:
-	
-	void operator()( const int r) const {
-		Cube_iterator c(r);
-		process_cube(*c, gg_, mm_, Mutex_);
+	void parallel_process()
+	{
+		std::vector<std::tuple<Mesh_Point, Mesh_Point, Mesh_Point>> vv;
+		Task<TGrid, TMesh, TGrid_Traits, TMesh_Traits> task(grid_, vv);
+		
+		auto cubes_count = 
+				TGrid_Traits::get_x_resolution(grid_) * 
+				TGrid_Traits::get_y_resolution(grid_) * 
+				TGrid_Traits::get_z_resolution(grid_);
+		
+		tbb::parallel_reduce(tbb::blocked_range<int>(
+				0,
+				cubes_count,
+				cubes_count / tbb::task_scheduler_init::default_num_threads()),
+			task);
+		
+		std::cerr << "[MARCHING CUBES] : " << "num of threads: " << tbb::task_scheduler_init::default_num_threads() << std::endl;
+		
+		for (auto triplet : vv )
+		{
+			auto a = TMesh_Traits::create_vertex(std::get<0>(triplet), mesh_);
+			auto b = TMesh_Traits::create_vertex(std::get<1>(triplet), mesh_);
+			auto c = TMesh_Traits::create_vertex(std::get<2>(triplet), mesh_);
+			TMesh_Traits::create_face(a, b, c, mesh_);
+		}
 	}
-	ProcessCube(Cube_descriptor _cidx, const Grid& _gg, TMesh& _mm, tbb::spin_mutex& _Mutex) :
-	cidx_(_cidx), gg_(_gg), mm_(_mm), Mutex_(_Mutex) {}
-};*/
-
+	
 
 	void PCube(int r, const Grid& _gg, const TMesh& _mm, const vertex_hashmap& vertices_, const tbb::spin_mutex& _Mutex)
 	{
@@ -223,7 +347,8 @@ public:
 
 		Vertex_descriptor vh;
 
-		auto coeff = 0.5f; //interpolate(_p0, _p1, grid_);
+// 		auto coeff = 0.5f; //interpolate(_p0, _p1, grid_);
+		auto coeff = interpolate(_p0, _p1, grid_);
 		Mesh_Point p = Mesh_Point((p0 + ( p1-p0 ) * coeff));
 
 		//avoid flipped edges

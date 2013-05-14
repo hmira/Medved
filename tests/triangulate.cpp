@@ -3,12 +3,13 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
-#include <algorithms/marching_cubes.hpp>
+#include <hmira/algorithms/marching_cubes.hpp>
+#include <hmira/algorithms/fill_holes.hpp>
 
-#include <meshes/OpenMeshX.hpp>
+#include <hmira/meshes/OpenMeshX.hpp>
 
-#include <grids/ScalarGridT.hh>
-#include <grids/ScalarGrid_traits.h>
+#include <hmira/grids/ScalarGridT.hh>
+#include <hmira/grids/ScalarGrid_traits.h>
 
 #include <boost/program_options.hpp>
 
@@ -19,13 +20,10 @@ int main(int argc, char **argv)
 	po::options_description desc("Allowed parameters");
 	desc.add_options()
 	("help,h","produce help message")
-	("rasterize,r", po::value<std::string>()->default_value("full"), "type of rasterization [full|faces|edges]")
+	("fill-holes,f","fill holes on the resulting mesh")
 	("input-header-file,t", po::value<std::string>(), "input grid header file")
 	("input-dump-file,i", po::value<std::string>(), "input grid dump file")
 	("output-file,o", po::value<std::string>()->default_value("output.obj"), "output mesh .obj file")
-	("x-resolution,x", po::value<int>()->default_value(30), "x resolution")
-	("y-resolution,y", po::value<int>()->default_value(30), "y resolution")
-	("z-resolution,z", po::value<int>()->default_value(30), "z resolution")
 	("x-size,X", po::value<float>()->default_value(3.f), "X size")
 	("y-size,Y", po::value<float>()->default_value(3.f), "Y size")
 	("z-size,Z", po::value<float>()->default_value(3.f), "Z size");
@@ -69,6 +67,7 @@ int main(int argc, char **argv)
 		std::cerr << "provide and input file\n" << desc << std::endl;
 		return -1;
 	}
+	auto fill = (vm.count("fill-holes"));
 	
 	auto rasterization = vm["rasterize"].as<std::string>();
 	if (rasterization != "full" && rasterization != "faces" && rasterization != "edges")
@@ -98,10 +97,16 @@ int main(int argc, char **argv)
 	z + 1);
 	
 	ScalarGrid_traits<float, IsoEx::ScalarGridT>::read_dump(input_dump_filename, sg);
+	std::cerr << "[GRID] : file " << input_dump_filename << " loaded." << std::endl;
 
 	OpenMeshExtended output_mesh;
 	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, output_mesh);
 	mc.process();
+	
+	if (fill)
+	{
+		fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(output_mesh);
+	}
 	
 	if (!OpenMesh::IO::write_mesh(output_mesh, output_filename)) 
 	{

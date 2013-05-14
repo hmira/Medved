@@ -2,7 +2,7 @@
 #define __VOXELIZE_HPP__
 
 #include <limits>
-#include <geometry/ray_face_intersection.hpp>
+#include <hmira/geometry/ray_face_intersection.hpp>
 #include <boost/concept_check.hpp>
 
 template <

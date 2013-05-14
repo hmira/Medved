@@ -17,7 +17,7 @@
 #include "concepts/vertex_adjacency.h"
 #include "concepts/iterable_vertices.h"
 #include "traits.h"
-#include "meshes/OpenMeshX.hpp"
+#include <hmira/meshes/OpenMeshX.hpp>
 
 /*!
  * \defgroup algorithms_concepts

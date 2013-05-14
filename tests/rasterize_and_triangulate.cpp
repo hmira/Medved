@@ -6,14 +6,14 @@
 #include <iostream>
 #include <string>
 
-#include <algorithms/marching_cubes.hpp>
-#include <algorithms/voxelize.hpp>
-#include <algorithms/fill_holes.hpp>
+#include <hmira/algorithms/marching_cubes.hpp>
+#include <hmira/algorithms/voxelize.hpp>
+#include <hmira/algorithms/fill_holes.hpp>
 
-#include <meshes/OpenMeshX.hpp>
+#include <hmira/meshes/OpenMeshX.hpp>
 
-#include <grids/ScalarGridT.hh>
-#include <grids/ScalarGrid_traits.h>
+#include <hmira/grids/ScalarGridT.hh>
+#include <hmira/grids/ScalarGrid_traits.h>
 
 #include <boost/program_options.hpp>
 

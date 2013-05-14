@@ -15,25 +15,25 @@
 
 #include <iostream>
 #include <deque>
-#include "meshes/winged_edge.hpp"
+#include <hmira/meshes/winged_edge.hpp>
 
-#include "algorithms/compute_components.hpp"
-#include "algorithms/flip_normals.hpp"
-#include "algorithms/triangulate.hpp"
+#include <hmira/algorithms/compute_components.hpp>
+#include <hmira/algorithms/flip_normals.hpp>
+#include <hmira/algorithms/triangulate.hpp>
 
-#include "algorithms/marching_cubes.hpp"
-#include "algorithms/voxelize.hpp"
-#include "algorithms/fill_holes.hpp"
+#include <hmira/algorithms/marching_cubes.hpp>
+#include <hmira/algorithms/voxelize.hpp>
+#include <hmira/algorithms/fill_holes.hpp>
 
-#include "meshes/OpenMeshX.hpp"
+#include <hmira/meshes/OpenMeshX.hpp>
 #include "traits.h"
 
-#include <grids/ScalarGridT.hh>
-#include <grids/ScalarGrid_traits.h>
-#include <grids/ImplicitSphere.hh>
+#include <hmira/grids/ScalarGridT.hh>
+#include <hmira/grids/ScalarGrid_traits.h>
+#include <hmira/grids/ImplicitSphere.hh>
 
 #include <math.h>
-#include <geometry/ray_face_intersection.hpp>
+#include <hmira/geometry/ray_face_intersection.hpp>
 
 template <typename T>
 constexpr auto has_x_method(T& t) -> decltype(t.add_vertex(), OpenMeshExtended::VertexHandle())
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
 	return 0;*/
 	
 	OpenMeshExtended mesh, mesh2;
-	OpenMesh::IO::read_mesh(mesh, "blender2.obj");
+// 	OpenMesh::IO::read_mesh(mesh, "blender2.obj");
 
 	std::cout << std::boolalpha << std::is_member_function_pointer<decltype(&OpenMeshExtended::add_vertex)>::value << std::endl;
 
@@ -212,7 +212,6 @@ int main(int argc, char **argv)
 	
 */
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
-//OpenMesh::VectorT<float, 3>( -2.2, -2.2, -2.2 ),
 OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 3, 0, 0 ),
 OpenMesh::VectorT<float, 3>( 0, 3, 0 ),
@@ -223,13 +222,9 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 // */
 
 
-	
-	auto vx = Voxelize<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh);
 
-
-// 	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(0.f,0.f,0.f), 1.4f);
-// 
-// 	sg.sample(ims);
+	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(1.5f,1.5f,1.5f), 1.5f);
+	sg.sample(ims);
 // 	
 // 	auto firstpair = ScalarGrid_traits<float, IsoEx::ScalarGridT>::get_bounds(sg, 2, 0);
 // 	auto secondpair = ScalarGrid_traits<float, IsoEx::ScalarGridT>::get_bounds(sg, 2, 1);
@@ -239,6 +234,7 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 	
 	
  	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh2);
+	mc.parallel_process();
 // 	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh2);
 //	mesh.update_face_normals();	
 

@@ -6,10 +6,7 @@ IF( EXTENSION_MODULES_ENABLED )
                 )
 ENDIF( EXTENSION_MODULES_ENABLED )
 
-
-SET( HMIRA_HEADERS 
-        "meshes/OpenMeshX.h"
-        "meshes/winged_edge.h" )
-
-
-MESSAGE( "${ISO_EX}" )
+# 
+# SET( HMIRA_HEADERS 
+#         "hmira/meshes/OpenMeshX.h"
+#         "hmira/meshes/winged_edge.h" )

@@ -7,7 +7,7 @@ ADD_DEFINITIONS("-std=c++0x -fopenmp")
 
 PROJECT ( Hmira )
 
-SET( HMIRA_INCLUDE_DIRECTORY "include" )
+SET( HMIRA_INCLUDE_DIRECTORY "include/" )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/tests )
@@ -19,7 +19,7 @@ endif(OPENMP_FOUND)
 FIND_LIBRARY(OPENMESH_CORE_LIBRARY_DEBUG NAMES OpenMeshCored PATHS "/usr/local/lib/OpenMesh")
 FIND_LIBRARY(OPENMESH_TOOLS_LIBRARY_DEBUG NAMES OpenMeshToolsd PATHS "/usr/local/lib/OpenMesh")
 
-SUBDIRS( ${HMIRA_INCLUDE_DIRECTORY} )
+# add_subdirectory( ${HMIRA_INCLUDE_DIRECTORY} )
 
 find_package(TBB)
 if(NOT TBB_FOUND)
@@ -54,7 +54,7 @@ TARGET_LINK_LIBRARIES( main ${OPENMESH_TOOLS_LIBRARY_DEBUG} )
 # add_executable( rasterize "tests/rasterize.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
 # target_link_libraries( rasterize gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
 # target_link_libraries( rasterize boost_program_options ${Boost_LIBRARIES})
-
-add_executable( triangulate "tests/triangulate.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
-target_link_libraries( triangulate gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
-target_link_libraries( triangulate boost_program_options ${Boost_LIBRARIES})
+# 
+# add_executable( triangulate "tests/triangulate.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
+# target_link_libraries( triangulate gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
+# target_link_libraries( triangulate boost_program_options ${Boost_LIBRARIES})
