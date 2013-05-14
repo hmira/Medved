@@ -24,10 +24,10 @@ int main(int argc, char **argv)
 	po::options_description desc("Allowed parameters");
 	desc.add_options()
 	("help,h","produce help message")
-	("fill-holes,f","fill holes on the resulting mesh")
 	("rasterize,r", po::value<std::string>()->default_value("full"), "type of rasterization [full|faces|edges]")
-	("input-file,i", po::value<std::string>(), "input file")
-	("output-file,o", po::value<std::string>()->default_value("output.obj"), "output file")
+	("input-file,i", po::value<std::string>(), "input mesh file")
+	("output-raw-file,o", po::value<std::string>()->default_value("output.dump"), "output grid raw file")
+	("output-header-file,t", po::value<std::string>()->default_value("output.hdr"), "output grid header file")
 	("x-resolution,x", po::value<int>()->default_value(30), "x resolution")
 	("y-resolution,y", po::value<int>()->default_value(30), "y resolution")
 	("z-resolution,z", po::value<int>()->default_value(30), "z resolution")
@@ -71,9 +71,10 @@ int main(int argc, char **argv)
 		return -1;
 	}
 	
-	auto fill = (vm.count("fill-holes"));
+// 	auto fill = (vm.count("fill-holes"));
 	
-	auto output_filename = vm["output-file"].as<std::string>();
+	auto output_raw_filename = vm["output-raw-file"].as<std::string>();
+	auto output_header_filename = vm["output-header-file"].as<std::string>();
 
 	x = vm["x-resolution"].as<int>();
 	y = vm["y-resolution"].as<int>();
@@ -82,6 +83,7 @@ int main(int argc, char **argv)
 	y_size = vm["y-size"].as<float>();
 	z_size = vm["z-size"].as<float>();
 	
+		
 	OpenMeshExtended input_mesh, output_mesh;
 	if (!OpenMesh::IO::read_mesh(input_mesh, input_filename))
 	{
@@ -124,24 +126,10 @@ int main(int argc, char **argv)
 		std::cerr << "[VOXELIZER] : rasterizing edges" << std::endl;
 		vx.process_edges();
 	}
+	
+	std::cerr << "[GRID] : write to header file \"" << output_header_filename << "\"" << std::endl;
+	ScalarGrid_traits<float, IsoEx::ScalarGridT>::write_header(output_header_filename, sg);
+	std::cerr << "[GRID] : write to raw file \"" << output_raw_filename << "\"" << std::endl;
+	ScalarGrid_traits<float, IsoEx::ScalarGridT>::write_dump(output_raw_filename, sg);
 
-	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, output_mesh);
-	mc.process();
-
-	if (fill)
-	{
-		fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(output_mesh);
-	}
-
-	if (!OpenMesh::IO::write_mesh(output_mesh, output_filename)) 
-	{
-		std::cerr << "write error\n";
-		exit(1);
-	}
-	else
-	{
-		std::cerr << "[MESH] : object: " << output_filename << " written" <<std::endl;
-	}
-
-	return 0;
 }

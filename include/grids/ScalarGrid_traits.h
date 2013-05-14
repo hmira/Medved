@@ -4,6 +4,7 @@
 #include <tuple>
 #include <limits>
 #include <fstream>
+#include <cstdio>
 #include <boost/concept_check.hpp>
 #include <boost/format.hpp>
 
@@ -43,7 +44,7 @@ public:
 
 	static inline
 	bool
-	is_cube_inside( GridT<F>& g, Cube_descriptor c)
+	is_cube_inside(const GridT<F>& g, Cube_descriptor c)
 	{
 		for (int i=0; i<8; ++i )
 		{
@@ -55,7 +56,7 @@ public:
 	}
 	
 	static inline
-	bool is_inside( GridT<F> g, Point_descriptor p )	{return g.is_inside(p);}
+	bool is_inside(const GridT<F> g, Point_descriptor p )	{return g.is_inside(p);}
 	
 	static inline
 	int get_cube_corner(GridT<F> g, Cube_descriptor c, int i)	{return g.point_idx( c, i );}
@@ -167,6 +168,24 @@ public:
 		write_header(hdr, g);
 	}
 	
+		static inline
+	void
+	read_header(std::istream& hdr, int& x, int &y, int &z)
+	{
+		std::string str;
+		hdr >> x;
+		hdr >> y;
+		hdr >> z;
+	}
+
+	static inline
+	void
+	read_header(const std::string& filename, int& x, int &y, int &z)
+	{
+		std::ifstream hdr(filename);
+		read_header(hdr, x, y, z);
+	}
+	
 	static inline
 	void
 	write_dump(std::ostream& out, const GridT<F> &g)
@@ -182,6 +201,28 @@ public:
 	{
 		std::ofstream out(filename, std::ofstream::out | std::ofstream::binary);
 		write_dump(out, g);
+	}
+	
+	static inline
+	void
+	read_dump(std::istream& in, GridT<F> &g)
+	{
+		for ( auto cube : g )
+		{
+			auto c = in.get();
+			if (c == 255)
+			{
+				fill_cube_by_value(g, cube, -1);
+			}
+		}
+	}
+
+	static inline
+	void
+	read_dump(std::string& filename, GridT<F> &g)
+	{
+		std::ifstream in(filename, std::ifstream::out | std::ifstream::binary);
+		read_dump(in, g);
 	}
 };
 

@@ -3,12 +3,7 @@
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
-#include <iostream>
-#include <string>
-
 #include <algorithms/marching_cubes.hpp>
-#include <algorithms/voxelize.hpp>
-#include <algorithms/fill_holes.hpp>
 
 #include <meshes/OpenMeshX.hpp>
 
@@ -24,10 +19,10 @@ int main(int argc, char **argv)
 	po::options_description desc("Allowed parameters");
 	desc.add_options()
 	("help,h","produce help message")
-	("fill-holes,f","fill holes on the resulting mesh")
 	("rasterize,r", po::value<std::string>()->default_value("full"), "type of rasterization [full|faces|edges]")
-	("input-file,i", po::value<std::string>(), "input file")
-	("output-file,o", po::value<std::string>()->default_value("output.obj"), "output file")
+	("input-header-file,t", po::value<std::string>(), "input grid header file")
+	("input-dump-file,i", po::value<std::string>(), "input grid dump file")
+	("output-file,o", po::value<std::string>()->default_value("output.obj"), "output mesh .obj file")
 	("x-resolution,x", po::value<int>()->default_value(30), "x resolution")
 	("y-resolution,y", po::value<int>()->default_value(30), "y resolution")
 	("z-resolution,z", po::value<int>()->default_value(30), "z resolution")
@@ -43,7 +38,8 @@ int main(int argc, char **argv)
 		options(desc).positional(p).run(), vm);
 	po::notify(vm);
 	
-	std::string input_filename;
+	std::string input_header_filename;
+	std::string input_dump_filename;
 	
 	int x,y,z;
 	float x_size, y_size, z_size;
@@ -54,24 +50,32 @@ int main(int argc, char **argv)
 		return 0;
 	}
 	
-	if (vm.count("input-file"))
+	if (vm.count("input-header-file"))
 	{
-		input_filename = vm["input-file"].as<std::string>();
+		input_header_filename = vm["input-header-file"].as<std::string>();
 	}
 	else
 	{
 		std::cerr << "provide and input file\n" << desc << std::endl;
 		return -1;
 	}
-
+	
+	if (vm.count("input-dump-file"))
+	{
+		input_dump_filename = vm["input-dump-file"].as<std::string>();
+	}
+	else
+	{
+		std::cerr << "provide and input file\n" << desc << std::endl;
+		return -1;
+	}
+	
 	auto rasterization = vm["rasterize"].as<std::string>();
 	if (rasterization != "full" && rasterization != "faces" && rasterization != "edges")
 	{
 		std::cerr << "unknown type of rasterization: \"" << rasterization << "\"\n" << desc << std::endl;
 		return -1;
 	}
-	
-	auto fill = (vm.count("fill-holes"));
 	
 	auto output_filename = vm["output-file"].as<std::string>();
 
@@ -82,57 +86,23 @@ int main(int argc, char **argv)
 	y_size = vm["y-size"].as<float>();
 	z_size = vm["z-size"].as<float>();
 	
-	OpenMeshExtended input_mesh, output_mesh;
-	if (!OpenMesh::IO::read_mesh(input_mesh, input_filename))
-	{
-		std::cerr << "error reading file:" << input_filename << std::endl;
-		return 1;
-	}
+	ScalarGrid_traits<float, IsoEx::ScalarGridT>::read_header(input_header_filename, x, y, z);
 	
-	std::cerr << 	"[GRID] : Buiding empty ScalarGridT<float>\nresolution:\n" <<
-			"x: " << x << " cubes\n" <<
-			"y: " << y << " cubes\n" <<
-			"z: " << z << " cubes" << std::endl;
-	std::cerr << "Grid size:\n" <<
-			"x: " << x_size << " cubes\n" <<
-			"y: " << y_size << " cubes\n" <<
-			"z: " << z_size << " cubes" << std::endl;
-
 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
-		OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
-		OpenMesh::VectorT<float, 3>( x_size, 0, 0 ),
-		OpenMesh::VectorT<float, 3>( 0, y_size, 0 ),
-		OpenMesh::VectorT<float, 3>( 0, 0, z_size ),
-		x,
-		y,
-		z);
+	OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
+	OpenMesh::VectorT<float, 3>( x_size, 0, 0 ),
+	OpenMesh::VectorT<float, 3>( 0, y_size, 0 ),
+	OpenMesh::VectorT<float, 3>( 0, 0, z_size ),
+	x + 1,
+	y + 1,
+	z + 1);
 	
-	auto vx = Voxelize<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, input_mesh);
+	ScalarGrid_traits<float, IsoEx::ScalarGridT>::read_dump(input_dump_filename, sg);
 
-	if (rasterization == "full")
-	{
-		vx.process_volume();
-		std::cerr << "[VOXELIZER] : rasterizing full volume" << std::endl;
-	}
-	else if(rasterization == "faces")
-	{
-		std::cerr << "[VOXELIZER] : rasterizing faces" << std::endl;
-		vx.process_faces();
-	}
-	else if(rasterization == "edges")
-	{
-		std::cerr << "[VOXELIZER] : rasterizing edges" << std::endl;
-		vx.process_edges();
-	}
-
+	OpenMeshExtended output_mesh;
 	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, output_mesh);
 	mc.process();
-
-	if (fill)
-	{
-		fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(output_mesh);
-	}
-
+	
 	if (!OpenMesh::IO::write_mesh(output_mesh, output_filename)) 
 	{
 		std::cerr << "write error\n";
@@ -143,5 +113,5 @@ int main(int argc, char **argv)
 		std::cerr << "[MESH] : object: " << output_filename << " written" <<std::endl;
 	}
 
-	return 0;
+
 }

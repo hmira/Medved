@@ -889,70 +889,7 @@ public:
 		}
 		return result;
 	}
-	
-	void floodfill()
-	{
-		auto x = grid_.x_resolution();
-		int i = 0;
-		bool inside = false;
-		bool fill = false;
-		bool previous_boundary = false;
-		std::vector<int> to_fill;
-	
-		for (auto cube: grid_)
-		{
-			if (i == x)
-			{
-				if (inside)
-				{
-					
-				}
-				else
-				{
-					for (auto c1 : to_fill)
-					{
-						fill_cube(c1);
-					}
-				}
-				to_fill.clear();
-				i = 0;
-				inside = false;
-				std::cout << "\n" << std::endl;
-			}
-			
-			if (boundary_cube(cube))
-			{
-				if (inside && !previous_boundary)
-				{
-					inside = false;
-				}
-				else if (!previous_boundary)
-				{
-					inside = true;
-				}
-				
-				previous_boundary = true;
-			}
-			else
-			{
-				previous_boundary = false;
-			}
-			/*
-			if (inside && !boundary_cube(cube))
-			{
-				fill_cube(cube);
-			}*/
-			
-			std::cout << "bound: " << boundary_cube(cube) << " io: " << (inside ? "in" : "out")
-			<< " start: " << (starting_cube(cube) ? " y " : " n ") << " end: " << ( ending_cube(cube) ? " y " : " n " )  << std::endl;
-			if (!boundary_cube(cube) && inside)
-			{
-				to_fill.push_back(cube);
-			}
-			i++;
-		}
-	}
-	
+
 	void fill_cube(unsigned int _cidx)
 	{
 		auto corner0 = TGrid_Traits::get_cube_corner(grid_, _cidx, 0 );
