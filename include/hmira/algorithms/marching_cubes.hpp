@@ -204,6 +204,11 @@ struct VertexPairEqual {
 
 	vertex_hashmap vertices_;
 	
+	MarchingCubes( const Grid& _grid, TMesh& _mesh)
+	: grid_( _grid ),
+	mesh_( _mesh )
+	{}
+	
 	void process()
 	{
 		#pragma omp parallel

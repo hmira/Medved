@@ -47,14 +47,18 @@ TARGET_LINK_LIBRARIES( main ${TBB_LIBRARIES})
 TARGET_LINK_LIBRARIES( main ${OPENMESH_CORE_LIBRARY_DEBUG} )
 TARGET_LINK_LIBRARIES( main ${OPENMESH_TOOLS_LIBRARY_DEBUG} )
 
-# add_executable( rasterize_and_triangulate "tests/rasterize_and_triangulate.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
-# target_link_libraries( rasterize_and_triangulate gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
-# target_link_libraries( rasterize_and_triangulate boost_program_options ${Boost_LIBRARIES})
-# 
-# add_executable( rasterize "tests/rasterize.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
-# target_link_libraries( rasterize gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
-# target_link_libraries( rasterize boost_program_options ${Boost_LIBRARIES})
-# 
-# add_executable( triangulate "tests/triangulate.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
-# target_link_libraries( triangulate gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
-# target_link_libraries( triangulate boost_program_options ${Boost_LIBRARIES})
+add_executable( rasterize_and_triangulate "tests/rasterize_and_triangulate.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
+target_link_libraries( rasterize_and_triangulate gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
+target_link_libraries( rasterize_and_triangulate boost_program_options ${Boost_LIBRARIES})
+
+add_executable( rasterize "tests/rasterize.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
+target_link_libraries( rasterize gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
+target_link_libraries( rasterize boost_program_options ${Boost_LIBRARIES})
+
+add_executable( triangulate "tests/triangulate.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
+target_link_libraries( triangulate gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
+target_link_libraries( triangulate boost_program_options ${Boost_LIBRARIES})
+
+add_executable( parallel_triangulate "tests/parallel_triangulate.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
+target_link_libraries( parallel_triangulate gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
+target_link_libraries( parallel_triangulate boost_program_options ${Boost_LIBRARIES})
