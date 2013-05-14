@@ -1,3 +1,7 @@
+#ifndef __VOXELIZE_HPP__
+#define __VOXELIZE_HPP__
+
+#include <limits>
 #include <geometry/ray_face_intersection.hpp>
 #include <boost/concept_check.hpp>
 
@@ -24,7 +28,6 @@ public:
 	typedef typename TMesh_Traits::vertex_descriptor	Vertex_descriptor;
 	typedef typename TMesh_Traits::face_descriptor		Face_descriptor;
 
-	
 	Grid&	grid_;
 	Grid_unit_type elem_x_, elem_y_, elem_z_;
 	TMesh&            mesh_;
@@ -37,45 +40,65 @@ public:
 		elem_x_ = TGrid_Traits::get_x_element_size(grid_);
 		elem_y_ = TGrid_Traits::get_y_element_size(grid_);
 		elem_z_ = TGrid_Traits::get_z_element_size(grid_);
-		
+	}
+	
+	void process_edges()
+	{
 		auto all_faces = TMesh_Traits::get_all_faces(mesh_);
 		for (auto f = all_faces.first; f != all_faces.second; ++f)
 		{
-			Vertex_descriptor vertices[3];
-			int i = 0;
+			auto minX = std::numeric_limits< float >::max();
+			auto maxX = std::numeric_limits< float >::min();
+			auto minY = std::numeric_limits< float >::max();
+			auto maxY = std::numeric_limits< float >::min();
+			auto minZ = std::numeric_limits< float >::max();
+			auto maxZ = std::numeric_limits< float >::min();
+			
 			auto f_vertex_pair = TMesh_Traits::get_surrounding_vertices(mesh_, f);
 			for (auto fv_i = f_vertex_pair.first; fv_i != f_vertex_pair.second; ++fv_i)
 			{
-				vertices[i] = *fv_i;
-				i++;
+				auto vertex = *fv_i;
+				auto coords = TMesh_Traits::get_coordinates(mesh_, vertex);
+				if (minX > coords[0]) minX = coords[0];
+				if (maxX < coords[0]) maxX = coords[0];
+				if (minY > coords[1]) minY = coords[1];
+				if (maxY < coords[1]) maxY = coords[1];
+				if (minZ > coords[2]) minZ = coords[2];
+				if (maxZ < coords[2]) maxZ = coords[2];
 			}
 			
-			auto cp0 = TMesh_Traits::get_coordinates(mesh_, vertices[0]);
-			auto cp1 = TMesh_Traits::get_coordinates(mesh_, vertices[1]);
-			auto cp2 = TMesh_Traits::get_coordinates(mesh_, vertices[2]);
-
-			if (cp0[1] > cp1[1]) std::swap(cp0, cp1);
-			if (cp1[1] > cp2[1]) std::swap(cp1, cp2);
-			if (cp0[1] > cp1[1]) std::swap(cp0, cp1);
+			auto dx = maxX - minX;
+			auto dy = maxY - minY;
+			auto dz = maxZ - minZ;
 			
-			auto minY = cp0[1];
-			auto maxY = cp2[1];
+			rasterize_triangle(*f);
+		}
+	}
+	
+	void process_faces()
+	{
+		auto all_faces = TMesh_Traits::get_all_faces(mesh_);
+		for (auto f = all_faces.first; f != all_faces.second; ++f)
+		{
+			auto minX = std::numeric_limits< float >::max();
+			auto maxX = std::numeric_limits< float >::min();
+			auto minY = std::numeric_limits< float >::max();
+			auto maxY = std::numeric_limits< float >::min();
+			auto minZ = std::numeric_limits< float >::max();
+			auto maxZ = std::numeric_limits< float >::min();
 			
-			if (cp0[0] > cp1[0]) std::swap(cp0, cp1);
-			if (cp1[0] > cp2[0]) std::swap(cp1, cp2);
-			if (cp0[0] > cp1[0]) std::swap(cp0, cp1);
-			
-			auto minX = cp0[0];
-			auto maxX = cp2[0];
-			
-			if (cp0[2] > cp1[2]) std::swap(cp0, cp1);
-			if (cp1[2] > cp2[2]) std::swap(cp1, cp2);
-			if (cp0[2] > cp1[2]) std::swap(cp0, cp1);
-			
-			auto minZ = cp0[2];
-			auto maxZ = cp2[2];
-			
-			/*try*/
+			auto f_vertex_pair = TMesh_Traits::get_surrounding_vertices(mesh_, f);
+			for (auto fv_i = f_vertex_pair.first; fv_i != f_vertex_pair.second; ++fv_i)
+			{
+				auto vertex = *fv_i;
+				auto coords = TMesh_Traits::get_coordinates(mesh_, vertex);
+				if (minX > coords[0]) minX = coords[0];
+				if (maxX < coords[0]) maxX = coords[0];
+				if (minY > coords[1]) minY = coords[1];
+				if (maxY < coords[1]) maxY = coords[1];
+				if (minZ > coords[2]) minZ = coords[2];
+				if (maxZ < coords[2]) maxZ = coords[2];
+			}
 			
 			auto dx = maxX - minX;
 			auto dy = maxY - minY;
@@ -90,13 +113,12 @@ public:
 			else
 				fill_triangle_yz(*f);
 		}
-		
-		fill_space();
-
-// 		for ( auto cube : grid_ )
-// 			process_cube( cube );
-// 		
-// 		floodfill();
+	}
+	
+	void process_volume()
+	{
+		this->process_faces();
+		this->fill_space();
 	}
 	
 	void process_cube(Cube_descriptor cube)
@@ -241,7 +263,7 @@ public:
 		{
 			Coordinates_descriptor v(x,y,z);
 			auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
-			TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
+			TGrid_Traits::fill_cube_by_value(grid_, pt, -1);
 			
 			x += ninja_constant * elem_x_;
 			y += ninja_constant * dyx * elem_x_;
@@ -250,7 +272,7 @@ public:
 		
 		Coordinates_descriptor v(x,y,z);
 		auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
-		TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
+		TGrid_Traits::fill_cube_by_value(grid_, pt, -1);
 	}
 	bool rasterize_line_y(Mesh_Point &p0, Mesh_Point &p1)
 	{		
@@ -279,7 +301,7 @@ public:
 		{
 			Coordinates_descriptor v(x,y,z);
 			auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
-			TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
+			TGrid_Traits::fill_cube_by_value(grid_, pt, -1);
 			
 			x += ninja_constant * dxy * elem_y_;
 			y += ninja_constant * elem_y_;
@@ -288,7 +310,7 @@ public:
 		
 		Coordinates_descriptor v(x,y,z);
 		auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
-		TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
+		TGrid_Traits::fill_cube_by_value(grid_, pt, -1);
 	}
 	bool rasterize_line_z(Mesh_Point &p0, Mesh_Point &p1)
 	{
@@ -317,7 +339,7 @@ public:
 		{
 			Coordinates_descriptor v(x,y,z);
 			auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
-			TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
+			TGrid_Traits::fill_cube_by_value(grid_, pt, -1);
 			
 			x += ninja_constant * dxz * elem_z_;
 			y += ninja_constant * dyz * elem_z_;
@@ -326,7 +348,7 @@ public:
 		
 		Coordinates_descriptor v(x,y,z);
 		auto pt = TGrid_Traits::get_cube_from_coords(grid_, v);
-		TGrid_Traits::fill_cube_by_value(grid_, pt, 0.5);
+		TGrid_Traits::fill_cube_by_value(grid_, pt, -1);
 	}
 	
 	bool fill_cube_one(
@@ -427,7 +449,7 @@ public:
 		}
 		for (auto cube : cubes)
 		{
-			TGrid_Traits::fill_cube_by_value(grid_, cube, 0.5);			
+			TGrid_Traits::fill_cube_by_value(grid_, cube, -1);			
 		}
 		cubes.clear();
 		return true;
@@ -435,44 +457,35 @@ public:
 	
 	bool fill_triangle_xy(Face_descriptor f)
 	{
-		Vertex_descriptor vertices[3];
-		int i = 0;
+		auto minX = std::numeric_limits< float >::max();
+		auto maxX = std::numeric_limits< float >::min();
+		auto minY = std::numeric_limits< float >::max();
+		auto maxY = std::numeric_limits< float >::min();
+		auto minZ = std::numeric_limits< float >::max();
+		auto maxZ = std::numeric_limits< float >::min();
+		
+		Coordinates_descriptor coords;
+		
 		auto f_vertex_pair = TMesh_Traits::get_surrounding_vertices(mesh_, f);
 		for (auto fv_i = f_vertex_pair.first; fv_i != f_vertex_pair.second; ++fv_i)
 		{
-			vertices[i] = *fv_i;
-			i++;
+			auto vertex = *fv_i;
+			coords = TMesh_Traits::get_coordinates(mesh_, vertex);
+			if (minX > coords[0]) minX = coords[0];
+			if (maxX < coords[0]) maxX = coords[0];
+			if (minY > coords[1]) minY = coords[1];
+			if (maxY < coords[1]) maxY = coords[1];
+			if (minZ > coords[2]) minZ = coords[2];
+			if (maxZ < coords[2]) maxZ = coords[2];
 		}
 		
-		auto cp0 = TMesh_Traits::get_coordinates(mesh_, vertices[0]);
-		auto cp1 = TMesh_Traits::get_coordinates(mesh_, vertices[1]);
-		auto cp2 = TMesh_Traits::get_coordinates(mesh_, vertices[2]);
-
-		auto v0 = (cp1 - cp0);
-		auto v1 = (cp2 - cp0);
-		auto norm = cross(v0, v1);
+		auto norm = TMesh_Traits::get_face_normal(mesh_, f); //cross(v0, v1);
 		
 		/*parameters*/
 		auto a = norm[0];
 		auto b = norm[1];
 		auto c = norm[2];
-		auto d = -1 * (a * cp0[0] + b * cp0[1] + c * cp0[2]);
-		
-		if (cp0[1] > cp1[1]) std::swap(cp0, cp1);
-		if (cp1[1] > cp2[1]) std::swap(cp1, cp2);
-		if (cp0[1] > cp1[1]) std::swap(cp0, cp1);
-		
-		auto minY = cp0[1];
-		auto maxY = cp2[1];
-		
-		if (cp0[0] > cp1[0]) std::swap(cp0, cp1);
-		if (cp1[0] > cp2[0]) std::swap(cp1, cp2);
-		if (cp0[0] > cp1[0]) std::swap(cp0, cp1);
-		
-		auto minX = cp0[0];
-		auto maxX = cp2[0];
-		
-		/*try*/
+		auto d = -1 * (a * coords[0] + b * coords[1] + c * coords[2]);
 		
 		auto dx = maxX - minX;
 		auto dy = maxY - minY;
@@ -558,44 +571,35 @@ public:
 	
 	bool fill_triangle_xz(Face_descriptor f)
 	{
-		Vertex_descriptor vertices[3];
-		int i = 0;
+		auto minX = std::numeric_limits< float >::max();
+		auto maxX = std::numeric_limits< float >::min();
+		auto minY = std::numeric_limits< float >::max();
+		auto maxY = std::numeric_limits< float >::min();
+		auto minZ = std::numeric_limits< float >::max();
+		auto maxZ = std::numeric_limits< float >::min();
+		
+		Coordinates_descriptor coords;
+		
 		auto f_vertex_pair = TMesh_Traits::get_surrounding_vertices(mesh_, f);
 		for (auto fv_i = f_vertex_pair.first; fv_i != f_vertex_pair.second; ++fv_i)
 		{
-			vertices[i] = *fv_i;
-			i++;
+			auto vertex = *fv_i;
+			coords = TMesh_Traits::get_coordinates(mesh_, vertex);
+			if (minX > coords[0]) minX = coords[0];
+			if (maxX < coords[0]) maxX = coords[0];
+			if (minY > coords[1]) minY = coords[1];
+			if (maxY < coords[1]) maxY = coords[1];
+			if (minZ > coords[2]) minZ = coords[2];
+			if (maxZ < coords[2]) maxZ = coords[2];
 		}
 		
-		auto cp0 = TMesh_Traits::get_coordinates(mesh_, vertices[0]);
-		auto cp1 = TMesh_Traits::get_coordinates(mesh_, vertices[1]);
-		auto cp2 = TMesh_Traits::get_coordinates(mesh_, vertices[2]);
-
-		auto v0 = (cp1 - cp0);
-		auto v1 = (cp2 - cp0);
-		auto norm = cross(v0, v1);
+		auto norm = TMesh_Traits::get_face_normal(mesh_, f); //cross(v0, v1);
 		
 		/*parameters*/
 		auto a = norm[0];
 		auto b = norm[1];
 		auto c = norm[2];
-		auto d = -1 * (a * cp0[0] + b * cp0[1] + c * cp0[2]);
-		
-		if (cp0[2] > cp1[2]) std::swap(cp0, cp1);
-		if (cp1[2] > cp2[2]) std::swap(cp1, cp2);
-		if (cp0[2] > cp1[2]) std::swap(cp0, cp1);
-		
-		auto minZ = cp0[2];
-		auto maxZ = cp2[2];
-		
-		if (cp0[0] > cp1[0]) std::swap(cp0, cp1);
-		if (cp1[0] > cp2[0]) std::swap(cp1, cp2);
-		if (cp0[0] > cp1[0]) std::swap(cp0, cp1);
-		
-		auto minX = cp0[0];
-		auto maxX = cp2[0];
-		
-		/*try*/
+		auto d = -1 * (a * coords[0] + b * coords[1] + c * coords[2]);
 		
 		auto dx = maxX - minX;
 		auto dz = maxZ - minZ;
@@ -682,44 +686,35 @@ public:
 	
 	bool fill_triangle_yz(Face_descriptor f)
 	{
-		Vertex_descriptor vertices[3];
-		int i = 0;
+		auto minX = std::numeric_limits< float >::max();
+		auto maxX = std::numeric_limits< float >::min();
+		auto minY = std::numeric_limits< float >::max();
+		auto maxY = std::numeric_limits< float >::min();
+		auto minZ = std::numeric_limits< float >::max();
+		auto maxZ = std::numeric_limits< float >::min();
+		
+		Coordinates_descriptor coords;
+		
 		auto f_vertex_pair = TMesh_Traits::get_surrounding_vertices(mesh_, f);
 		for (auto fv_i = f_vertex_pair.first; fv_i != f_vertex_pair.second; ++fv_i)
 		{
-			vertices[i] = *fv_i;
-			i++;
+			auto vertex = *fv_i;
+			coords = TMesh_Traits::get_coordinates(mesh_, vertex);
+			if (minX > coords[0]) minX = coords[0];
+			if (maxX < coords[0]) maxX = coords[0];
+			if (minY > coords[1]) minY = coords[1];
+			if (maxY < coords[1]) maxY = coords[1];
+			if (minZ > coords[2]) minZ = coords[2];
+			if (maxZ < coords[2]) maxZ = coords[2];
 		}
 		
-		auto cp0 = TMesh_Traits::get_coordinates(mesh_, vertices[0]);
-		auto cp1 = TMesh_Traits::get_coordinates(mesh_, vertices[1]);
-		auto cp2 = TMesh_Traits::get_coordinates(mesh_, vertices[2]);
-
-		auto v0 = (cp1 - cp0);
-		auto v1 = (cp2 - cp0);
-		auto norm = cross(v0, v1);
+		auto norm = TMesh_Traits::get_face_normal(mesh_, f); //cross(v0, v1);
 		
 		/*parameters*/
 		auto a = norm[0];
 		auto b = norm[1];
 		auto c = norm[2];
-		auto d = -1 * (a * cp0[0] + b * cp0[1] + c * cp0[2]);
-		
-		if (cp0[1] > cp1[1]) std::swap(cp0, cp1);
-		if (cp1[1] > cp2[1]) std::swap(cp1, cp2);
-		if (cp0[1] > cp1[1]) std::swap(cp0, cp1);
-		
-		auto minY = cp0[1];
-		auto maxY = cp2[1];
-		
-		if (cp0[2] > cp1[2]) std::swap(cp0, cp1);
-		if (cp1[2] > cp2[2]) std::swap(cp1, cp2);
-		if (cp0[2] > cp1[2]) std::swap(cp0, cp1);
-		
-		auto minZ = cp0[2];
-		auto maxZ = cp2[2];
-		
-		/*try*/
+		auto d = -1 * (a * coords[0] + b * coords[1] + c * coords[2]);
 		
 		auto dz = maxZ - minZ;
 		auto dy = maxY - minY;
@@ -1029,3 +1024,5 @@ public:
 			return true && opp_bound;
 	}
 };
+
+#endif //__VOXELIZE_HPP__

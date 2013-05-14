@@ -1,3 +1,5 @@
+#ifndef __FLIP_NORMALS_HPP__
+#define __FLIP_NORMALS_HPP__
 
 template <typename TMesh, typename TMesh_Traits = mesh_traits<TMesh>>
 int flip_normals(TMesh& m)
@@ -15,3 +17,5 @@ int flip_normals(TMesh& m)
 
 	return 0;
 }
+
+#endif //__FLIP_NORMALS_HPP__

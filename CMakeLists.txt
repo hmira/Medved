@@ -26,7 +26,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}")
 
 find_package(OpenMP)
 if(OPENMP_FOUND)
-message("damn im good")
 endif(OPENMP_FOUND)
 
 

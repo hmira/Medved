@@ -5,8 +5,8 @@
  *      Author: hmirap
  */
 
-#ifndef COMPUTE_COMPONENTS_H_
-#define COMPUTE_COMPONENTS_H_
+#ifndef __COMPUTE_COMPONENTS_HPP__
+#define __COMPUTE_COMPONENTS_HPP__
 
 #include <vector>
 #include <deque>
@@ -135,4 +135,4 @@ int compute_components(TMesh& m)
  * @}
  */
 
-#endif /* COMPUTE_COMPONENTS_H_ */
+#endif /*  __COMPUTE_COMPONENTS_HPP__ */

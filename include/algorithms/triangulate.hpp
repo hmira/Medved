@@ -1,3 +1,5 @@
+#ifndef __TRIANGULATE_HPP__
+#define __TRIANGULATE_HPP__
 
 template <typename TMesh, typename TMesh_Traits = mesh_traits<TMesh>>
 int triangulate(TMesh& m)
@@ -17,3 +19,5 @@ int triangulate(TMesh& m)
 
 	return 0;
 }
+
+#endif //__TRIANGULATE_HPP__

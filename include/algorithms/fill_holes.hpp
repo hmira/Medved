@@ -1,3 +1,5 @@
+#ifndef __FILL_HOLES_HPP__
+#define __FILL_HOLES_HPP__
 
 template <typename TMesh, typename TMesh_Traits = mesh_traits<TMesh>>
 int fill_holes(TMesh& m)
@@ -15,3 +17,5 @@ int fill_holes(TMesh& m)
 
 	return 0;
 }
+
+#endif //__FILL_HOLES_HPP__

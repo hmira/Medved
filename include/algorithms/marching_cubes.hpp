@@ -88,13 +88,16 @@ struct VertexPairEqual {
 			[&]{process_grid_part(firstpair.first, firstpair.second, _grid, _mesh, Mutex);},
 			[&]{process_grid_part(secondpair.first, secondpair.second, _grid, _mesh, Mutex);} 
 		);*/
-		#pragma omp parallel
-			for ( auto cube = grid_.begin(); cube!=grid_.end(); ++cube )
-			{
-			//for ( auto cube : grid_ )
-				process_cube( *cube );
-			}
 // 		process_grid_part(firstpair.first, firstpair.second, _grid, _mesh, Vertices_, Mutex);
+	}
+	
+	void process()
+	{
+		#pragma omp parallel
+		for ( auto cube = grid_.begin(); cube!=grid_.end(); ++cube )
+		{
+			process_cube( *cube );
+		}
 	}
 	
 /*	
@@ -151,28 +154,20 @@ public:
 		auto s0 = TGrid_Traits::scalar_value( gg, _p0 );
 		auto s1 = TGrid_Traits::scalar_value( gg, _p1 );
 
+		// 0-1 metric case
+ 		if (
+			((s0 == 0) && (s1 == -1))||
+			((s0 == -1) && (s1 == 0)))
+		{
+			return 0.5f;
+		}
+
 		//no scalar type exists
 		if ( (s0 == 0) && (s1 == 0))
 			return 0.5f;
 
 		return -s0 / (s1 - s0);
 	}
-
-/*	template<std::size_t I = 0, typename T1, typename T2>
-	inline typename std::enable_if< I == sizeof(T1), void>::type
-	print(T1 t1, T2 t2)
-	{
-	}
-
-	template<std::size_t I = 0, typename T1, typename T2>
-	inline typename std::enable_if< I < sizeof(T1), void>::type
-	print(T1 t1, T2 t2)
-	{
-		std::cout << std::get<I>(t1) << std::endl;
-		std::cout << std::get<I>(t2) << std::endl;
-		print<I + 1, T1, T2>(t1, t2);
-	}
-*/
 
 	template <typename T_Tuple, size_t size>
 	struct interpolate_helper 

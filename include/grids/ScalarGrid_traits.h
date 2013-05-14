@@ -1,5 +1,11 @@
+#ifndef __SCALAR_GRID_TRAITS_H__
+#define __SCALAR_GRID_TRAITS_H__
+
 #include <tuple>
+#include <limits>
+#include <fstream>
 #include <boost/concept_check.hpp>
+#include <boost/format.hpp>
 
 #include "ScalarGridT.hh"
 
@@ -42,14 +48,14 @@ public:
 		for (int i=0; i<8; ++i )
 		{
 			auto corner = g.point_idx( c, i );
-			if (g.scalar_distance(corner) <= 0)
+			if (!g.is_inside(corner))
 				return false;
 		}
 		return true;
 	}
 	
 	static inline
-	bool is_inside( GridT<F> g, Point_descriptor p )	{return g.scalar_distance(p)==0.5 /*|| g.scalar_distance(p)==0*//* g.is_inside(p)*/;}
+	bool is_inside( GridT<F> g, Point_descriptor p )	{return g.is_inside(p);}
 	
 	static inline
 	int get_cube_corner(GridT<F> g, Cube_descriptor c, int i)	{return g.point_idx( c, i );}
@@ -142,5 +148,41 @@ public:
 
 		return x + y * X + z * X * Y;
 	}
+	
+	static inline
+	void
+	write_header(std::ostream& hdr, const GridT<F> &g)
+	{
+		hdr << boost::format("%1% %2% %3%\n%4%\n%5% %6% %7%") 
+			% (g.x_resolution()-1) % (g.y_resolution()-1)  % (g.z_resolution()-1) 
+			% 8 
+			% 1 % 1 % 1;
+	}
 
+	static inline
+	void
+	write_header(const std::string& filename, const GridT<F> &g)
+	{
+		std::ofstream hdr(filename);
+		write_header(hdr, g);
+	}
+	
+	static inline
+	void
+	write_dump(std::ostream& out, const GridT<F> &g)
+	{
+		for ( auto cube : g ) {
+			out.put((is_cube_inside(g, cube)) ? 255 : 0);
+		}
+	}
+
+	static inline
+	void
+	write_dump(const std::string& filename, const GridT<F> &g)
+	{
+		std::ofstream out(filename, std::ofstream::out | std::ofstream::binary);
+		write_dump(out, g);
+	}
 };
+
+#endif //__SCALAR_GRID_TRAITS_H__
