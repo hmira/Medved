@@ -7,7 +7,7 @@
 template< typename Vector3T >
 bool line_face_intersection(
 	const Vector3T& rayStart,
-	Vector3T& rayDir,
+	const Vector3T& rayDir,
 	const Vector3T& a,
 	const Vector3T& b,
 	const Vector3T& c,
@@ -18,11 +18,11 @@ bool line_face_intersection(
 	distance = 0;
 	intersection = Vector3T(0,0,0);   
 
-	rayDir.normalize();
+	//rayDir.normalize();
 
 	Vector3T triNorm = cross(b-a, c-a).normalize();
 	float vn = dot(rayDir, triNorm);
-	
+	std::cout << "dot: " << vn << std::endl;
 	if (vn < 0.0000001f && vn > -0.0000001f)
 		return false;
 

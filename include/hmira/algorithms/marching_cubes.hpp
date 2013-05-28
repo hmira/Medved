@@ -39,17 +39,15 @@ public:
 	typedef typename TMesh_Traits::vertex_descriptor	Vertex_descriptor;
 	typedef typename TMesh_Traits::face_descriptor		Face_descriptor;
 
-	std::vector<std::tuple<Mesh_Point, Mesh_Point, Mesh_Point>>& semi_result;
+	std::vector<std::tuple<Mesh_Point, Mesh_Point, Mesh_Point>> semi_result;
 	const Grid&	grid_;
 
-	Task(const Grid& _grid,
-	     std::vector<std::tuple<Mesh_Point, Mesh_Point, Mesh_Point>>& _semi_result) : 
-		grid_(_grid),
-		semi_result(_semi_result)
+	Task(const Grid& _grid) : 
+		grid_(_grid)
 	{
 	}
 	
-	Task( Task& subtask, tbb::split ) : grid_(subtask.grid_), semi_result(subtask.semi_result)
+	Task( Task& subtask, tbb::split ) : grid_(subtask.grid_)
 	{
 		
 	}
@@ -220,8 +218,8 @@ struct VertexPairEqual {
 	
 	void parallel_process()
 	{
-		std::vector<std::tuple<Mesh_Point, Mesh_Point, Mesh_Point>> vv;
-		Task<TGrid, TMesh, TGrid_Traits, TMesh_Traits> task(grid_, vv);
+// 		std::vector<std::tuple<Mesh_Point, Mesh_Point, Mesh_Point>> vv;
+		Task<TGrid, TMesh, TGrid_Traits, TMesh_Traits> task(grid_);
 		
 		auto cubes_count = 
 				TGrid_Traits::get_x_resolution(grid_) * 
@@ -236,7 +234,7 @@ struct VertexPairEqual {
 		
 		std::cerr << "[MARCHING CUBES] : " << "num of threads: " << tbb::task_scheduler_init::default_num_threads() << std::endl;
 		
-		for (auto triplet : vv )
+		for (auto triplet : task.semi_result )
 		{
 			auto a = TMesh_Traits::create_vertex(std::get<0>(triplet), mesh_);
 			auto b = TMesh_Traits::create_vertex(std::get<1>(triplet), mesh_);

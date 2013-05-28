@@ -15,6 +15,7 @@
 #include <tuple>
 #include <algorithm>
 #include <memory>
+#include <functional>
 
 #include <boost/mpl/if.hpp>
 #include <boost/mpl/bitand.hpp>

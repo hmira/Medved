@@ -35,11 +35,28 @@
 #include <math.h>
 #include <hmira/geometry/ray_face_intersection.hpp>
 
+#include <hmira/range/vertices.hpp>
+#include <hmira/range/edges.hpp>
+#include <hmira/range/faces.hpp>
+
+#include <hmira/geometry/point_in_polyhedron.hpp>
+
 template <typename T>
 constexpr auto has_x_method(T& t) -> decltype(t.add_vertex(), OpenMeshExtended::VertexHandle())
 {
 	return true;
 }
+
+
+template <typename T>
+constexpr auto is_bool_functor(T& t) -> decltype(t(), bool())
+{
+	return true;
+}
+
+
+
+
 
 typedef winged_edge_mesh<triangleMesh> my_mesh;
 typedef winged_edge_mesh_traits<triangleMesh> my_mesh_traits;
@@ -65,6 +82,7 @@ int main(int argc, char **argv)
 		intersection,
 		distance
 	);
+	
 	/*
 	std::cout << resultt << std::endl;
 	std::cout << intersection << std::endl;
@@ -97,53 +115,60 @@ int main(int argc, char **argv)
 // 	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f2) << std::endl;
 // 	std::cout << "normal: " << mesh_traits<OpenMeshExtended>::get_face_normal(mesh, f3) << std::endl;
 	
-//   OpenMeshExtended::VertexHandle vhandle[8];
-//   vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
-//   vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1,  1));
-//   vhandle[2] = mesh.add_vertex(OpenMeshExtended::Point( 1,  1,  1));
-//   vhandle[3] = mesh.add_vertex(OpenMeshExtended::Point(-1,  1,  1));
-//   vhandle[4] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1, -1));
-//   vhandle[5] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1, -1));
-//   vhandle[6] = mesh.add_vertex(OpenMeshExtended::Point( 1,  1, -1));
-//   vhandle[7] = mesh.add_vertex(OpenMeshExtended::Point(-1,  1, -1));
-//   // generate (quadrilateral) faces
-//   std::vector<OpenMeshExtended::VertexHandle>  face_vhandles;
-//   face_vhandles.clear();
-//   face_vhandles.push_back(vhandle[0]);
-//   face_vhandles.push_back(vhandle[1]);
-//   face_vhandles.push_back(vhandle[2]);
-//   face_vhandles.push_back(vhandle[3]);
-//   mesh.add_face(face_vhandles);
-//  
-//   face_vhandles.clear();
-//   face_vhandles.push_back(vhandle[7]);
-//   face_vhandles.push_back(vhandle[6]);
-//   face_vhandles.push_back(vhandle[5]);
-//   face_vhandles.push_back(vhandle[4]);
-//   mesh.add_face(face_vhandles);
-//   face_vhandles.clear();
-//   face_vhandles.push_back(vhandle[1]);
-//   face_vhandles.push_back(vhandle[0]);
-//   face_vhandles.push_back(vhandle[4]);
-//   face_vhandles.push_back(vhandle[5]);
-//   mesh.add_face(face_vhandles);
-//   face_vhandles.clear();
-//   face_vhandles.push_back(vhandle[2]);
-//   face_vhandles.push_back(vhandle[1]);
-//   face_vhandles.push_back(vhandle[5]);
-//   face_vhandles.push_back(vhandle[6]);
-//   mesh.add_face(face_vhandles);
-//   face_vhandles.clear();
-//   face_vhandles.push_back(vhandle[3]);
-//   face_vhandles.push_back(vhandle[2]);
-//   face_vhandles.push_back(vhandle[6]);
-//   face_vhandles.push_back(vhandle[7]);
-//   mesh.add_face(face_vhandles);
-//   face_vhandles.clear();
-//   face_vhandles.push_back(vhandle[0]);
-//   face_vhandles.push_back(vhandle[3]);
-//   face_vhandles.push_back(vhandle[7]);
-//   face_vhandles.push_back(vhandle[4]);
+	OpenMeshExtended::VertexHandle vhandle[8];
+	vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
+	vhandle[1] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1,  1));
+	vhandle[2] = mesh.add_vertex(OpenMeshExtended::Point( 1,  1,  1));
+	vhandle[3] = mesh.add_vertex(OpenMeshExtended::Point(-1,  1,  1));
+	vhandle[4] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1, -1));
+	vhandle[5] = mesh.add_vertex(OpenMeshExtended::Point( 1, -1, -1));
+	vhandle[6] = mesh.add_vertex(OpenMeshExtended::Point( 1,  1, -1));
+	vhandle[7] = mesh.add_vertex(OpenMeshExtended::Point(-1,  1, -1));
+	// generate (quadrilateral) faces
+	std::vector<OpenMeshExtended::VertexHandle>  face_vhandles;
+	face_vhandles.clear();
+	face_vhandles.push_back(vhandle[0]);
+	face_vhandles.push_back(vhandle[1]);
+	face_vhandles.push_back(vhandle[2]);
+	face_vhandles.push_back(vhandle[3]);
+	mesh.add_face(face_vhandles);
+
+	face_vhandles.clear();
+	face_vhandles.push_back(vhandle[7]);
+	face_vhandles.push_back(vhandle[6]);
+	face_vhandles.push_back(vhandle[5]);
+	face_vhandles.push_back(vhandle[4]);
+	mesh.add_face(face_vhandles);
+	face_vhandles.clear();
+	face_vhandles.push_back(vhandle[1]);
+	face_vhandles.push_back(vhandle[0]);
+	face_vhandles.push_back(vhandle[4]);
+	face_vhandles.push_back(vhandle[5]);
+	mesh.add_face(face_vhandles);
+	face_vhandles.clear();
+	face_vhandles.push_back(vhandle[2]);
+	face_vhandles.push_back(vhandle[1]);
+	face_vhandles.push_back(vhandle[5]);
+	face_vhandles.push_back(vhandle[6]);
+	mesh.add_face(face_vhandles);
+	face_vhandles.clear();
+	face_vhandles.push_back(vhandle[3]);
+	face_vhandles.push_back(vhandle[2]);
+	face_vhandles.push_back(vhandle[6]);
+	face_vhandles.push_back(vhandle[7]);
+	mesh.add_face(face_vhandles);
+	face_vhandles.clear();
+	face_vhandles.push_back(vhandle[0]);
+	face_vhandles.push_back(vhandle[3]);
+	face_vhandles.push_back(vhandle[7]);
+	face_vhandles.push_back(vhandle[4]);
+	mesh.add_face(face_vhandles);
+	
+	
+	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
+
+	hmira::geometry::point_in_polyhedron<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
+	
 	
 /*
   OpenMeshExtended::VertexHandle vhandle[8];
@@ -211,20 +236,20 @@ int main(int argc, char **argv)
 //	scale.rescale_by_unit(0.5f);
 	
 */
-	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
-OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
-OpenMesh::VectorT<float, 3>( 3, 0, 0 ),
-OpenMesh::VectorT<float, 3>( 0, 3, 0 ),
-OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
-30,
-30,
-30);
+// 	IsoEx::ScalarGridT<float> sg = IsoEx::ScalarGridT<float>(
+// OpenMesh::VectorT<float, 3>( 0, 0, 0 ),
+// OpenMesh::VectorT<float, 3>( 3, 0, 0 ),
+// OpenMesh::VectorT<float, 3>( 0, 3, 0 ),
+// OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
+// 30,
+// 30,
+// 30);
 // */
 
 
 
-	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(1.5f,1.5f,1.5f), 1.5f);
-	sg.sample(ims);
+// 	IsoEx::ImplicitSphere ims = IsoEx::ImplicitSphere(OpenMesh::Vec3f(1.5f,1.5f,1.5f), 1.5f);
+// 	sg.sample(ims);
 // 	
 // 	auto firstpair = ScalarGrid_traits<float, IsoEx::ScalarGridT>::get_bounds(sg, 2, 0);
 // 	auto secondpair = ScalarGrid_traits<float, IsoEx::ScalarGridT>::get_bounds(sg, 2, 1);
@@ -233,8 +258,8 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 // 	std::cout << "2pair: " << secondpair.first << " & " << secondpair.second  << std::endl;
 	
 	
- 	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh2);
-	mc.parallel_process();
+// 	auto mc = MarchingCubes<IsoEx::ScalarGridT<float>, OpenMeshExtended, ScalarGrid_traits<float, IsoEx::ScalarGridT>>(sg, mesh2);
+// 	mc.parallel_process();
 // 	fill_holes<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh2);
 //	mesh.update_face_normals();	
 
@@ -252,19 +277,9 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 		(advanced_mesh_traits<OpenMeshExtended>::face_descriptor)0
 								);
 */
+	
+	
 
-// 	auto all_faces = mesh_traits<OpenMeshExtended>::get_all_faces(mesh2);
-// 	for (auto f = all_faces.first; f != all_faces.second; ++f)
-// 	{
-// 		std::cout << "OO" << std::endl;
-// 
-// 		auto my_face = *f;
-// 		auto surr_v = mesh_traits<OpenMeshExtended>::get_surrounding_vertices(mesh, my_face);
-// 
-// 		for (auto it_sv = surr_v.first; it_sv != surr_v.second; ++it_sv)
-// 		{
-// 		}
-// 	}
 
 	
 	std::cout << "norma: c++0x" << std::endl;
@@ -276,11 +291,11 @@ OpenMesh::VectorT<float, 3>( 0, 0, 3 ),
 	}
 	
 	
-	if (!OpenMesh::IO::write_mesh(mesh2, "snd_mesh.obj")) 
-	{
-		std::cerr << "write error\n";
-		exit(1);
-	}
+// 	if (!OpenMesh::IO::write_mesh(mesh2, "snd_mesh.obj")) 
+// 	{
+// 		std::cerr << "write error\n";
+// 		exit(1);
+// 	}
 
 	//M4D::Imaging::AImage::Ptr image = M4D::Imaging::ImageFactory::LoadDumpedImage( path );
 

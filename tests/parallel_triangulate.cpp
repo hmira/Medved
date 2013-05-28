@@ -57,30 +57,9 @@ int main(int argc, char **argv)
 		std::cerr << "provide and input file\n" << desc << std::endl;
 		return -1;
 	}
-	
-	if (vm.count("input-dump-file"))
-	{
-		input_dump_filename = vm["input-dump-file"].as<std::string>();
-	}
-	else
-	{
-		std::cerr << "provide and input file\n" << desc << std::endl;
-		return -1;
-	}
-	auto fill = (vm.count("fill-holes"));
-	
-	auto rasterization = vm["rasterize"].as<std::string>();
-	if (rasterization != "full" && rasterization != "faces" && rasterization != "edges")
-	{
-		std::cerr << "unknown type of rasterization: \"" << rasterization << "\"\n" << desc << std::endl;
-		return -1;
-	}
-	
+		
 	auto output_filename = vm["output-file"].as<std::string>();
 
-	x = vm["x-resolution"].as<int>();
-	y = vm["y-resolution"].as<int>();
-	z = vm["z-resolution"].as<int>();
 	x_size = vm["x-size"].as<float>();
 	y_size = vm["y-size"].as<float>();
 	z_size = vm["z-size"].as<float>();
