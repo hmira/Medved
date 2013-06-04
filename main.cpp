@@ -164,12 +164,20 @@ int main(int argc, char **argv)
 	face_vhandles.push_back(vhandle[4]);
 	mesh.add_face(face_vhandles);
 	
-	
+
+	if (!OpenMesh::IO::read_mesh(mesh, "untitled.obj")) 
+	{
+		std::cerr << "write error\n";
+		exit(1);
+	}
 	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
 
-	hmira::geometry::point_in_polyhedron<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
-	
-	
+	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(1,  1, 1));
+	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(-1,  -1, -1));
+	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(-1,  1, 1));
+	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(1,  -1, 1));
+	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(1,  1, -1));
+
 /*
   OpenMeshExtended::VertexHandle vhandle[8];
   vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));

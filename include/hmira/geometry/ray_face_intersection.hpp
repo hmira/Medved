@@ -22,7 +22,7 @@ bool line_face_intersection(
 
 	Vector3T triNorm = cross(b-a, c-a).normalize();
 	float vn = dot(rayDir, triNorm);
-	std::cout << "dot: " << vn << std::endl;
+
 	if (vn < 0.0000001f && vn > -0.0000001f)
 		return false;
 
