@@ -14,7 +14,7 @@ propreties of the object such as density or elasticity. It is mostly used in sof
 engineering simulations.
 
 \item \textbf{surface} - this representation works only with the surface of the object
-ignoring the properties of the volume. The one of tremendous advantages of this representation is
+ignoring the properties of the volume. The one of advantages of this representation is
 relatively simple visualisation. The surface description is totally sufficient for graphical purposes.
 \end{itemize}
 
@@ -73,12 +73,60 @@ as the set of points that can contain a hole.
 \\
 There are several techniques to represent a topology of the mesh. Each of them has its own advantages
 that are reflected in efficiency of data storage and querying the surrounding elements. Several
-mesh representations are described in next paragraph.
+mesh representations are described in the next section.
 
 \section{Polygonal Mesh}
 
+The collection can be represented in a variety ways, the main purpose of structure is to improve
+the efficiency of the queries. In the other hand we face the limitations such as memory. In some
+representations in impossible to query the adjacent vertices of a vertex without iteration through
+entire container of vertices or faces.
+
 \subsection{Face-vertex mesh}
 
+The simpliest representation that contains any information about topology of the polygonal
+mesh. A mesh is represented by a container of vertices and the container of sets of vertices that
+forms faces. The face is represented by at least 3 vertices or more vertices that have to be
+coplanar.\\
+
+\begin{figure}[h]
+
+\begin{minipage}[hb]{0.65\linewidth}
+\centering
+\includegraphics[width=0.6\linewidth]{../img/fv_rep_mesh.eps}
+\label{fig:figure1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[hb]{0.25\linewidth}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textsf{v0 v1 v5 v4} & \textsf{f1}\\
+\hline
+\textsf{v1 v2 v6 v5} & \textsf{f2}\\
+\hline
+\textsf{v4 v5 v6 v7} & \textsf{f5}\\
+\hline
+\end{tabular}
+\label{fig:figure2}
+\end{minipage}
+
+\end{figure}
+
+The set that forms the faces must be ordered. The preceding and following vertex in order must be adjacent to
+the vertex. If the structure is not extended by face-normal-attribute, the vertices must be in 
+clockwise/counter-clockwise order from the view of face normal. If the order is either clockwise or counter-clockwise
+depends on the implementation of the mesh.
+
 \subsection{Winged-edge mesh}
+
+The representation described above contain no direct information about adjacency of faces. 
+In order to determine the adjacency of any two faces or vertices in constant complexity, we
+can build a structure that requires an extra storage. The winged edge structure provide information
+that are capable of determination an edges that belong to a vertex, from a given face a set
+of edges that surrounds the face; in case of triangle mesh, it returns the triplet of edges.
+Finally, the name \emph{winged-edge} is due to capabilty to get a face pair (wings) from
+a given edge.
+
 
 \subsection{Half-edge mesh}

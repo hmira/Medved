@@ -8,19 +8,43 @@
 #include <hmira/range/faces.hpp>
 #include <hmira/geometry/line_on_plane_projection.hpp>
 
+#include <hmira/preprocessor/debug_mode.hpp>
+
 namespace hmira
 {
 
 namespace geometry
 {
+	/**
+	 * \brief possible cases of point and polyhedron in space
+	 */
+	enum point_classification
+	{
+		outside = 0,
+		inside = 1,
+		boundary = 2
+	};
+	
+	/**
+	 * \brief method that determines whether the point is either inside or outside the polygonal mesh
+	 * 
+	 * the method determines the point classification by counting the number of intersections
+	 * led from the point in given direction. The direction is set by default to [1,1,1]
+	 * 
+	 * if the 
+	 * 
+	 * \return	the point classification - inside/outside/boundary
+	 * 
+	 * \param m	polyhedron represented by mesh
+	 * 
+	 */
 	template <typename TPoint, typename TMesh, typename TMesh_Traits = mesh_traits<TMesh>>
-	int point_in_polyhedron(
+	point_classification point_in_polyhedron(
 		TMesh& m,
 		TPoint tested_point,
-		TPoint tested_direction)// = TMesh_Traits::Point(1, 1, 1))
+		TPoint tested_direction = TPoint(1,1,1))// = TMesh_Traits::Point(1, 1, 1))
 	{
-// 		typedef std::pair<float, TMesh_Traits::face_descriptor> DistFacePair;
-		std::unordered_map<float, int> distances;
+		std::unordered_map<float, int> distances; /// set of points that intersect the line led from the tested_point
 
 		range::for_each_face(m,
 			[&]
@@ -54,17 +78,6 @@ namespace geometry
 
 				if (result)
 				{
-// 					OpenMesh::Vec3f proj1(7,7,7), proj2(7,7,7);
-					
-// 					auto reflected = hmira::geometry::line_on_plane_projection(
-// 						a,
-// 						b,
-// 						c,
-// 						TMesh_Traits::get_face_normal(m, face),
-// 						intersect,
-// 						tested_direction,
-// 						proj1,
-// 						proj2);
 					
 					auto dot_prod = dot(TMesh_Traits::get_face_normal(m, face), tested_direction) > 0;
 					int entry_flag = 0; 
@@ -77,26 +90,10 @@ namespace geometry
 						entry_flag = 2;
 					}
 					
-// 					std::cout << "--" << dot_prod << " ref: " << reflected << " projected: " << proj1 << " : " << proj2 << std::endl;
-					
 					distances[dist] |= entry_flag;
 					
-// 					auto iter = distances.find(dist);
-// 					std::cout << "flag: " << entry_flag << (distances[dist] | entry_flag) << std::endl;
-// 					if (iter == distances.end())
-// 					{
-// 						distances[dist] = entry_flag;
-// 					}
-// 					else
-// 					{
-// 						iter->second |= entry_flag;
-// 					}
 				}
 			});
-		for (auto a:distances)
-		{
-			std::cout << a.second << std::endl;
-		}
 		
 		auto boundary = false;
 		int number_of_intersects = 0;
@@ -110,15 +107,36 @@ namespace geometry
 				number_of_intersects++;
 		}
 		
+		
+		if (boundary)
+		{
+			
+			H_DEBUG_STDERR( "[POINT CLASSIFICATION] : ---------------------------------" )
+			H_DEBUG_STDERR( "[POINT CLASSIFICATION] : the point is evaluated as boundary" )
+			H_DEBUG_STDERR( "[POINT CLASSIFICATION] : the position of the point refers to" )
+			H_DEBUG_STDERR( "[POINT CLASSIFICATION] : the surface of the object")
+			H_DEBUG_STDERR( "[POINT CLASSIFICATION] : ---------------------------------" )
+			return point_classification::boundary;
+		}
+
+		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : ---------------------------------" )
+		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : the number of intersections with" )
+		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : object and the line led from the" )
+		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : given point: ", tested_point ", in direction: ", tested_direction )
+		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : is ", number_of_intersects ," in total" )
+		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : ---------------------------------" )
+		
 		if ( number_of_intersects & 1 )
 		{
-			std::cout << "inside" << std::endl;
-			return 1; //inside
+			H_DEBUG_STDERR( "[POINT CLASSIFICATION] : the point is inside of the object" )
+			H_DEBUG_STDERR( "[POINT CLASSIFICATION] : ---------------------------------" )
+			return point_classification::inside;
 		}
 		else
 		{
-			std::cout << "outside" << std::endl;
-			return 0; //outside
+			H_DEBUG_STDERR( "[POINT CLASSIFICATION] : the point is outside of the object" )
+			H_DEBUG_STDERR( "[POINT CLASSIFICATION] : ---------------------------------" )
+			return point_classification::outside;
 		}
 	}
 	
