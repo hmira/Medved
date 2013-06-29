@@ -1,3 +1,27 @@
 \chapter{Libraries}
 
+What we did not yet mentioned is the implemented data structures that fulfills the described rules.
+In this chapter there are introduced several libraries that are comonnly used. In following paragraphs
+is shown the corelation with the structures shown in the previous chapter.
+
 \section{OpenMesh}
+
+\emph{OpenMesh} is an open-source generic data structure for representing and manipulating polygonal
+meshes. It is developed at the Computer Graphics Group, RWTH Aachen.
+\\
+\\
+Restricting to the meshes introduced in chapter 2, OpenMesh is considered as a half-edge structure.
+It is formed by kernel that set proper attributes such as triangular restriction or allowing to remove
+vertices from mesh.
+\\
+To fully specify a mesh, several parameters can be given:\\
+
+\textbf{Face type}: Specifies whether to use a general polygonal mesh or the triangle mesh.\\
+
+\textbf{Kernel}: Stores the element of the mesh internally. User chooses from available
+kernels according to expected usage. For example the decimation algorithm requires
+efficient deletion/insertion thus the proper kernel for this case is kernel based on
+linked list.\\
+
+\textbf{Traits}: Traits is the class that enhances the mesh functionality such as
+vertices removal or adding various attributes to elements.

@@ -1,0 +1,27 @@
+\chapter{Goals of the thesis}
+
+There are a lot of libraries that offers the ability to represent the volume data
+and the basic manipulation with it. There are also lot of published algorithms
+that can be implemented.\\
+
+Our goal is to create a generic set of algorithms that can be used on any implementation
+of mesh that satisfies required concept. Before the algorithm is finally implemented,
+we must completely describe the concept of the algorithm nor the behavior of algorithm
+on specified mesh. The point of this goal is \emph{to think generally} regardless of
+the specification of a potentionally used mesh.\\
+
+\section{Observation}
+
+Observing the algorithms step-by-step we can see that a single steps
+of the algorithm are the variations of adding, removing and modifying the elements
+of the mesh. In addition, the algorithms uses also a capabilities of querying
+in mesh such as getting all adjancent vertices of given vertex or getting all
+vertices in a container or any iterable structure.\\
+
+Such a capabilities of the mesh are critical for implementing an algorithm.
+The question then arises, "Why do we implement the algorithms for meshes if
+the usage of required operations might have suffice?``
+
+\section{Concepts of an algorithms}
+
+Concept is specific according the requirements of an algorithm.

@@ -113,7 +113,8 @@ coplanar.\\
 
 \end{figure}
 
-The set that forms the faces must be ordered. The preceding and following vertex in order must be adjacent to
+The set that forms the faces must be ordered. The preceding and following vertex in order must be 
+adjacent to
 the vertex. If the structure is not extended by face-normal-attribute, the vertices must be in 
 clockwise/counter-clockwise order from the view of face normal. If the order is either clockwise or counter-clockwise
 depends on the implementation of the mesh.
@@ -128,5 +129,113 @@ of edges that surrounds the face; in case of triangle mesh, it returns the tripl
 Finally, the name \emph{winged-edge} is due to capabilty to get a face pair (wings) from
 a given edge.
 
+\begin{figure}[h]
+\label{fig:winged_edge_mesh}
+
+\begin{minipage}[hb]{0.65\linewidth}
+\centering
+\includegraphics[width=0.6\linewidth]{../img/we_rep_mesh.eps}
+\label{fig:figure1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[hb]{0.25\linewidth}
+\centering
+
+\emph{Face list}
+\vspace{1mm}
+
+\begin{tabular}{|c|c|}
+\hline
+\textsf{f0} & \textsf{e0 e9 e4 e8}\\
+\hline
+\textsf{f1} & \textsf{e1 e10 e5 e9}\\
+\hline
+\textsf{f5} & \textsf{e4 e5 e6 e7}\\
+\hline
+\end{tabular}
+
+\vspace{10mm}
+\emph{Edge list}
+\vspace{1mm}
+
+\begin{tabular}{|c|c|c|}
+\hline
+\textsf{e0} & \textsf{f0 f4} & \textsf{v0 v1}\\
+\hline
+\textsf{e1} & \textsf{f1 f4} & \textsf{v1 v2}\\
+\hline
+\textsf{e4} & \textsf{f0 f5} & \textsf{v4 v5}\\
+\hline
+\textsf{e5} & \textsf{f1 f5} & \textsf{v5 v6}\\
+\hline
+\textsf{e6} & \textsf{f2 f5} & \textsf{v6 v7}\\
+\hline
+\textsf{e7} & \textsf{f3 f5} & \textsf{v7 v8}\\
+\hline
+\textsf{e8} & \textsf{f0 f3} & \textsf{v4 v0}\\
+\hline
+\textsf{e9} & \textsf{f1 f0} & \textsf{v5 v1}\\
+\hline
+\textsf{e10} & \textsf{f2 f1} & \textsf{v6 v2}\\
+\hline
+\end{tabular}
+
+\label{fig:figure2}
+\end{minipage}
+
+\caption{Winged-edge mesh}
+\end{figure}
+
+On the example shown above there are occured several uncertainities.
+
+\begin{itemize}
+\item Let us take edge \textsf{e9}. In pair of faces, which of faces \textsf{f0} and 
+\textsf{f1} should be considered as \emph{first} and the \emph{second}?
+
+\item Which of vertices \textsf{v1} and \textsf{v5} should be considered as 
+\emph{first} and the \emph{second} in pair that forms the edge \textsf{e9}?
+\end{itemize}
+
+One of the possible solutions is to split the edge element to two \emph{half-edges}.
+The structure using or rather based on this representation is described in the next
+paragraph.
 
 \subsection{Half-edge mesh}
+
+The halfedge data structure is the structure capable of maintaining the incidence
+information of vertices, edges and faces. Each edge is decomposed in two halfedges
+with opposite orientations.
+\\
+
+The structure contains the set of information
+\begin{itemize}
+\item a vertex that is the halfedge pointing to
+\item a face that the halfedge belongs to
+\item the next halfedge in order that forms a face that halfedge belongs to
+\item (optional) the previous halfedge in the same order
+\item opposite halfedge
+\end{itemize}
+
+\begin{figure}[h]
+
+\begin{minipage}[hb]{0.65\linewidth}
+\centering
+\includegraphics[width=0.6\linewidth]{../img/he_rep_mesh.eps}
+\label{fig:figure1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[hb]{0.25\linewidth}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textsf{v0 v1 v5 v4} & \textsf{f1}\\
+\hline
+\textsf{v1 v2 v6 v5} & \textsf{f2}\\
+\hline
+\textsf{v4 v5 v6 v7} & \textsf{f5}\\
+\hline
+\end{tabular}
+\label{fig:figure2}
+\end{minipage}
+
+\end{figure}
