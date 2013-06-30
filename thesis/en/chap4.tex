@@ -19,9 +19,68 @@ in mesh such as getting all adjancent vertices of given vertex or getting all
 vertices in a container or any iterable structure.\\
 
 Such a capabilities of the mesh are critical for implementing an algorithm.
-The question then arises, "Why do we implement the algorithms for meshes if
-the usage of required operations might have suffice?``
+The question then arises, ``Why do we implement the algorithms for meshes if
+the usage of required operations might have suffice?" The answer can be relatively simple:
+We are generally not able to determine how is a given structure controlled
+without giving additional information.\\
 
-\section{Concepts of an algorithms}
+Thus there is an option to build an algorithm working correctly over any structure
+that fullfills the criteria that has been presented by the algorithm. Nowadays in C++,
+we are able to build a template-based interface that modify a given structure according
+to algorithm requirements during a compile time.\\
 
-Concept is specific according the requirements of an algorithm.
+Before using this set of algorithms the user only defines a interface for chosen structure
+and pass it as parameter.
+
+\section{Concepts and algorithms}
+
+Concept is specific according the requirements of an algorithm. Let us provide an example
+algorithm and then we build a structure concept that requires the algorithm in order to work 
+correctly.\\
+
+\textbf{Example:}\\
+The algorithm, that flips normal on each face of a given mesh.\\
+
+\textbf{Solution:}\\
+Before analyzing the algorithm, we can see that input is a mesh (not closely specified)
+that returns modified mesh. The idea of the algorithm is simple; iterate through all faces
+and flip the normal of each one. Obviously, the mesh is required to have a faces. This is not an
+unnecessary point because there are several implementations of mesh without faces; e.g.
+vertex-edge mesh. Finally, let us summarize what \emph{attributes} are required by the algorithm.
+
+\begin{itemize}
+\item faces of a mesh
+%\item normal of a face
+\end{itemize}
+
+Now when we have the required attributes, we need to specify which \emph{operations} are required.
+
+\begin{itemize}
+\item iterating through all faces of mesh
+\item flipping the normal of a face 
+\end{itemize}
+
+\textbf{Question:}\\
+What if the structure does not have a method that flips the normal of a face?\\
+
+After all, the algorithm can be build without providing a method that flips a normal;
+it can flip the normal of a face by itself.
+There are two possible approaches of solving this question. The first: create separately
+next algorithm with different requirements. The second: build an \emph{adaptor} that
+has the same functionality as required method that flips normals and use it as method
+in the algorithm described above instead required method.\\
+
+Both cases requires additional points of concept instead the ommited one.
+In order to reverse the normal of a face manually, it is required:
+
+\begin{itemize}
+\item the normal of a face
+\item getting the face normal
+\item setting the face normal
+\end{itemize}
+
+It is up to us how we design the algorithms and the level of implementation. As more sophisticated
+the adaptors are than more cases of mesh implementation can be covered. If the compiler does not
+find the require methods and is able to build an adaptor then does not bother the user and build
+a modified method. Naturally, adaptor may have own requirements therefore we can assume that
+some point of concepts can be replaced with different ones.
