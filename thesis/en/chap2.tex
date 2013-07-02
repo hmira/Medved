@@ -29,23 +29,28 @@ or reflective simmetry or sign changed case.\\
 
 
 \begin{figure}[ht]
-\includegraphics[scale=0.1]{../img/mar_cub_case0.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case1.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case2.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case3.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case4.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case5.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case6.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case7.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case8.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case9.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case10.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case11.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case12.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case13.eps}
-\includegraphics[scale=0.1]{../img/mar_cub_case14.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case0.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case1.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case2.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case3.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case4.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case5.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case6.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case7.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case8.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case9.eps}
+\includegraphics[scale=0.15]{../img/mar_cub_case10.eps}
+\hspace{1mm}
+\includegraphics[scale=0.15]{../img/mar_cub_case11.eps}
+\hspace{2mm}
+\includegraphics[scale=0.15]{../img/mar_cub_case12.eps}
+\hspace{2mm}
+\includegraphics[scale=0.15]{../img/mar_cub_case13.eps}
+\hspace{3mm}
+\includegraphics[scale=0.15]{../img/mar_cub_case14.eps}
 \caption{The 15 cases of marching cubes algorithm. The corners that are evaluated as inside of the object
 are labeled with red. The yellow triangles represent faces to be added to mesh.}
+\label{fig:mc_cases}
 \end{figure}
 
 Finaly, all of them can be reduced to $15$ unique cases. The main idea of this algorithm is to
@@ -59,7 +64,9 @@ the face is based on linear interpolation corner values.\\
 \\
 
 \begin{figure}[ht]
-\includegraphics[scale=0.5]{../img/marc_cub_inter.eps}
+\centering
+\includegraphics[scale=0.35]{../img/marc_cub_inter.eps}
+\label{fig:mc_interpolation}
 \end{figure}
 
 Let $v1$ and $v2$ be the values that represents a distance from a surface to the corner.
@@ -91,9 +98,17 @@ rasterization in 2D.
 First, algorithm voxelizes the boundary edges and then runs floodfill over the face. The filling
 technique of the face is is processed by the line filling algorithm in following steps. 
 
-\includegraphics[scale=0.2]{../img/voxelize_1.eps}
-\includegraphics[scale=0.2]{../img/voxelize_2.eps}
-\includegraphics[scale=0.2]{../img/voxelize_3.eps}
+\begin{figure}
+\centering
+\includegraphics[scale=0.25]{../img/voxelize_1.eps}
+\includegraphics[scale=0.25]{../img/voxelize_2.eps}\\
+\includegraphics[scale=0.25]{../img/voxelize_3.eps}
+\includegraphics[scale=0.25]{../img/voxelize_4.eps}
+
+\caption{Voxelization in step-by-step}
+\label{fig:voxelize}
+
+\end{figure}
 
 \begin{itemize}
 \item On the pre-computed minimum boundary rectangle start on the bottom and repeat for each line
