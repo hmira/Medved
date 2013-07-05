@@ -31,7 +31,24 @@ in case of boundary voxels, surface description. Some implementation provide inf
 each corner of voxel separately in order to improve the accuracy.
 As can be deduced from overview, this representation perfectly fits for representing the solid objects.
 
-\subsection{Isosurface}
+\subsection{Implicit surface}
+An implicit surface is a surface defined implicitly by a function
+
+\begin{equation}
+\begin{split}
+surface_{f(x,y,z)} =
+  &\left\{\;
+    \begin{split}
+      \text{on surface if }f(x,y,z) = 0 \\ 
+      \text{below surface if }f(x,y,z) < 0 \\
+      \text{above surface if }f(x,y,z) > 0 \\
+    \end{split}
+  \right.
+\end{split}
+\end{equation}
+
+This representation has several advantages such as efficient checking whether a point is either
+inside or outside or efficient finding a intersection with geometric primitives.
 
 \subsection{Constructive solid geometry}
 
