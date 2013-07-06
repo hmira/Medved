@@ -43,7 +43,7 @@ The algorithm, that flips normal on each face of a given mesh.\\
 
 \textbf{Solution:}\\
 Before analyzing the algorithm, we can see that input is a mesh (not closely specified)
-that returns modified mesh. The idea of the algorithm is simple; iterate through all faces
+that returns modified mesh. The idea of the algorithm is simple; pick all faces
 and flip the normal of each one. Obviously, the mesh is required to have a faces. This is not an
 unnecessary point because there are several implementations of mesh without faces; e.g.
 vertex-edge mesh. Finally, let us summarize what \emph{attributes} are required by the algorithm.
@@ -56,8 +56,8 @@ vertex-edge mesh. Finally, let us summarize what \emph{attributes} are required 
 Now when we have the required attributes, we need to specify which \emph{operations} are required.
 
 \begin{itemize}
-\item iterating through all faces of mesh
 \item flipping the normal of a face 
+\item capabilty of applying the operation on each face
 \end{itemize}
 
 \textbf{Question:}\\

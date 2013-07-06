@@ -146,16 +146,16 @@ of edges that surrounds the face; in case of triangle mesh, it returns the tripl
 Finally, the name \emph{winged-edge} is due to capabilty to get a face pair (wings) from
 a given edge.
 
-\begin{figure}[h]
+\begin{figure}[!htbp]
 \label{fig:winged_edge_mesh}
 
-\begin{minipage}[hb]{0.65\linewidth}
+\begin{minipage}[!htbp]{0.65\linewidth}
 \centering
 \includegraphics[width=0.6\linewidth]{../img/we_rep_mesh.eps}
 \label{fig:figure1}
 \end{minipage}
 \hspace{0.5cm}
-\begin{minipage}[hb]{0.25\linewidth}
+\begin{minipage}[!htbp]{0.25\linewidth}
 \centering
 
 \emph{Face list}
@@ -243,13 +243,38 @@ The structure contains the set of information
 \hspace{0.5cm}
 \begin{minipage}[hb]{0.25\linewidth}
 \centering
-\begin{tabular}{|c|c|}
+\emph{Halfedge list}
+\vspace{1mm}
+
+\begin{tabular}{|c|c|c|c|}
 \hline
-\textsf{v0 v1 v5 v4} & \textsf{f1}\\
+\textsf{he0} & \textsf{f0} & \textsf{v0} & \textsf{he1}\\
 \hline
-\textsf{v1 v2 v6 v5} & \textsf{f2}\\
+\textsf{he1} & \textsf{f0} & \textsf{v4} & \textsf{he2}\\
 \hline
-\textsf{v4 v5 v6 v7} & \textsf{f5}\\
+\textsf{he2} & \textsf{f0} & \textsf{v5} & \textsf{he3}\\
+\hline
+\textsf{he3} & \textsf{f0} & \textsf{v1} & \textsf{he0}\\
+\hline
+
+\hline
+\textsf{he8} & \textsf{f1} & \textsf{v1} & \textsf{he9}\\
+\hline
+\textsf{he9} & \textsf{f1} & \textsf{v5} & \textsf{he10}\\
+\hline
+\textsf{he10} & \textsf{f1} & \textsf{v6} & \textsf{he11}\\
+\hline
+\textsf{he11} & \textsf{f1} & \textsf{v2} & \textsf{he8}\\
+\hline
+
+\hline
+\textsf{he4} & \textsf{f5} & \textsf{v4} & \textsf{he5}\\
+\hline
+\textsf{he5} & \textsf{f5} & \textsf{v7} & \textsf{he6}\\
+\hline
+\textsf{he6} & \textsf{f5} & \textsf{v6} & \textsf{he7}\\
+\hline
+\textsf{he7} & \textsf{f5} & \textsf{v5} & \textsf{he4}\\
 \hline
 \end{tabular}
 \label{fig:figure2}
