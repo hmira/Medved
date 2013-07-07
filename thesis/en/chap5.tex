@@ -8,6 +8,97 @@ In this thesis is chosen such level that leads to the least count of operations 
 If the mesh does not fulfill the concept of the algorithm \emph{adaptors} can be used instead
 of the absent operators. An adaptor behaves like an operator but in fact it is the algorithm that
 makes a desired step as a result. In the other words it is the operator implemented in terms
-brute-force. In some cases, lack of an operator can not be replaced by an adaptor.
+brute-force. In some cases, lack of an operator can not be replaced by an adaptor.\\
+\\
+The algorithms described in this chapter are only the small part of all algorithms. The emphasized
+algorithms are primarily the commonly used, the algorithms that changes the mesh topology and
+the conversion algorithm between voxel and polygon mesh representation.
 
 \section{Converting between representations}
+
+\subsection{Marching cubes}
+
+The algorithm has the specific requirements for the mesh and also for the voxel map (See algorithm
+description \ref{sub:march}). However the voxel map can be in various forms some special cases
+of marching cubes are explained.
+
+\begin{algorithm}[H]
+\caption{Marching cubes}
+\label{alg:mc}
+\begin{algorithmic}[1]
+	\Function{Marching cubes}{$voxelMap$}
+			\State $mesh$ := empty mesh
+
+		\For{\textbf{each} $voxel$ \textbf{in} $voxelMap$}
+			\State $cubeType$ := Determine Cube Type($voxel$)
+			\State $faces$ := Create Faces($cubeType$)
+			\For{\textbf{each} $face$ \textbf{in} $faces$}
+				\State Add Face To Mesh($mesh$, $face$)
+			\EndFor
+		\EndFor
+		\State \Return{$mesh$}
+	\EndFunction
+	\\
+	\Function{Determine cube type}{$voxel$}
+		\State $configuration$ := initial configuration
+		\State \Comment{configuration contains all the information}
+		\State \Comment{	about each corner of the cube}
+		\State \Comment{initial configuration assumes that all corners are outside}
+		\State $corners$ := Get Voxel Corners($voxel$)
+		\For{\textbf{each} $corner$ \textbf{in} $corners$}
+			\If {$corner$ is inside the surface}
+				\State Set in configuration the $corner$ as inside
+			\EndIf
+		\EndFor
+		\State \Return{$configuration$}
+	\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+%\caption{The simplified pseudo-code of the algorithm Marching cubes}
+
+
+From the pseudocode \ref{alg:mc} we can conclude that the structures used as a parameters
+are required to support operations used in the algorithm. Thus the concept of the algorithm
+is designed as follows:
+
+\begin{itemize}
+\item $mesh$ is required to support $face$ structure \emph{(line 6)}
+\item $mesh$ is required to support adding the $faces$ \emph{(line 7)}
+\item $voxelMap$ is required to support $voxel$ structure \emph{(line 3)}
+\item $voxelMap$ is required to support getting all the $voxels$ \emph{(line 3)}
+\item $voxelMap$ is required to support getting all the $corners$ of each $voxel$ \emph{(line 18)}
+\item $voxelMap$ and $mesh$ are required to have a $cubeType$ convertible to a set of $faces$ \emph{(line 5)}
+\end{itemize}
+
+\subsection{Voxelization}
+
+Compared to the \emph{Marching cubes} algorithm, the requirements for the voxel map structure
+are more comprehensive. As mentioned in description \ref{sub:vox}, the algorithm consequently rasterizes
+the edges, the faces and finally fills the object.
+
+\begin{algorithm}[H]
+\caption{Voxelization}
+\label{alg:vox}
+\begin{algorithmic}[1]
+	\Function{Voxelize mesh}{$mesh$}
+			\State $voxelMap$ := map of empty voxels
+
+		\For{\textbf{each} $face$ \textbf{in} $mesh$}
+			\State Voxelize face($face$, $voxelMap$)
+		\EndFor
+		\State Run Floodfill($voxel map$)
+		\State \Return{$voxel map$}
+	\EndFunction
+	\\
+	\Function{Voxelize face}{$face$, $voxelMap$}
+		\For{\textbf{each} $edge$ \textbf{in} $face$}
+			\State Voxelize edge($edge$, $voxelMap$)
+		\EndFor
+		\State \Return{$configuration$}
+	\EndFunction
+	\\
+	\Function{Voxelize edge}{$edge$, $voxelMap$}
+	\EndFunction
+\end{algorithmic}
+\end{algorithm}

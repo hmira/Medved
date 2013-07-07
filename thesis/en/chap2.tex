@@ -19,6 +19,7 @@ of any simplex in $DT(P)$. For better imagination, in case of $2$-dimensional sp
 structure is inside the circumcircle of any triangle of resulting structure.
 
 \subsection{Marching cubes}
+\label{sub:march}
 
 Marching cubes algorithm converts from a grid representation to a mesh. It iterates through
 all grid elements and build a new polygonial mesh. For an each element (can be considered as \emph{cube}.
@@ -65,10 +66,11 @@ a distance from point to surface. In that case, placing or any other processing 
 the face is based on linear interpolation corner values.\\
 \\
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[scale=0.35]{../img/marc_cub_inter.eps}
 \label{fig:mc_interpolation}
+\caption{Interpolated position of face}
 \end{figure}
 
 Let $v1$ and $v2$ be the values that represents a distance from a surface to the corner.
@@ -83,6 +85,7 @@ u = \frac{v1}{v1-v2}
 %hand, algorithm needs standard operations for creating faces and vertices of mesh.
 
 \subsection{Voxelization}
+\label{sub:vox}
 
 In 2D, known as \emph{rasterization}. The algorithm that constructs an initially empty 3D grid and fill 
 the
