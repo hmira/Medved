@@ -13,6 +13,8 @@ thesis.ps: thesis.dvi
 # LaTeX je potreba spustit dvakrat, aby spravne spocital odkazy
 thesis.dvi: thesis.tex $(wildcard *.tex)
 	cslatex $<
+	bibtex thesis.aux
+	cslatex $<
 	cslatex $<
 
 clean:
