@@ -1,0 +1,29 @@
+\chapter{Hmira library}
+
+The library is written in C++ using the standard \emph{C++11}\cite{Naugler2013}. However the features
+for metaprogramming are not yet as advanced as the ones from \emph{Boost}\cite{Abrahams2004} we
+use Boost library, especially Boost Metaprogramming Library and Boost Preprocessor for
+metaprogramming purposes.
+
+\section{Designing the concept}
+
+The important part of the generic library is the concept - the set of requirements for a template
+used as parameter. After the concept is satisfied, code can be built.\\
+\\
+Concept consists of axioms and constraints\cite{Sutton2012}. Constraints are statically evaluable
+predicates on the properties. Axioms are the requirements on the types that can not be statically
+evaluated.
+
+\section{C++11}
+
+The standard \emph{C++11} comes with new features such as lambda functions, static assertions or other
+features that help us to pre-evaluate available constants during the compile-time.\\
+\\
+In C++11, there is the header \textsc{\textless type\_traits\textgreater} that defines
+a series of classes to obtain information during the compile-time.
+
+\section{Boost}
+
+Boost have a metaprogramming framework \textsc{boost::mpl}. During the compile-time, it is
+capable of evaluation logic or arithmetic expressions. Combinated with \textsc{std::enable\_if}
+or static assertion it can determine which function will be compiled and which not.

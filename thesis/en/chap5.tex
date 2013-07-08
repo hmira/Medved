@@ -95,10 +95,17 @@ the edges, the faces and finally fills the object.
 		\For{\textbf{each} $edge$ \textbf{in} $face$}
 			\State Voxelize edge($edge$, $voxelMap$)
 		\EndFor
-		\State \Return{$configuration$}
+		\State Run Face Floodfill($face$, $voxel map$)
+		\State{\textbf{update} $voxelMap$}
 	\EndFunction
 	\\
 	\Function{Voxelize edge}{$edge$, $voxelMap$}
+		\State $v_{0}$ = First Vertex($edge$)
+		\State $v_{1}$ = Second Vertex($edge$)
+		\For{\textbf{each} $voxel$ \textbf{between} $v_{0}$ \textbf{and} $v_{1}$}
+			\State Set As Filled($voxel$)
+		\EndFor
+		\State{\textbf{update} $voxelMap$}
 	\EndFunction
 \end{algorithmic}
 \end{algorithm}

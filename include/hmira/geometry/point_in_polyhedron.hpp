@@ -7,6 +7,7 @@
 
 #include <hmira/range/faces.hpp>
 #include <hmira/geometry/line_on_plane_projection.hpp>
+#include <hmira/geometry/ray_face_intersection.hpp>
 
 #include <hmira/preprocessor/debug_mode.hpp>
 
@@ -122,7 +123,7 @@ namespace geometry
 		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : ---------------------------------" )
 		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : the number of intersections with" )
 		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : object and the line led from the" )
-		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : given point: ", tested_point ", in direction: ", tested_direction )
+		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : given point: ", tested_point ,", in direction: ", tested_direction )
 		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : is ", number_of_intersects ," in total" )
 		H_DEBUG_STDERR( "[POINT CLASSIFICATION] : ---------------------------------" )
 		

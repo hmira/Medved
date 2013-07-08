@@ -89,9 +89,10 @@ u = \frac{v1}{v1-v2}
 
 In 2D, known as \emph{rasterization}. The algorithm that constructs an initially empty 3D grid and fill 
 the
-grid elements that indicates whether the element is inside the object. There is a several techniques
+grid elements that indicates whether the element is inside the object\cite{Cohen-Or1995}. There is a several techniques
 to represent a boundary element. The simpliest one is to set the boundary element as completely filled, 
-thus we have a voxel map of values $0$ and $1$.\\
+thus we have a voxel map of values $0$ and $1$. The other ones stores in voxels additional
+information that form alias-free voxelized object. \cite{Wang1993}\\
 
 Algorithm can be divided to two phases: The first phase voxelizes the faces of triangle mesh and the
 second one fill the created object. Admittedly, before the filling the object algorithm has to check,
