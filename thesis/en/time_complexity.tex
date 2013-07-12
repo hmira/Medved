@@ -1,0 +1,67 @@
+\chapter{Computational complexity}
+
+In this chapter is described the impact on the computational complexity by choice of the mesh
+representation. We will also define the limits for those we consider the operation
+as \emph{effective} or \emph{ineffective}. Later in the thesis, if the operation is
+marked as effective it must fulfill the defined criteria. If the mesh representation
+does not contain an operation that satisfies the criteria for complexity then
+the representation does not natively support the operation.
+
+\section{Effective vs. Ineffective}
+
+The efficiency is a relative expression so that we need to define what is effective.
+If the operation does query on the local topology only then the scanning the whole structure
+are considered in this case as ineffective. The acceptable complexity is the complexity
+of scanning the immediate surroundings.\\
+
+\textbf{Example:}\\
+Getting all adjacent verticies of a vertex in the face-vertex representation. \ref{sec:face-vertex}\\
+
+\textbf{Analysis:}\\
+However the structure does not possess information about vertex adjacency
+we can acquire the demanded information by scanning the topology of the mesh.
+As we do not have any auxiliary structure the information can be acquired only by
+scanning the whole structure. Thus the only way how to solve this problem
+is for each face check whether the vertex is contained in the face. Then the
+previous and the next vertex from the view of the demanded vertex are the ones
+that forms the edges in the mesh.\\
+
+\textbf{Conclusion:}\\
+The computation complexity of the operation can be computed intuitively:
+For \emph{each face} we need to check whether the demanded vertex is contained in the
+face so we need to check \emph{each vertex in the face} and if the vertex is contained
+we are able get an adjacent vertex in constant time.\\
+\\
+Thus the computational complexity of the operation
+is $\mathcal{O}(F_{mesh} \times V_{face})$ in total.
+However getting the adjacent vertices is the operation querying the surroundings only
+the complexity of the operation on the face-vertex structure is above the effective limit.\\
+\\
+The limits for the operation are defined in the following paragraph.
+
+\section{Limits}
+
+For each operation mentioned in \ref{chap:op_al} has to be defined the specific limit
+of effectiveness. Before we specify the limits, we classify the operations in two categories:
+
+\begin{itemize}
+\item \emph{Global operation} - the operation that can not be done without any information
+about entire structure
+\item \emph{Local operation} - the operation that involves only the specific part of the mesh
+without querying the rest of elements in the structure
+\end{itemize}
+
+\begin{figure}[!hbf]
+
+\centering
+\begin{tabular}{| c | c | c | c |}
+\hline
+\textbf{Name of the operation} & \textbf{Complexity} & \textbf{Amortized complexity} & \textbf{local/global}\\
+\hline
+Truncate & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
+\hline
+Bevel & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
+\hline
+\end{tabular}
+
+\end{figure}

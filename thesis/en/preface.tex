@@ -2,8 +2,8 @@
 \addcontentsline{toc}{chapter}{Introduction}
 
 As written in abstract, several libraries for 3D polygonal meshes manipulation exist.
-Each of them has proper or imported implementation of mesh. But what if we want to use
-a more sophisticated mesh implementation in one of them? We have two options: build
+Each of them has already implemented or imported implementation of mesh. But what if we want to use
+a different mesh implementation in one of them? We have two options: build
 the algorithm from beginning on our mesh or forcely import our mesh implementation into
 the implementation of a algorithm, which can be in cases of incompatibile basic operations
 used in algorithm impossible.\\
@@ -18,24 +18,6 @@ make us capable of write most of known algorithms over polygonal mesh.\\
 This thesis focuses on the fact that most of implemented algorithms implement the
 same concept of polygonal mesh. We analyze the representative set of algorithms that
 supports this statement and provide a solution that utilizes the observed facts.
-
-\section{Generic programming}
-
-In C++, we are able to use the programming technique that allow us to write in terms
-\emph{to-be-specified-later} by using a templates. Thus we are able to write an algorithm
-without knowing the closer specification of instantiated type. The only information we have
-to know if the type used as parameter contains properties that are demanded in implementation.\\
-\\
-Template metaprogramming technique gives us an options to determine at compile time whether
-a structure used as parameter contains required properties. Moreover, using this technique,
-we are able to expose implemented operations in the structure and generate a temporary source
-code based on the structure which is later merged with the rest of the source code.\\
-\\
-In this thesis is shown how we can analyze an implementation of mesh during the compile time.
-Therefore we are able to determine whether it satisfies the concept of the implementation of
-an algorithm. Based on other operations that is contained in structure, we can temporarily build a new
-operation that is not generally supported by the structure. Despite the risk of inefficiences in
-the resulting operation, we can use the algorithms that requires the generated operation.
 
 \section{Algorithm decomposition}
 
@@ -55,3 +37,21 @@ are user able to understand the technique for using the library.\\
 The secondary goal is to design the library in terms \emph{easy-to-expand}. In the other words,
 whenever a new algorithm will be published, one can create the implementation inspired
 by the implementations of other algorithms in the library.
+
+\section{Generic programming}
+
+In C++, we are able to use the programming technique that allow us to write in terms
+\emph{to-be-specified-later} by using a templates. Thus we are able to write an algorithm
+without knowing the closer specification of instantiated type. The only information we have
+to know if the type used as parameter contains properties that are demanded in implementation.\\
+\\
+Template metaprogramming technique gives us an options to determine at compile time whether
+a structure used as parameter contains required properties. Moreover, using this technique,
+we are able to expose implemented operations in the structure and generate a temporary source
+code based on the structure which is later merged with the rest of the source code.\\
+\\
+In this thesis is shown how we can analyze an implementation of mesh during the compile time.
+Therefore we are able to determine whether it satisfies the concept of the implementation of
+an algorithm. Based on other operations that is contained in structure, we can temporarily build a new
+operation that is not generally supported by the structure. Despite the risk of inefficiences in
+the resulting operation, we can use the algorithms that requires the generated operation.

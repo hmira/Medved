@@ -47,8 +47,17 @@ surface_{f(x,y,z)} =
 \end{split}
 \end{equation}
 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1]{../img/implicit_surface.eps}
+\label{fig:implicit}
+\caption{Implicit surface given by function $f(x,y,z) = \frac{1}{2}x^{2} + 3y^{2} + z^{2} = 1$}
+\end{figure}
+
+
 This representation has several advantages such as efficient checking whether a point is either
 inside or outside or efficient finding a intersection with geometric primitives.
+
 
 \subsection{Constructive solid geometry}
 
@@ -100,6 +109,7 @@ representations in impossible to query the adjacent vertices of a vertex without
 entire container of vertices or faces.
 
 \subsection{Face-vertex mesh}
+\label{sec:face-vertex}
 
 The simpliest representation that contains any information about topology of the polygonal
 mesh. A mesh is represented by a container of vertices and the container of sets of vertices that

@@ -14,15 +14,16 @@ used in algorithm.
 
 \section{Observation}
 
-Same as algorithms, adaptors have specific requirements to be created. From this point of view,
-we can state that an adaptor has a capability to substitute a point of the concept with
-the other ones that are required for the adaptor.\\
+Same as algorithms, adapters have specific requirements to be created. From this point of view,
+we can state that an adapter has a capability to substitute a point of the concept with
+the other ones that are required for the adapter.\\
 \\
 That statement is supported in following paragraphs.
 
-\section{Get-adjacent-vertex-of-vertex adaptor}
+\section{Get-adjacent-vertex-of-vertex adapter}
 
-If the polygonal mesh is not in edge-based representation then the mesh can not natively (?TODO ASK HONZA)
+If the polygonal mesh is not representation that contains direct information about adjacency of two
+vertices then the mesh can not effectively 
 get the adjacent vertices from a given vertex. Obviously, no algorithm that contains query for
 adjacent vertices of a vertex can not be working over such a structure.\\
 \\
@@ -30,7 +31,7 @@ However, using the brute-force, we can determine which ones from vertices are in
 the queried vertex. In the other words, demanded vertices can be acquired after checking all
 faces that contain the queried vertex.
 
-\subsection{Concept of the adaptor}
+\subsection{Concept of the adapter}
 
 Assuming the structure is non-edge-based, we add an assumption that the structure is face-based
 so it supports the face structure that provides information about contained vertices in correct

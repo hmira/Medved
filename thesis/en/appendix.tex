@@ -1,0 +1,118 @@
+\begin{appendices}
+
+\chapter{Running the implemented examples}
+
+The library has been developed on the OS \emph{Ubuntu 12.10} using compiler \texttt{g++ 4.7}.
+
+\lstset { %
+belowcaptionskip=1\baselineskip,
+breaklines=true,
+language=C++,
+showstringspaces=false,
+basicstyle=\footnotesize\ttfamily,
+keywordstyle=\bfseries\color{green!40!black},
+commentstyle=\itshape\color{purple!40!black},
+identifierstyle=\color{blue},
+stringstyle=\color{orange},
+backgroundcolor=\color{black!5}
+}
+
+%\begin{lstlisting}
+%for (int i=0; i<iterations; i++)
+%{
+%	do something
+%}
+%\end{lstlisting}
+
+\section{Installation}
+
+\begin{lstlisting}
+git clone https://github.com/hmira/Medved.git
+\end{lstlisting}
+
+\begin{lstlisting}
+mkdir build
+cd build/
+\end{lstlisting}
+
+\begin{lstlisting}
+cmake ..
+\end{lstlisting}
+
+\begin{lstlisting}
+make [custom executable]
+\end{lstlisting}
+
+\section{Running}
+
+By running a command
+
+\begin{lstlisting}
+./test/[custom executable] --help
+\end{lstlisting}
+the program prints a message that specifies the required parameters to run.
+
+\chapter{Templating by a custom polygon mesh}
+
+To make the library working, we must build a proper traits in order to let the library recognize
+the required operations.\\
+\\
+Depending on the demanding algorithm, we must create the traits that satisfies the concept
+of the algorithm. If the concept is not fulfilled the compiler throws an error.\\
+
+\textbf{Example:}
+
+\begin{lstlisting}
+template <typename my_mesh>
+class my_mesh_implementation_traits<my_mesh>
+{
+public:
+	typedef typename my_mesh::point point;
+	typedef typename my_mesh::normal normal;
+
+	typedef typename my_mesh::vertex_descriptor vertex_descriptor;
+	typedef typename my_mesh::vertex_iterator vertex_iterator;
+
+	typedef typename my_mesh::edge_descriptor edge_descriptor;
+	typedef typename my_mesh::edge_iterator edge_iterator;
+
+	typedef typename my_mesh::face_descriptor face_descriptor;
+	typedef typename my_mesh::face_iterator face_iterator;
+
+	typedef typename my_mesh::fv_iterator fv_iterator;
+	typedef typename my_mesh::vv_iterator vv_iterator;
+	typedef typename my_mesh::ve_iterator ve_iterator;
+	
+	inline static bool add_vertex(
+				  vertex_descriptor a,
+		  	  	  my_mesh& m)
+	{
+		m.my_add_vertex(a);
+		return true;
+	}		
+	
+	inline static bool create_face(
+				  vertex_descriptor a,
+				  vertex_descriptor b,
+				  vertex_descriptor c,
+		  	  	  my_mesh& m)
+	{
+		m.my_make_face(a,b,c);
+		return true;
+	}
+}
+\end{lstlisting}
+
+From here, we have a traits that is capable of generating a cube.
+
+\begin{lstlisting}
+int main()
+{
+	typedef typename my_mesh_implementation_traits<my_mesh> traits;
+	auto cube = generate_cube<my_mesh, traits>();
+}
+\end{lstlisting}
+
+\chapter{Expansion of the library}
+
+\end{appendices}

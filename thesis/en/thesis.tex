@@ -40,6 +40,9 @@
 \usepackage{algorithm}
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
+\usepackage[toc,page]{appendix}
+\usepackage{xcolor}
+\usepackage{listings}
 
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,
 %% ale hlavně ho používáme k uložení metadat do PDF (včetně obsahu).
@@ -247,11 +250,14 @@ Keywords:
 \include{chap2}
 \part{Analysis}
 \include{chap3}
+\include{time_complexity}
 \include{chap4}
 \include{chap5}
 \include{chap6}
 \part{Implementation}
 \include{chap7}
+\include{chap8}
+\include{chap9}
 
 % Ukázka použití některých konstrukcí LateXu (odkomentujte, chcete-li)
 % \include{example}
@@ -260,6 +266,7 @@ Keywords:
 
 %%% Seznam použité literatury
 \include{bibliography}
+\include{appendix}
 
 %%% Tabulky v bakalářské práci, existují-li.
 \chapwithtoc{List of Tables}
