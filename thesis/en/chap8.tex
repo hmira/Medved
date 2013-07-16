@@ -1,1 +1,37 @@
 \chapter{Concepts}
+
+The example in the previous chapter\ref{chap:traits} shows that the implemented algorithm
+is not be working if the class that is used as traits misses any of the methods or parameters
+used in the algorithm. In order to be certain, the error is raised during the compile time.\\
+\\
+The set of all parameters and method required by the algorithm is called \emph{concept}.
+The concept specifies what must be obtained in the traits to let the algorithm work correctly.
+In this chapter is explained the purposes of specifying the concept of the algorithm and the
+possible methods to let the compiler check the concept.\\
+\\
+Summarized from the code\ref{code:traits} of the example, we can see that the required
+paramters and methods are as follows:
+
+\begin{lstlisting}
+	//parameters
+	typename Traits::Point
+	typename Traits::Vertex
+	typename Traits::Face
+	
+	//methods
+	Traits::Face create_face(
+		Traits::Mesh& m,
+		Traits::Vertex a,
+		Traits::Vertex b,
+		Traits::Vertex c,
+		Traits::Vertex d);
+
+	bool add_vertex(
+		Traits::Mesh& m,
+		Traits::Vertex a);
+\end{lstlisting}
+In addition, the type \texttt{Vertex} must be constructible from the type \texttt{Point}.
+and the type \texttt{Point} must be constructible from the triplet of \texttt{float}.
+As the syntax of C++ does not distinguish the constructor and \texttt{operator()} the
+user does not have to overload the constructor; the wrapper for the class with an
+operator is sufficient.

@@ -4,7 +4,147 @@
 
 Our aim in this chapter is to describe algorithms over 3D data structures. In each description of
 algorithm there is a short paragraph that summarizes required operations for running the algorithm.
-It is later used in hierarchical implementation of the algorithms.
+It is later used in hierarchical implementation of the algorithms.\\
+\\
+The article\cite{Grunbaum2007} proves that the mesh representation of a hole-free solid object can be
+treated as planar graph and a polygon mesh as general unoriented graph. Therefore we can generalize the
+editing functions over polygon meshes as the operation over the graphs.\\
+
+\section{Euler operators}
+\label{sec:euler}
+
+The \emph{Euler operators} are the set of operators to create a polygon meshes. One of the advantages
+of this operators is that they are invertible. In following description paragraphs,
+each operator is followed by its inverted operator.
+
+\subsection{Make Vertex}
+
+The operation creates a vertex with no topological dependencies. It can be used
+either on empty mesh or mesh with already created topology.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.25]{../img/makeV.eps}
+\label{fig:makev}
+\caption{Euler operator makeV}
+\end{figure}
+
+\subsection{Kill Vertex}
+
+The operation removes a vertex that is required to be not contained in faces or
+edges.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.25]{../img/killV.eps}
+\label{fig:killv}
+\caption{Euler operator killV}
+\end{figure}
+
+
+\subsection{Make Vertex and Edge}
+
+Creates a vertex and connects it with an another vertex that is already
+contained in the mesh.
+
+\begin{figure}[h]
+\centering
+\includegraphics[scale=0.25]{../img/makeEV.eps}
+\label{fig:makeev}
+\caption{Euler operator makeEV}
+\end{figure}
+
+\subsection{Kill Vertex and Edge}
+
+Removes a vertex and disposes the edge that is connected to the vertex.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.25]{../img/killEV.eps}
+\label{fig:killev}
+\caption{Euler operator killEV}
+\end{figure}
+
+\subsection{Make Edge and Face}
+
+Creates an edge and creates a new face by splitting another one or by forming a new
+face.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.25]{../img/makeEF.eps}
+\label{fig:makeef}
+\caption{Euler operator makeEF}
+\end{figure}
+
+\subsection{Kill Edge and Face}
+
+Removes an edge and face that is connected to the edge.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.25]{../img/killEF.eps}
+\label{fig:killef}
+\caption{Euler operator killEF}
+\end{figure}
+
+\subsection{Make Face and Kill Ring}
+
+Creates a face by disposing a ring using a new edge.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.25]{../img/makeFkillR.eps}
+\label{fig:makefkillr}
+\caption{Euler operator makeFkillR}
+\end{figure}
+
+\subsection{Kill Face and Make Ring}
+
+Creates a ring by disposing a face.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.25]{../img/killFmakeR.eps}
+\label{fig:killfmaker}
+\caption{Euler operator killFmakeR}
+\end{figure}
+
+
+\section{Editing functions}
+
+Some functions are designed to changing size or shape of the object. Those functions are called 
+\emph{editing function}.
+During the editation of the object, user defines required values and the function deforms the
+object properly. In case of the editing function \emph{scaling} for instance, a user defines the scaling
+ratio.
+
+\subsection{Truncate}
+
+Truncate is the operation that affects a topology of mesh. From a given vertex it creates a new face with
+surroundings of the original vertex. This is a common operation of mesh editation used e.g. in
+3D editors.\\
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.2]{../img/truncate.eps}
+\caption{The red-marked vertex is a selected vertex to be truncated.
+The face filled by orange color with red borders is the resulting face created by truncation}
+\end{figure}
+
+\subsection{Bevel}
+
+This operation is almost identical with \emph{truncation}. The only difference is the argument of the
+operation. As the truncate operation creates a new face based on the given vertex, the bevel operation
+creates the face from a given edge.\\
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.2]{../img/bevel.eps}
+\caption{The red-marked edge is a selected edge to be beveled. As in the previous case, the resulting
+face is filled by orange color.}
+\end{figure}
+
 
 \section{Converting between representations}
 
@@ -51,6 +191,7 @@ or reflective simmetry or sign changed case.\\
 \includegraphics[scale=0.15]{../img/mar_cub_case13.eps}
 \hspace{3mm}
 \includegraphics[scale=0.15]{../img/mar_cub_case14.eps}
+
 \caption{The 15 cases of marching cubes algorithm. The corners that are evaluated as inside of the object
 are labeled with red. The yellow triangles represent faces to be added to mesh.}
 \label{fig:mc_cases}
@@ -129,44 +270,3 @@ determine whether the given voxel is inside or outside the object. As described 
 starting with line outside the enclosed area gives us the right method. Also in this case the
 bounding box will be needed. If the object cannot be wrapped the inside/outside property of element can 
 not be determined.
-
-\section{Editing functions}
-
-Some functions are designed to changing size or shape of the object. Those functions are called 
-\emph{editing function}.
-During the editation of the object, user defines required values and the function deforms the
-object properly. In case of the editing function \emph{scaling} for instance, a user defines the scaling
-ratio.
-
-\subsection{Truncate}
-
-Truncate is the operation that affects a topology of mesh. From a given vertex it creates a new face with
-surroundings of the original vertex. This is a common operation of mesh editation used e.g. in
-3D editors.\\
-
-\begin{figure}[ht]
-\centering
-\includegraphics[scale=0.2]{../img/truncate.eps}
-\caption{The red-marked vertex is a selected vertex to be truncated.
-The face filled by orange color with red borders is the resulting face created by truncation}
-\end{figure}
-
-%This algorithm requires the capability of mesh to query the surrounding vertices of given vertex and
-%adding the vertices and faces to the mesh.
-
-\subsection{Bevel}
-
-This operation is almost identical with \emph{truncation}. The only difference is the argument of the
-operation. As the truncate operation creates a new face based on the given vertex, the bevel operation
-creates the face from a given edge.\\
-
-\begin{figure}[ht]
-\centering
-\includegraphics[scale=0.2]{../img/bevel.eps}
-\caption{The red-marked edge is a selected edge to be beveled. As in the previous case, the resulting
-face is filled by orange color.}
-\end{figure}
-
-%This algorithm has the same requirements as the truncate. In addition it requires the capability of
-%querying to surrounding vertices of given edge.
-

@@ -50,7 +50,6 @@ vertex-edge mesh. Finally, let us summarize what \emph{attributes} are required 
 
 \begin{itemize}
 \item faces of a mesh
-%\item normal of a face
 \end{itemize}
 
 Now when we have the required attributes, we need to specify which \emph{operations} are required.
@@ -66,7 +65,7 @@ What if the structure does not have a method that flips the normal of a face?\\
 After all, the algorithm can be build without providing a method that flips a normal;
 it can flip the normal of a face by itself.
 There are two possible approaches of solving this question. The first: create separately
-next algorithm with different requirements. The second: build an \emph{adaptor} that
+next algorithm with different requirements. The second: build an \emph{adapter} that
 has the same functionality as required method that flips normals and use it as method
 in the algorithm described above instead required method.\\
 
@@ -80,7 +79,7 @@ In order to reverse the normal of a face manually, it is required:
 \end{itemize}
 
 It is up to us how we design the algorithms and the level of implementation. As more sophisticated
-the adaptors are than more cases of mesh implementation can be covered. If the compiler does not
-find the require methods and is able to build an adaptor then does not bother the user and build
-a modified method. Naturally, adaptor may have own requirements therefore we can assume that
+the adapters are than more cases of mesh implementation can be covered. If the compiler does not
+find the require methods and is able to build an adapter then does not bother the user and build
+a modified method. Naturally, adapter may have own requirements therefore we can assume that
 some point of concepts can be replaced with different ones.
