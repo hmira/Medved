@@ -32,6 +32,33 @@ paramters and methods are as follows:
 \end{lstlisting}
 In addition, the type \texttt{Vertex} must be constructible from the type \texttt{Point}.
 and the type \texttt{Point} must be constructible from the triplet of \texttt{float}.
-As the syntax of C++ does not distinguish the constructor and \texttt{operator()} the
-user does not have to overload the constructor; the wrapper for the class with an
-operator is sufficient.
+From this point there are two approaches to create a class that fullfills the requirement
+for the constructor assuming the class does not support it by default.
+The first, to create an inherited class with modified constructor. The second,
+to build a templated wrapper that uses a class as a parameter.
+\label{code:constr1}
+\begin{lstlisting}
+	//building a vertex type
+	//using inheriting class
+	class Vertex1 : public MyVertex
+	{
+	public:
+		Vertex1( MyPoint& p )
+		{
+			this->coordinates = p;
+		}
+	};
+	//building a vertex type
+	//using a wrapper class
+	template <typename TVertex, typename TPoint>
+	class Vertex2 : public TVertex
+	{
+	public:
+		Vertex2( TPoint& p )
+		{
+			this->coordinates = p;
+		}
+	}
+\end{lstlisting}
+In the code\ref{code:constr1} is written an example with an assumption that the class \texttt{MyVertex}
+contains a member \texttt{coordinates}.

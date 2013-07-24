@@ -48,36 +48,141 @@ of effectiveness. Before we specify the limits, we classify the operations in tw
 \item \emph{Global operation} - the operation that can not be done without any information
 about entire structure
 \item \emph{Local operation} - the operation that involves only the specific part of the mesh
-without querying the rest of elements in the structure
+with no demans on the rest of elements in the structure
 \end{itemize}
+In the following analysis are involved operations that adds/removes an element(vertex, edge, face),
+Euler operators\ref{sec:euler}, advanced editing functions\ref{sec:edit_f},
+the getters on the surroundings of an element and the getters
+on the entire structure(e.g. getting all vertices).
 
 \begin{figure}[!hbf]
 
 \centering
+\textbf{Add/remove primitives}\\
+\label{fig:comp_prim}
+\vspace{2mm}
 \begin{tabular}{| c | c | c | c |}
 \hline
-\textbf{Name of the operation} & \textbf{Complexity} & \textbf{Amortized complexity} & \textbf{local/global}\\
+\textbf{Name of the operation} & \textbf{Allowed complexity} & \textbf{local/global}\\
 \hline
-MakeV & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
+Add vertex & $\mathcal{O}(V_{1})$ & \emph{local}\\
 \hline
-KillV & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
+Remove vertex & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
-MakeEV & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
+Create edge from vertices& $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
-KillEV & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
+Remove edge & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
-MakeEF & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
+Create face from vertices& $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
-KillEF & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
-\hline
-MakeFkillR & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
-\hline
-KillFmakeR & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
-\hline
-Truncate & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
-\hline
-Bevel & $\mathcal{O}(V_{adjacent})$ & $\mathcal{O}$ & \emph{local}\\
+Remove face & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
 \end{tabular}
-
 \end{figure}
+In the table above are shown basic operations over mesh structure. The allowed
+computational complexity is based on the number of adjacent vertices of the vertex involved
+in the operation. In case of the operation that involves more vertices the number $V_{adjacentV}$
+represents the sum of all adjacent verticies of all verticies involved in the operation.
+E.g. in case of the operation \emph{Create face from vertices} if the operation creates a
+face from the triplet of vertices the computational complexity is $3 \times V_{adjacentV}$.
+
+\begin{figure}[!hbf]
+
+\centering
+\textbf{Euler operators}\\
+\vspace{2mm}
+\begin{tabular}{| c | c | c | c |}
+\hline
+\textbf{Name of the operation} & \textbf{Allowed complexity} & \textbf{local/global}\\
+\hline
+MakeV & $\mathcal{O}(V_{1})$ & \emph{local}\\
+\hline
+KillV & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+MakeEV & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+KillEV & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+MakeEF & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+KillEF & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+MakeFkillR & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+KillFmakeR & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+\end{tabular}
+\end{figure}
+The table above shows the allowed complexity of the Euler operators on any mesh structure.
+
+\begin{figure}[!hbf]
+
+\centering
+\textbf{Editing functions}\\
+\vspace{2mm}
+\begin{tabular}{| c | c | c | c |}
+\hline
+\textbf{Name of the operation} & \textbf{Allowed complexity} & \textbf{local/global}\\
+\hline
+Truncate & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+Bevel & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+Extrude & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+\end{tabular}
+\end{figure}
+Despite to the fact the operations listed in the table above can be created using the
+Euler operations a mesh may have own, faster and optimized implementation of the operation.
+
+\begin{figure}[!hbf]
+
+\centering
+\textbf{Getters (surroundings)}\\
+\vspace{2mm}
+\begin{tabular}{| c | c | c | c |}
+\hline
+\textbf{Name of the operation} & \textbf{Allowed complexity} & \textbf{local/global}\\
+\hline
+Get adjacent vertices of the vertex& $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+\hline
+Get adjacent edges of the vertex& $\mathcal{O}(E_{adjacentV})$ & \emph{local}\\
+\hline
+Get adjacent faces of the vertex& $\mathcal{O}(F_{adjacentV})$ & \emph{local}\\
+\hline
+Get vertices of the edge& $\mathcal{O}(V_{consistE})$ & \emph{local}\\
+\hline
+Get faces that the edge splits& $\mathcal{O}(F_{adjacentE})$ & \emph{local}\\
+\hline
+Get vertices of the face& $\mathcal{O}(V_{consistF})$ & \emph{local}\\
+\hline
+Get edges of the face& $\mathcal{O}(E_{consistF})$ & \emph{local}\\
+\hline
+Get adjacent faces of the face& $\mathcal{O}(F_{adjacentF})$ & \emph{local}\\
+\hline
+\end{tabular}
+\end{figure}
+The operations listed above does not affect the mesh; only information about the
+structure is acquired. The allowed complexity does not permit scanning the entire structure.
+The operations cover operations that determines whether two elements are adjacent.
+E.g. the operation \emph{determine whether two vertices are adjacent} is covered by the
+operation \emph{Get adjacent vertices of the vertex}.
+
+\begin{figure}[!hbf]
+\centering
+\textbf{Getters (surroundings)}\\
+\vspace{2mm}
+\begin{tabular}{| c | c | c | c |}
+\hline
+\textbf{Name of the operation} & \textbf{Allowed complexity} & \textbf{local/global}\\
+\hline
+Get all vertices & $\mathcal{O}(V_{all})$ & \emph{global}\\
+\hline
+Get all edges & $\mathcal{O}(E_{all})$ & \emph{global}\\
+\hline
+Get all faces & $\mathcal{O}(F_{all})$ & \emph{global}\\
+\hline
+\end{tabular}
+\end{figure}
+The operation that gets all elements in the structure assumes that all elements are contained
+in specific container that can be scanned in a linear complexity.

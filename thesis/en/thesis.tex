@@ -44,6 +44,8 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{multicol}
+\usepackage{acronym}
+
 
 %% Balíček hyperref, kterým jdou vyrábět klikací odkazy v PDF,
 %% ale hlavně ho používáme k uložení metadat do PDF (včetně obsahu).
@@ -192,11 +194,11 @@ Autor:
 Peter Hmíra
 
 Katedra:  % Případně Ústav:
-Název katedry či ústavu, kde byla práce oficiálně zadána
+Kabinet software a výuky informatiky
 % dle Organizační struktury MFF UK
 
 Vedoucí bakalářské práce:
-Jméno a příjmení s tituly, pracoviště
+Mgr. Jan Kolomazník, Kabinet software a výuky informatiky
 % dle Organizační struktury MFF UK, případně plný název pracoviště mimo MFF UK
 
 Abstrakt:
@@ -213,14 +215,14 @@ Title:
 % přesný překlad názvu práce v angličtině
 
 Author:
-Jméno a příjmení autora
+Peter Hmíra
 
 Department:
-Název katedry či ústavu, kde byla práce oficiálně zadána
+Department of Software and Computer Science Education
 % dle Organizační struktury MFF UK v angličtině
 
 Supervisor:
-Jméno a příjmení s tituly, pracoviště
+Mgr. Jan Kolomazník, Department of Software and Computer Science Education
 % dle Organizační struktury MFF UK, případně plný název pracoviště
 % mimo MFF UK v angličtině
 
@@ -271,15 +273,33 @@ Keywords:
 \include{appendix}
 
 %%% Tabulky v bakalářské práci, existují-li.
-\chapwithtoc{List of Tables}
+%\chapwithtoc{List of Tables}
 
 %%% Použité zkratky v bakalářské práci, existují-li, včetně jejich vysvětlení.
 \chapwithtoc{List of Abbreviations}
 
+\begin{acronym}
+\acro{$V_{adjacentV}$}{Number of adjacent vertices of the vertex}
+\acro{$E_{adjacentV}$}{Number of adjacent edges of the vertex}
+\acro{$F_{adjacentV}$}{Number of adjacent faces of the vertex}
+\acro{$V_{adjacentE}$}{Number of adjacent vertices of the edge}
+\acro{$E_{adjacentE}$}{Number of adjacent edges of the edge}
+\acro{$F_{adjacentE}$}{Number of adjacent faces of the edge}
+\acro{$V_{adjacentF}$}{Number of adjacent vertices of the face}
+\acro{$E_{adjacentF}$}{Number of adjacent edges of the face}
+\acro{$F_{adjacentF}$}{Number of adjacent faces of the face}
+%\acro{$V_{consistE}$}{Number of vertices that forms the edge}
+\acro{$V_{consistF}$}{Number of vertices that forms the face}
+\acro{$E_{consistF}$}{Number of edges that forms the face}
+\acro{$V_{all}$}{Number of vertices contained in entire structure}
+\acro{$E_{all}$}{Number of vertices contained in entire structure}
+\acro{$F_{all}$}{Number of vertices contained in entire structure}
+\end{acronym}
+
 %%% Přílohy k bakalářské práci, existují-li (různé dodatky jako výpisy programů,
 %%% diagramy apod.). Každá příloha musí být alespoň jednou odkazována z vlastního
 %%% textu práce. Přílohy se číslují.
-\chapwithtoc{Attachments}
+%\chapwithtoc{Attachments}
 
 \openright
 \end{document}

@@ -22,20 +22,25 @@ The algorithm has the specific requirements for the mesh and also for the voxel 
 description \ref{sub:march}). However the voxel map can be in various forms some special cases
 of marching cubes are explained.
 
+\algblockdefx[ParallelFor]{ParallelFor}{EndParallelFor}
+[1]{\textbf{parallel for} #1}
+{\textbf{end parallel for}}
+
 \begin{algorithm}[H]
 \caption{Marching cubes}
 \label{alg:mc}
+
 \begin{algorithmic}[1]
 	\Function{Marching cubes}{$voxelMap$}
 			\State $mesh$ := empty mesh
 
-		\For{\textbf{each} $voxel$ \textbf{in} $voxelMap$}
+		\ParallelFor{\textbf{each} $voxel$ \textbf{in} $voxelMap$}
 			\State $cubeType$ := Determine Cube Type($voxel$)
 			\State $faces$ := Create Faces($cubeType$)
 			\For{\textbf{each} $face$ \textbf{in} $faces$}
 				\State Add Face To Mesh($mesh$, $face$)
 			\EndFor
-		\EndFor
+		\EndParallelFor
 		\State \Return{$mesh$}
 	\EndFunction
 	\\
@@ -84,9 +89,9 @@ the edges, the faces and finally fills the object.
 	\Function{Voxelize mesh}{$mesh$}
 			\State $voxelMap$ := map of empty voxels
 
-		\For{\textbf{each} $face$ \textbf{in} $mesh$}
+		\ParallelFor{\textbf{each} $face$ \textbf{in} $mesh$}
 			\State Voxelize face($face$, $voxelMap$)
-		\EndFor
+		\EndParallelFor
 		\State Run Floodfill($voxel map$)
 		\State \Return{$voxel map$}
 	\EndFunction

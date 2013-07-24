@@ -112,7 +112,7 @@ Creates a ring by disposing a face.
 
 
 \section{Editing functions}
-
+\label{sec:edit_f}
 Some functions are designed to changing size or shape of the object. Those functions are called 
 \emph{editing function}.
 During the editation of the object, user defines required values and the function deforms the
@@ -145,6 +145,18 @@ creates the face from a given edge.\\
 face is filled by orange color.}
 \end{figure}
 
+\subsection{Extrude}
+
+In the previous operations the argument is a vertex and then an edge. Intuitively, one can assume
+that there is an operation that demands a face as the argument. Operation \emph{extrude} ``pulls"
+the face out the object creating new faces connecting the extruded face with the resulting object.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.2]{../img/extrude.eps}
+\caption{The red-filled face is a selected face to be extruded. The operation creates a set of
+faces (marked with orange) with the topology as shown on the picture.}
+\end{figure}
 
 \section{Converting between representations}
 

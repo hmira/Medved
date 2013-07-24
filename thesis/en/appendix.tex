@@ -115,4 +115,149 @@ int main()
 
 \chapter{Expansion of the library}
 
+\section{Creating a new concept}
+
+Once we have an algorithm/adapter working, we have to create a concept following the convention
+provided by the library. In the concept it has to be contained the rules required for running the
+algorithm/adaptor.\\
+
+\textbf{Example:}\\
+We have a method that generates a cube
+\label{app:cube}
+\begin{lstlisting}
+template <typename TMesh, typename TMesh_traits>
+bool generate_cube(TMesh& m)
+{
+	typedef typename TMesh_traits::Point Point; //coordinates
+	typedef typename TMesh_traits::Vertex Vertex; //vertex
+	typedef typename TMesh_traits::Face Face; //face type
+	
+	auto a = Vertex(Point(-1,-1,-1));
+	auto b = Vertex(Point(1,-1,-1));
+	auto c = Vertex(Point(1,-1,1));
+	auto d = Vertex(Point(-1,-1,1));
+	auto e = Vertex(Point(-1,1,-1));
+	auto f = Vertex(Point(1,1,-1));
+	auto g = Vertex(Point(1,1,1));
+	auto h = Vertex(Point(-1,1,1));
+	
+	TMesh_traits::add_vertex(m, a);
+	TMesh_traits::add_vertex(m, b);
+	TMesh_traits::add_vertex(m, c);
+	TMesh_traits::add_vertex(m, d);
+	TMesh_traits::add_vertex(m, e);
+	TMesh_traits::add_vertex(m, f);
+	TMesh_traits::add_vertex(m, g);
+	TMesh_traits::add_vertex(m, h);
+
+	TMesh_traits::create_face(m, a, b, c, d);
+	TMesh_traits::create_face(m, b, c, g, f);
+	TMesh_traits::create_face(m, c, g, h, d);
+	TMesh_traits::create_face(m, a, d, h, e);		
+	TMesh_traits::create_face(m, e, f, b, a);		
+	TMesh_traits::create_face(m, h, g, f, e);
+	
+	return true; // the cube has been generated succesfully
+}
+\end{lstlisting}
+Thus the concept appear as follows:
+
+\begin{lstlisting}
+template <class TMesh, class TMesh_Traits>
+struct GenerateCubeConcept
+{
+	typedef typename TMesh_traits::Point Point; //coordinates
+	typedef typename TMesh_traits::Vertex Vertex; //vertex
+	typedef typename TMesh_traits::Face Face; //face type
+
+	TMesh m;
+	Vertex v;
+	float f;
+	Point p;
+
+	void constraints() {
+
+		boost::function_requires<MeshConcept<TMesh, TMesh_Traits> >();
+
+		p = Point(f, f, f);
+		v = Vertex(p);
+		TMesh_traits::add_vertex(m, v);
+		TMesh_traits::create_face(m, v, v, v, v);
+	}
+};
+\end{lstlisting}
+
+After building a concept, we place a concept checker in the implementation
+of the algorithm.
+
+\begin{lstlisting}
+boost::function_requires<GenerateCubeConcept<TMesh, TMesh_Traits> >();
+\end{lstlisting}
+
+\section{Creating a new algorithm}
+
+The algorithm should be created from the elementary operations that are commonly used in the
+library. As more operations that are already used in the other algorithms
+the algorithm uses than the robustness of the library is enhanced. In the other words,
+user should let himself be inspired by the other algorithms so the concepts overlap as a result.
+\\
+\\
+Inspiring from the implementation \ref{app:cube} we can implement an algorithm that generates
+a tetrahedron.
+\begin{lstlisting}
+template <typename TMesh, typename TMesh_traits>
+bool generate_cube(TMesh& m)
+{
+	typedef typename TMesh_traits::Point Point; //coordinates
+	typedef typename TMesh_traits::Vertex Vertex; //vertex
+	typedef typename TMesh_traits::Face Face; //face type
+	
+	auto a = Vertex(Point(0,0,0));
+	auto b = Vertex(Point(0,0,1));
+	auto c = Vertex(Point(0,1,0));
+	auto d = Vertex(Point(1,0,0));
+	
+	TMesh_traits::add_vertex(m, a);
+	TMesh_traits::add_vertex(m, b);
+	TMesh_traits::add_vertex(m, c);
+	TMesh_traits::add_vertex(m, d);
+
+	TMesh_traits::create_face(m, a, b, c);
+	TMesh_traits::create_face(m, d, a, c);
+	TMesh_traits::create_face(m, d, b, a);
+	TMesh_traits::create_face(m, d, c, b);
+	
+	return true; // the tetrahedron has been generated succesfully
+}
+\end{lstlisting}
+
+From here, compared to the implementation\ref{app:cube} that generates a cube, the implementation
+that generates a tetrahedron requires one method to have modified. Thus the concept will be as follows:
+
+\begin{lstlisting}
+template <class TMesh, class TMesh_Traits>
+struct GenerateTetrahedronConcept
+{
+	typedef typename TMesh_traits::Point Point; //coordinates
+	typedef typename TMesh_traits::Vertex Vertex; //vertex
+	typedef typename TMesh_traits::Face Face; //face type
+
+	TMesh m;
+	Vertex v;
+	float f;
+	Point p;
+
+	void constraints() {
+
+		boost::function_requires<MeshConcept<TMesh, TMesh_Traits> >();
+
+		p = Point(f, f, f);
+		v = Vertex(p);
+		TMesh_traits::add_vertex(m, v);
+		TMesh_traits::create_face(m, v, v, v);
+		// 3 vertices instead of 4
+	}
+};
+\end{lstlisting}
+
 \end{appendices}

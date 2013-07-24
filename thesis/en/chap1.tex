@@ -61,7 +61,8 @@ inside or outside or efficient finding a intersection with geometric primitives.
 
 \subsection{Constructive solid geometry}
 
-Known also as \emph{CSG tree}. This technique is used especially in engineering software. It allows
+Known also as \emph{CSG tree}\cite{Zara2004}. This technique is used especially
+in engineering software. It allows
 user to construct objects using \emph{Boolean operators} to combine objects. Objects created using this
 method can be used repeatedly in Boolean operators; resulting object can be decomposited into a tree.
 \\
@@ -77,7 +78,8 @@ algorithms with no need for searching its descendants.
 
 \subsection{Point cloud}
 
-A point cloud is a set of points in three-dimensional coordinate system. The set can form the surface
+A point cloud is a set of points in three-dimensional coordinate system\cite{Agarwal2006}.
+The set can form the surface
 of an object or any other three dimensional figure. Each point is indepedent
 from each other, with no information about its topology. Often they are converted to polygon mesh
 or triangle mesh models.
@@ -113,7 +115,7 @@ entire container of vertices or faces.
 
 The simpliest representation that contains any information about topology of the polygonal
 mesh. A mesh is represented by a container of vertices and the container of sets of vertices that
-forms faces. The face is represented by at least 3 vertices or more vertices that have to be
+forms faces\cite{Zara2004}. The face is represented by at least 3 vertices or more vertices that have to be
 coplanar.\\
 
 \begin{figure}[h]
@@ -151,7 +153,8 @@ depends on the implementation of the mesh.
 
 The representation described above contain no direct information about adjacency of faces. 
 In order to determine the adjacency of any two faces or vertices in constant complexity, we
-can build a structure that requires an extra storage. The winged edge structure provide information
+can build a structure that requires an extra storage. The winged edge structure\cite{Baumgart1972}
+provide information
 that are capable of determination an edges that belong to a vertex, from a given face a set
 of edges that surrounds the face; in case of triangle mesh, it returns the triplet of edges.
 Finally, the name \emph{winged-edge} is due to capabilty to get a face pair (wings) from
