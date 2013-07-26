@@ -203,9 +203,24 @@ Mgr. Jan Kolomazník, Kabinet software a výuky informatiky
 
 Abstrakt:
 % abstrakt v rozsahu 80-200 slov; nejedná se však o opis zadání bakalářské práce
+Táto bakalárska práca analyzuje algoritmy, ktoré pracujú s objemovými datami, najmä s
+trojuholníkovou či polygonálnou sieťou. Výsledky analýzy sú premietnuté v
+návrhu generickej knižnice, ktorá prijíma ľubovolnú implementáciu mesh-u,
+ktorá spĺňa požiadavky knižnice. Samotná knižnica je napísaná v jazyku C++
+využívajúc normu C++11 s pomocou knižnice \texttt{boost}. Výber jazyka je
+oddôvodnený predovšetkým tým, že dôraz sa kladie hlavne na \emph{run-time}
+rýchlosť a tým, že C++ nám prináša možnosti analyzovať dátove typy už počas
+prekladu programu. Ďalej je v práci popísaná samotná implementácia knižnice,
+použitie algoritmov a ich konceptov, zmysel adaptérov - nástrojov, ktoré
+umožňujú chod algoritmov nad takými implementáciami polygonálnych sietí,
+ktoré nie sú pre ne vhodne navrhnuté. Technika, akou je táto práca písaná
+môže byť naďalej uplatňovaná vo vývoji knižnice, teda v pridávaní ďaľších algoritmov
+do knižnice.
+
 
 Klíčová slova:
 % 3 až 5 klíčových slov
+polygonálny mesh, generické programovanie, algoritmy
 
 \vss}\nobreak\vbox to 0.49\vsize{
 \setlength\parindent{0mm}
@@ -229,9 +244,36 @@ Mgr. Jan Kolomazník, Department of Software and Computer Science Education
 Abstract:
 % abstrakt v rozsahu 80-200 slov v angličtině; nejedná se však o překlad
 % zadání bakalářské práce
+This bachelor thesis analyses algorithms working with the volume data, especially
+the triangle or polygon mesh. The results of the analysis are applied in the
+design of the generic library which can be templated with any implementation
+of mesh satisfying requirements of the library. The library is written in C++
+using the norm C++11 with assistance of the \texttt{boost} library. The choice of the
+programming language is supported by the strong emphasis on the run-time performance
+as well as the capabilities of C++ to analyze a templated code during the compile-time.
+Later in thesis is described the implemenation of the library, usage of the algorithms
+and their concepts, the purpose of the adapters - tools that allow to run algorithms
+over such an implementation of the mesh that is not properly designed for the algorithm.
+The technique used in the development of this library can be later applied in the library
+developement, thus adding new algorithms to the library.
+%
+%Táto bakalárska práca analyzuje algoritmy, ktoré pracujú s objemovými datami, najmä s
+%trojuholníkovou či polygonálnou sieťou. Výsledky analýzy sú premietnuté v
+%návrhu generickej knižnice, ktorá prijíma ľubovolnú implementáciu mesh-u,
+%ktorá spĺňa požiadavky knižnice. Samotná knižnica je napísaná v jazyku C++
+%využívajúc normu C++11 s pomocou knižnice \texttt{boost}. Výber jazyka je
+%oddôvodnený predovšetkým tým, že dôraz sa kladie hlavne na \emph{run-time}
+%rýchlosť a tým, že C++ nám prináša možnosti analyzovať dátove typy už počas
+%prekladu programu. Ďalej je v práci popísaná samotná implementácia knižnice,
+%použitie algoritmov a ich konceptov, zmysel adaptérov - nástrojov, ktoré
+%umožňujú chod algoritmov nad takými implementáciami polygonálnych sietí,
+%ktoré nie sú pre ne vhodne navrhnuté. Technika, akou je táto práca písaná
+%môže byť naďalej uplatňovaná vo vývoji knižnice, teda v pridávaní ďaľších algoritmov
+%do knižnice.
 
 Keywords:
 % 3 až 5 klíčových slov v angličtině
+polygonal mesh, generic programing, algorithms
 
 \vss}
 
