@@ -1,12 +1,12 @@
 \chapter{3D object representation}
 
-This chapter contains the definitions for various three-dimensional object representations
+This chapter contains the definitions of various three-dimensional object representations
 that are commonly used in applications. A geometric query or a different operation involving the
 object might be more effectively formulated with one representation than another.
 
 \section{Overview}
 
-The 3D object representations can be divided into two big categories
+The 3D object representations can be divided into two general categories
 
 \begin{itemize}
 \item \textbf{solid} - the object in this representation contains information about inner
@@ -14,22 +14,23 @@ propreties of the object such as density or elasticity. It is mostly used in sof
 engineering simulations.
 
 \item \textbf{surface} - this representation works only with the surface of the object
-ignoring the properties of the volume. The one of advantages of this representation is
-relatively simple visualisation. The surface description is totally sufficient for graphical purposes.
+ignoring the properties of the volume. One of the advantages of this representation is
+relatively simple visualisation. The surface description is entirely sufficient for graphical purposes.
 \end{itemize}
 
 \subsection{Voxel map}
 
 A \textbf{voxel} is a word made by joining '\textbf{Vo}lumetric' and 'Pi\textbf{xel}'. It represents
-the value on regular grid that forms a voxel map. The simpliest representation of voxel map is
-normalized grid made of cube-shaped voxels with 0-1 values where 0 stands for that cube is completely
+the value on regular grid that forms a voxel map. The simpliest representation of a voxel map is
+normalized grid made of cube-shaped voxels with 0-1 values where 0 stands for that cube which is completely
 outside of the object and 1 represents the case of crossing the surface or inclusion by the object.
 \\
 \\
 Each voxel can contain various properties such as color, material physical properties or
 in case of boundary voxels, surface description. Some implementation provide information about
 each corner of voxel separately in order to improve the accuracy.
-As can be deduced from overview, this representation perfectly fits for representing the solid objects.
+As it can be deduced from the overview, this representation perfectly fits the representation
+of the solid objects.
 
 \subsection{Implicit surface}
 An implicit surface is a surface defined implicitly by a function
@@ -56,40 +57,41 @@ surface_{f(x,y,z)} =
 
 
 This representation has several advantages such as efficient checking whether a point is either
-inside or outside or efficient finding a intersection with geometric primitives.
+inside or outside or efficient finding of an intersection with geometric primitives.
 
 
 \subsection{Constructive solid geometry}
 
 Known also as \emph{CSG tree}\cite{Zara2004}. This technique is used especially
-in engineering software. It allows
-user to construct objects using \emph{Boolean operators} to combine objects. Objects created using this
-method can be used repeatedly in Boolean operators; resulting object can be decomposited into a tree.
+in the engineering software. It allows
+the user to construct objects using \emph{Boolean operators}. Objects created by using this
+method can be used repeatedly in Boolean operators; the resulting object can be decomposed into a tree.
 \\
 \\
-The leafs of the tree are typically the objects of the simple shape, however the operators can be
-theoretically applied on any objects. The set of supported primitives are given by a specific
+The leaves of the tree are typically the objects of the simple shape. However, the operators can be
+theoretically applied on any objects. The set of supported primitives is given by a specific
 software package.
 \\
 \\
 Thanks to the tree structure, CSG objects come with some convenient properties. The nodes that
-are higher in the tree hierarchy gives us an approximation that can be used in various geometric
+are higher in the tree hierarchy give us an approximation that can be used in various geometric
 algorithms with no need for searching its descendants.
 
 \subsection{Point cloud}
 
-A point cloud is a set of points in three-dimensional coordinate system\cite{Agarwal2006}.
+A point cloud is a set of points in three-dimensional coordinate system\cite{Zara2004}\cite{Agarwal2006}.
 The set can form the surface
-of an object or any other three dimensional figure. Each point is indepedent
-from each other, with no information about its topology. Often they are converted to polygon mesh
+of an object or any other three dimensional figure. Every point is indepedent
+from each other, with no information about its topology. They are often converted to polygon mesh
 or triangle mesh models.
 
 \subsection{Polygonal mesh}
 
 A polygonal mesh is a collection of vertices, edges and faces that defines the shape of the surface of
-the object. Some special implementations do not contain faces, those are defined only by vertices and
+the object\cite{Zara2004}. Some special implementations do not contain faces, these are
+defined only by vertices and
 edges. Moreover, some cases do not consider the topology and the object is a raw set of polygons.
-Neverthless, standard implementation is expected to contain a topology information about each vertex
+Neverthless, a standard implementation is expected to contain a topology information about each vertex
 and face.
 \\
 \\
@@ -105,9 +107,9 @@ mesh representations are described in the next section.
 
 \section{Polygonal Mesh}
 
-The collection can be represented in a variety ways, the main purpose of structure is to improve
-the efficiency of the queries. In the other hand we face the limitations such as memory. In some
-representations in impossible to query the adjacent vertices of a vertex without iteration through
+The collection can be represented in a variety of ways, the main purpose of structure is to improve
+the efficiency of the queries. On the other hand we face the limitations such as memory. In some
+representations it is impossible to query the adjacent vertices of a vertex without iteration through
 entire container of vertices or faces.
 
 \subsection{Face-vertex mesh}
@@ -115,7 +117,7 @@ entire container of vertices or faces.
 
 The simpliest representation that contains any information about topology of the polygonal
 mesh. A mesh is represented by a container of vertices and the container of sets of vertices that
-forms faces\cite{Zara2004}. The face is represented by at least 3 vertices or more vertices that have to be
+form faces\cite{Zara2004}. The face is represented by at least 3 vertices or more vertices that have to be
 coplanar.\\
 
 \begin{figure}[h]
@@ -145,19 +147,21 @@ coplanar.\\
 
 The set that forms the faces must be ordered. The preceding and following vertex in order must be 
 adjacent to
-the vertex. If the structure is not extended by face-normal-attribute, the vertices must be in 
-clockwise/counter-clockwise order from the view of face normal. If the order is either clockwise or counter-clockwise
+the vertex. If the structure is not extended by face-normal-attribute, the vertices have to be in 
+clockwise/counter-clockwise order from the view of face normal. Whether the order is clockwise or counter-clockwise
 depends on the implementation of the mesh.
 
 \subsection{Winged-edge mesh}
 
-The representation described above contain no direct information about adjacency of faces. 
+The representation described above contains no direct information about adjacency of faces. 
 In order to determine the adjacency of any two faces or vertices in constant complexity, we
 can build a structure that requires an extra storage. The winged edge structure\cite{Baumgart1972}
-provide information
-that are capable of determination an edges that belong to a vertex, from a given face a set
-of edges that surrounds the face; in case of triangle mesh, it returns the triplet of edges.
-Finally, the name \emph{winged-edge} is due to capabilty to get a face pair (wings) from
+provides information
+capable of determination edges that belong to a vertex. It also provides information which allows us
+to determine the surrounding edges from the given face;
+in case of a triangle mesh, it returns the triplet of edges.
+Finally, the structure is named \emph{winged-edge} because of its
+capabilty to get a face pair (wings) from
 a given edge.
 
 \begin{figure}[!htbp]
@@ -217,34 +221,35 @@ a given edge.
 \caption{Winged-edge mesh}
 \end{figure}
 
-On the example shown above there are occured several uncertainities.
+%On the example shown above there are occured several uncertainities.
+Several uncertainities occured in the above-mentioned examples.
 
 \begin{itemize}
-\item Let us take edge \textsf{e9}. In pair of faces, which of faces \textsf{f0} and 
-\textsf{f1} should be considered as \emph{first} and the \emph{second}?
+\item Let us take edge \textsf{e9}. In the pair of faces, which of faces \textsf{f0} and 
+\textsf{f1} should be considered as the \emph{first} and which as the \emph{second}?
 
 \item Which of vertices \textsf{v1} and \textsf{v5} should be considered as 
-\emph{first} and the \emph{second} in pair that forms the edge \textsf{e9}?
+the \emph{first} and which as the \emph{second} in the pair that forms the edge \textsf{e9}?
 \end{itemize}
 
-One of the possible solutions is to split the edge element to two \emph{half-edges}.
+One of possible solutions is to split the edge element into two \emph{half-edges}.
 The structure using or rather based on this representation is described in the next
 paragraph.
 
 \subsection{Half-edge mesh}
 
-The halfedge data structure is the structure capable of maintaining the incidence
-information of vertices, edges and faces. Each edge is decomposed in two halfedges
+The half-edge data structure is the structure capable of maintaining the incidence
+information of vertices, edges and faces\cite{Botsch2006}. Each edge is decomposed in two half-edges
 with opposite orientations.
 \\
 
-The structure contains the set of information
+The structure contains the set of following information
 \begin{itemize}
-\item a vertex that is the halfedge pointing to
-\item a face that the halfedge belongs to
-\item the next halfedge in order that forms a face that halfedge belongs to
-\item (optional) the previous halfedge in the same order
-\item opposite halfedge
+\item a vertex that is the half-edge pointing to
+\item a face that the half-edge belongs to
+\item the next half-edge in order that forms a face that half-edge belongs to
+\item (optional) the previous half-edge in the same order
+\item opposite half-edge
 \end{itemize}
 
 \begin{figure}[h]
@@ -257,7 +262,7 @@ The structure contains the set of information
 \hspace{0.5cm}
 \begin{minipage}[hb]{0.25\linewidth}
 \centering
-\emph{Halfedge list}
+\emph{Half-edge list}
 \vspace{1mm}
 
 \begin{tabular}{|c|c|c|c|}
