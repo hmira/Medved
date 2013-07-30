@@ -64,3 +64,8 @@ target_link_libraries( triangulate boost_program_options ${Boost_LIBRARIES})
 add_executable( parallel_triangulate "tests/parallel_triangulate.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
 target_link_libraries( parallel_triangulate gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
 target_link_libraries( parallel_triangulate boost_program_options ${Boost_LIBRARIES})
+
+add_executable( point_in_polyhedron "tests/point_in_polyhedron.cpp" ${HMIRA_HEADERS} ${EXTENSION_HEADERS} )
+target_link_libraries( point_in_polyhedron gomp ${TBB_LIBRARIES} ${OPENMESH_CORE_LIBRARY_DEBUG} ${OPENMESH_TOOLS_LIBRARY_DEBUG})
+target_link_libraries( point_in_polyhedron boost_program_options ${Boost_LIBRARIES})
+add_subdirectory(concepts/geometry)

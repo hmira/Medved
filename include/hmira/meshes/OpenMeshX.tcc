@@ -266,7 +266,7 @@ bool mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::is_isolated(const O
 	  Mesh& m = const_cast<Mesh&>(m_);
 	  return m.is_isolated(v);
 }
-/*
+
 template<>
 std::pair<typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vv_iterator,
 	  	  	typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::vv_iterator>
@@ -278,7 +278,7 @@ mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_adjacent_vertices(
 	  Mesh& m = const_cast<Mesh&>(m_);
 	  return std::make_pair(m.vv_begin(v), m.vv_end(v));
 }
-*/
+
 template<>
 std::pair<typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ve_iterator,typename mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::ve_iterator>
 mesh_traits<OpenMesh::PolyMesh_ArrayKernelT<MyTraits>>::get_adjacent_edges(

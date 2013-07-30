@@ -21,37 +21,47 @@ namespace po = boost::program_options;
 
 int main(int argc, char **argv)
 {	
-	po::options_description desc("Allowed parameters");
-	desc.add_options()
-	("help,h","produce help message")
-	("fill-holes,f","fill holes on the resulting mesh")
-	("rasterize,r", po::value<std::string>()->default_value("full"), "type of rasterization [full|faces|edges]")
-	("input-file,i", po::value<std::string>(), "input file")
-	("output-file,o", po::value<std::string>()->default_value("output.obj"), "output file")
-	("x-resolution,x", po::value<int>()->default_value(30), "x resolution")
-	("y-resolution,y", po::value<int>()->default_value(30), "y resolution")
-	("z-resolution,z", po::value<int>()->default_value(30), "z resolution")
-	("x-size,X", po::value<float>()->default_value(3.f), "X size")
-	("y-size,Y", po::value<float>()->default_value(3.f), "Y size")
-	("z-size,Z", po::value<float>()->default_value(3.f), "Z size");
-	
-	po::positional_options_description p;
-	p.add("input-file,i", -1);
-
-	po::variables_map vm;
-	po::store(po::command_line_parser(argc, argv).
-		options(desc).positional(p).run(), vm);
-	po::notify(vm);
-	
-	std::string input_filename;
-	
 	int x,y,z;
 	float x_size, y_size, z_size;
+	std::string input_filename;
+	std::string output_filename;
+	std::string rasterization;
+	
+	po::variables_map vm;	
+	po::options_description desc("Allowed parameters");
 
-	if (vm.count("help"))
+	try
 	{
-		std::cerr << desc << std::endl;
-		return 0;
+		desc.add_options()
+		("help,h","produce help message")
+		("fill-holes,f","fill holes on the resulting mesh")
+		("rasterize,r", po::value<std::string>(&rasterization)->default_value("full"), "type of rasterization [full|faces|edges]")
+		("input-file,i", po::value<std::string>(&input_filename), "input file")
+		("output-file,o", po::value<std::string>(&output_filename)->default_value("output.obj"), "output file")
+		("x-resolution,x", po::value<int>(&x)->default_value(30), "x resolution")
+		("y-resolution,y", po::value<int>(&y)->default_value(30), "y resolution")
+		("z-resolution,z", po::value<int>(&z)->default_value(30), "z resolution")
+		("x-size,X", po::value<float>(&x_size)->default_value(3.f), "X size")
+		("y-size,Y", po::value<float>(&y_size)->default_value(3.f), "Y size")
+		("z-size,Z", po::value<float>(&z_size)->default_value(3.f), "Z size");
+		
+		po::positional_options_description p;
+		p.add("input-file,i", -1);
+
+		po::store(po::command_line_parser(argc, argv).
+			options(desc).positional(p).run(), vm);
+		po::notify(vm);
+		
+		if (vm.count("help"))
+		{
+			std::cerr << desc << std::endl;
+			return 0;
+		}
+	}
+	catch(po::error& e)
+	{
+		std::cerr << "ERROR: " << e.what() << std::endl;
+		return 1;
 	}
 	
 	if (vm.count("input-file"))
@@ -64,7 +74,6 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	auto rasterization = vm["rasterize"].as<std::string>();
 	if (rasterization != "full" && rasterization != "faces" && rasterization != "edges")
 	{
 		std::cerr << "unknown type of rasterization: \"" << rasterization << "\"\n" << desc << std::endl;
@@ -72,15 +81,6 @@ int main(int argc, char **argv)
 	}
 	
 	auto fill = (vm.count("fill-holes"));
-	
-	auto output_filename = vm["output-file"].as<std::string>();
-
-	x = vm["x-resolution"].as<int>();
-	y = vm["y-resolution"].as<int>();
-	z = vm["z-resolution"].as<int>();
-	x_size = vm["x-size"].as<float>();
-	y_size = vm["y-size"].as<float>();
-	z_size = vm["z-size"].as<float>();
 	
 	OpenMeshExtended input_mesh, output_mesh;
 	if (!OpenMesh::IO::read_mesh(input_mesh, input_filename))

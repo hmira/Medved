@@ -41,6 +41,9 @@
 
 #include <hmira/geometry/point_in_polyhedron.hpp>
 
+#include <hmira/adapters/ff_adapter.hpp>
+#include <hmira/adapters/vv_adapter.hpp>
+
 template <typename T>
 constexpr auto has_x_method(T& t) -> decltype(t.add_vertex(), OpenMeshExtended::VertexHandle())
 {
@@ -60,6 +63,7 @@ constexpr auto is_bool_functor(T& t) -> decltype(t(), bool())
 
 typedef winged_edge_mesh<triangleMesh> my_mesh;
 typedef winged_edge_mesh_traits<triangleMesh> my_mesh_traits;
+
 
 int main(int argc, char **argv)
 {
@@ -131,7 +135,7 @@ int main(int argc, char **argv)
 	face_vhandles.push_back(vhandle[1]);
 	face_vhandles.push_back(vhandle[2]);
 	face_vhandles.push_back(vhandle[3]);
-	mesh.add_face(face_vhandles);
+	auto face1 = mesh.add_face(face_vhandles);
 
 	face_vhandles.clear();
 	face_vhandles.push_back(vhandle[7]);
@@ -165,19 +169,35 @@ int main(int argc, char **argv)
 	mesh.add_face(face_vhandles);
 	
 
-	if (!OpenMesh::IO::read_mesh(mesh, "untitled.obj")) 
+// 	if (!OpenMesh::IO::read_mesh(mesh, "untitled.obj")) 
+// 	{
+// 		std::cerr << "write error\n";
+// 		exit(1);
+// 	}
+// 	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
+// 
+// 	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(1,  1, 1));
+// 	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(-1,  -1, -1));
+// 	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(-1,  1, 1));
+// 	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(1,  -1, 1));
+// 	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(1,  1, -1));
+
+	auto surr = hmira::adapters::ff_adapter<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>::ff_iterator_adapter(mesh, face1);
+	for (auto i = surr.first; i!=surr.second ; ++i)
 	{
-		std::cerr << "write error\n";
-		exit(1);
+		std::cout << "joe " << *i << std::endl;
 	}
-	triangulate<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>>(mesh);
-
-	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(1,  1, 1));
-	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(-1,  -1, -1));
-	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(-1,  1, 1));
-	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(1,  -1, 1));
-	hmira::geometry::point_in_polyhedron(mesh, OpenMeshExtended::Point(0,  0, 0), OpenMeshExtended::Point(1,  1, -1));
-
+	
+// 	auto surr_v ==
+	auto surr_v = advanced_mesh_traits<OpenMeshExtended>::get_adjacent_vertices(mesh, vhandle[0]);
+// 	auto surr_v = hmira::adaptors::vv_iterator_adaptor(mesh, vhandle[0]);
+	for (auto i = surr_v.first; i!=surr_v.second ; ++i)
+	{
+		std::cout << "joe joe " << *i << std::endl;
+	}
+	
+	boost::function_requires<ComputeComponentsConcept<OpenMeshExtended, advanced_mesh_traits<OpenMeshExtended>> >();
+	compute_components(mesh);
 /*
   OpenMeshExtended::VertexHandle vhandle[8];
   vhandle[0] = mesh.add_vertex(OpenMeshExtended::Point(-1, -1,  1));
