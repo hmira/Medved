@@ -58,7 +58,7 @@ section \ref{sec:edit_f}),
 the getters on the surroundings of an element and the getters
 on the entire structure(e.g. getting all vertices).
 
-\begin{figure}[!hbf]
+\begin{figure}[!htbp]
 
 \centering
 \textbf{Add/remove primitives}\\
@@ -82,14 +82,15 @@ Remove face & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
 \end{tabular}
 \end{figure}
-In the table above are shown basic operations over mesh structure. The allowed
+
+The table above are shown basic operations over mesh structure. The allowed
 computational complexity is based on the number of adjacent vertices of the vertex involved
 in the operation. In case of the operation that involves more vertices the number $V_{adjacentV}$
 represents the sum of all adjacent verticies of all verticies involved in the operation.
 E.g. in case of the operation \emph{Create face from vertices} if the operation creates a
 face from the triplet of vertices the computational complexity is $3 \times V_{adjacentV}$.
 
-\begin{figure}[!hbf]
+\begin{figure}[!htbp]
 
 \centering
 \textbf{Euler operators}\\
@@ -102,9 +103,9 @@ MakeV & $\mathcal{O}(1)$ & \emph{local}\\
 \hline
 KillV & $\mathcal{O}(1)$ & \emph{local}\\
 \hline
-MakeEV & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+MakeEV & $\mathcal{O}(1)$ & \emph{local}\\
 \hline
-KillEV & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+KillEV & $\mathcal{O}(1)$ & \emph{local}\\
 \hline
 MakeEF & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
@@ -115,10 +116,11 @@ MakeFkillR & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 KillFmakeR & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
 \end{tabular}
+\caption{The table shows the allowed complexity of the Euler operators on any mesh structure.
+}
 \end{figure}
-The table above shows the allowed complexity of the Euler operators on any mesh structure.
 
-\begin{figure}[!hbf]
+\begin{figure}[!htbp]
 
 \centering
 \textbf{Editing functions}\\
@@ -134,11 +136,13 @@ Bevel & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 Extrude & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
 \end{tabular}
-\end{figure}
+\caption{
 Despite to the fact the operations listed in the table above can be created using the
 Euler operations a mesh may have own, faster and optimized implementation of the operation.
+}
+\end{figure}
 
-\begin{figure}[!hbf]
+\begin{figure}[!htbp]
 
 \centering
 \textbf{Getters (surroundings)}\\
@@ -164,14 +168,15 @@ Get edges of the face& $\mathcal{O}(E_{consistF})$ & \emph{local}\\
 Get adjacent faces of the face& $\mathcal{O}(F_{adjacentF})$ & \emph{local}\\
 \hline
 \end{tabular}
-\end{figure}
-The operations listed above does not affect the mesh; only information about the
+\caption{The operations listed above does not affect the mesh; the readable information about the
 structure is acquired. The allowed complexity does not permit scanning the entire structure.
 The operations cover operations that determines whether two elements are adjacent.
 E.g. the operation \emph{dethtermine whether two vertices are adjacent} is covered by the
 operation \emph{Get adjacent vertices of the vertex}.
+}
+\end{figure}
 
-\begin{figure}[!hbf]
+\begin{figure}[!htbp]
 \centering
 \textbf{Getters (entire structure)}\\
 \vspace{2mm}
@@ -186,6 +191,6 @@ Get all edges & $\mathcal{O}(E_{all})$ & \emph{global}\\
 Get all faces & $\mathcal{O}(F_{all})$ & \emph{global}\\
 \hline
 \end{tabular}
+\caption{The operation that gets all elements in the structure assumes that all elements are contained
+in specific container that can be scanned in a linear complexity.}
 \end{figure}
-The operation that gets all elements in the structure assumes that all elements are contained
-in specific container that can be scanned in a linear complexity.
