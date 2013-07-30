@@ -1,6 +1,7 @@
 \chapter{Algorithms Decomposition}
+\label{chap:alg_decomp}
 
-In this chapter are decomposed the algorithms (see chapter \ref{chap:op_al}) so that basic
+In this chapter are decomposed the algorithms (see the chapter \ref{chap:op_al}) so that basic
 operations over polygon
 mesh can be summarized. The word ``\emph{basic}" is relative according the chosen level.
 In this thesis is chosen such level that leads to the least count of operations in total.\\
@@ -13,6 +14,22 @@ brute-force. In some cases, lack of an operator can not be replaced by an adapte
 The algorithms described in this chapter are only the small part of all algorithms. The emphasized
 algorithms are primarily the commonly used, the algorithms that changes the mesh topology and
 the conversion algorithm between voxel and polygon mesh representation.
+
+\section{Parallel processing}
+
+Some algorithms have a passage that is repeated for every \emph{vertex}, or every \emph{face}, etc.
+According the design of an algorithm, it can be determined whether the repetition can be processed
+simultaneously. If the other processed elements are affected in the loop body, the loop can not
+be processed parallelly.\\
+\\
+If an algorithm have such a passage, the developer has an opportunity to accelerate the run-time 
+of the algorithm implementation by using multiple computational threads. Since the most of processors
+have more than one processor core nowadays, the parallel processing of the algorithm block might
+significantly speed up the performing time.\\
+\\
+If a loop has an option to be processed parallelly,
+in pseudocode, the loop is labelled with ``\textbf{parallel}".
+In the implementation, if the algorithm is not implemented parallelly, the algorithm remains correct.
 
 \section{Converting between representations}
 
@@ -79,7 +96,8 @@ is designed as follows:
 \subsection{Voxelization}
 
 Compared to the \emph{Marching cubes} algorithm, the requirements for the voxel map structure
-are more comprehensive. As mentioned in description \ref{sub:vox}, the algorithm consequently rasterizes
+are more comprehensive. As mentioned in description (See the section \ref{sub:vox}),
+the algorithm consequently rasterizes
 the edges, the faces and finally fills the object.
 
 \begin{algorithm}[H]

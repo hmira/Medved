@@ -1,6 +1,6 @@
 \chapter{Concepts}
 
-The example in the previous chapter\ref{chap:traits} shows that the implemented algorithm
+The example in the chapter \ref{chap:traits} shows that the implemented algorithm
 is not be working if the class that is used as traits misses any of the methods or parameters
 used in the algorithm. In order to be certain, the error is raised during the compile time.\\
 \\
@@ -9,7 +9,7 @@ The concept specifies what must be obtained in the traits to let the algorithm w
 In this chapter is explained the purposes of specifying the concept of the algorithm and the
 possible methods to let the compiler check the concept.\\
 \\
-Summarized from the code\ref{code:traits} of the example, we can see that the required
+Summarized from the code of the example in the chapter \ref{code:traits}, we can see that the required
 paramters and methods are as follows:
 
 \begin{lstlisting}
@@ -60,5 +60,43 @@ to build a templated wrapper that uses a class as a parameter.
 		}
 	}
 \end{lstlisting}
-In the code\ref{code:constr1} is written an example with an assumption that the class \texttt{MyVertex}
+The code implements an example with an assumption that the class \texttt{MyVertex}
 contains a member \texttt{coordinates}.
+
+\section{Usage}
+
+The user can check the concept by the placing the following code before the calling of the function.
+\begin{lstlisting}
+boost::function_requires<GenerateCubeConcept<Mesh, Traits >();
+\end{lstlisting}
+If the concept is not satisfied, the error code will apear as follows:
+
+\lstset {language=bash,
+keywordstyle=\color{black},
+basicstyle=\ttfamily,
+keywordstyle=[2]{\color{black}},
+literate={\$}{{\textcolor{green}{\$}}}1 
+         {:}{{\textcolor{black}{:}}}1
+         {~}{{\textcolor{red}{\textasciitilde}}}1,
+}
+
+\begin{lstlisting}
+$ /usr/include/boost/concept/detail/has_constraints.hpp:32:14:   required by substitution of template<class Model> boost::concepts::detail::yes boost::concepts::detail::has_constraints_(Model*, boost::concepts::detail::wrap_constraints<Model, (& Model:: constraints)>*) [with Model = VertexAdjacencyConcept<Mesh, Traits > >]
+\end{lstlisting}
+If the checking is not processed, the compilator still throws an error. The benefit of the error
+message above is that the compiler always throws such an error if the concept is not satisfied.
+If the concept is not checked, the compiler may produce a misleading or confusing error messages
+that are more demanding to solve.
+
+\lstset { %
+belowcaptionskip=1\baselineskip,
+breaklines=true,
+language=C++,
+showstringspaces=false,
+basicstyle=\footnotesize\ttfamily,
+keywordstyle=\bfseries\color{green!40!black},
+commentstyle=\itshape\color{purple!40!black},
+identifierstyle=\color{blue},
+stringstyle=\color{orange},
+backgroundcolor=\color{black!5}
+}

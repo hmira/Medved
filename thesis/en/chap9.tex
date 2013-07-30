@@ -1,1 +1,98 @@
 \chapter{Adapters}
+
+The chapter \ref{chap:adapter_analysis} explains the purpose of the adapters.
+The adapter is worth using only if the conversion of the used mesh representation
+is more demanding than the usage of the adapter.\\
+\\Adapters generally can not
+be treated as standard implementation of the function that an adapter replaces;
+the computational complexity of the adapter increases the total complexity of the
+algorithm so that the resulting behavior is considered as \emph{inefficient}
+(see the section \ref{sec:eff_vs_ineff}).
+
+%The user has to consider the
+%efficiency (see the section \ref{sec:eff_vs_ineff}) that is acceptable for the use.
+
+\section{Usage}
+
+The adapters are processing the demanded operation by the \emph{brute-force}. When
+the user is building the traits(see the chapter \ref{chap:traits}) for the algorithm,
+he puts a calling of the adapter inside the function placed to traits instead of
+calling the function supported by a mesh structure.\\
+
+\textbf{Example:}\\
+Let us have an algorithm \texttt{X} that requires iterating through all adjacent vertices
+from a given vertex. We have a \emph{face-vertex} polygonal mesh(see the section \ref{sec:face-vertex})
+that does not support the \emph{efficient}(see the section \ref{sec:eff_vs_ineff}) operation
+capable of getting the all adjacent vertices.\\
+\\
+\emph{How do we build a traits for the algorithm} \texttt{X}\emph{?}\\
+\\
+Let us assume that the type representing the mesh is named \texttt{X\_fv\_mesh}, and
+the required operation of the algorithm that has to be contained in traits is as follows:
+
+\begin{lstlisting}
+static std::pair<vv_iterator,vv_iterator>
+get_adjacent_vertices(
+	const X_fv_mesh& m,
+	const vertex_descriptor v);
+\end{lstlisting}
+
+\textbf{Observation:}\\
+From the declaration of the function above, it is obvious that except the \texttt{X\_fv\_mesh},
+two additional types has to be contained in the traits.
+
+\begin{lstlisting}
+typedef vertex_descriptor X_fv_mesh&::Vertex; //supported by the structure
+typedef vv_iterator ??? //not supported by the structure
+\end{lstlisting}
+
+Thus the question arises ``How do we define the \texttt{vv\_iterator}" and what do we
+place into the implementation of the function \texttt{get\_adjacent\_vertices()}?\\
+
+\textbf{Solution:}\\
+We use an adapter \texttt{hmira::adapters::vv\_adapter::vv\_iterator\_adapter} which allow us to
+call a function that returns the demanded pair of the iterators and provides a type
+that was required for the function; in case of this example, \texttt{vv\_iterator}.\\
+\\
+The implementation of the traits will appear as follows:
+\nopagebreak
+
+\begin{lstlisting}
+#include <hmira/adapters/vv_adapter.hpp>
+
+class X_fv_mesh_traits
+{
+//the following block of the code has to be
+//added to the traits
+//...
+
+	typedef typename hmira::adapters::vv_adapter<
+		X_fv_mesh,
+		X_fv_mesh_traits
+	>::vv_iterator vv_iterator;
+
+	static inline
+	std::pair<vv_iterator, vv_iterator>
+	get_adjacent_vertices(
+		const X_fv_mesh& m,
+		vertex_descriptor v)
+	{
+		return hmira::adapters::vv_adapter<
+				X_fv_mesh,
+				X_fv_mesh_traits
+			>::vv_iterator_adapter(m, v);
+	}
+
+//...
+};
+\end{lstlisting}
+The class \texttt{X\_fv\_mesh} does not support the operation that returns the iterators
+that are able to iterate through the adjacent vertices of a given vertex. Instead of calling
+the implemented function, the function refers to an adapter. In this case \texttt{vv\_iterator\_adapter}.
+
+
+
+
+
+
+

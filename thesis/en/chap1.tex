@@ -33,7 +33,7 @@ As it can be deduced from the overview, this representation perfectly fits the r
 of the solid objects.
 
 \subsection{Implicit surface}
-An implicit surface is a surface defined implicitly by a function
+An implicit surface\cite{Agin1972} is a surface defined implicitly by a function
 
 \begin{equation}
 \begin{split}
@@ -54,8 +54,6 @@ surface_{f(x,y,z)} =
 \label{fig:implicit}
 \caption{Implicit surface given by function $f(x,y,z) = \frac{1}{2}x^{2} + 3y^{2} + z^{2} = 1$}
 \end{figure}
-
-
 This representation has several advantages such as efficient checking whether a point is either
 inside or outside or efficient finding of an intersection with geometric primitives.
 
@@ -106,7 +104,7 @@ that are reflected in efficiency of data storage and querying the surrounding el
 mesh representations are described in the next section.
 
 \section{Polygonal Mesh}
-
+\label{sec:polyg_mesh}
 The collection can be represented in a variety of ways, the main purpose of structure is to improve
 the efficiency of the queries. On the other hand we face the limitations such as memory. In some
 representations it is impossible to query the adjacent vertices of a vertex without iteration through

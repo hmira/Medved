@@ -21,6 +21,8 @@
 #include <boost/mpl/bitand.hpp>
 #include <boost/mpl/int.hpp>
 
+#include <hmira/adapters/vv_adapter.hpp>
+
 struct MyTraits : public OpenMesh::DefaultTraits
 {
   VertexAttributes(OpenMesh::Attributes::Status);
@@ -72,7 +74,9 @@ public:
 	class ox_fe_iterator;
 
 	typedef ox_fv_iterator fv_iterator;
-	typedef ox_vv_iterator vv_iterator;
+// 	typedef ox_vv_iterator vv_iterator;
+// 	typedef typename hmira::adapters::vv_adapter<OpenMeshExtended, mesh_traits<OpenMeshExtended> >::vv_iterator vv_iterator;
+
 	typedef ox_ve_iterator ve_iterator;
 	typedef ox_fe_iterator fe_iterator;
 
@@ -132,11 +136,20 @@ get_all_faces(const OpenMeshExtended& m_);
 static bool is_isolated(const OpenMeshExtended& m_,
 		vertex_descriptor v);
 
+// static std::pair<vv_iterator,
+// 	  	  vv_iterator>
+// get_adjacent_vertices(
+// 		const OpenMeshExtended& m_,
+// 		  vertex_descriptor v){}
+
 static std::pair<vv_iterator,
-	  	  vv_iterator>
+		vv_iterator>
 get_adjacent_vertices(
-		const OpenMeshExtended& m_,
-		  vertex_descriptor v);
+	const OpenMeshExtended& m_,
+		vertex_descriptor v)
+{
+	return hmira::adapters::vv_adapter<OpenMeshExtended, mesh_traits<OpenMeshExtended> >::vv_iterator_adapter(m_, v);
+}
 
 static std::pair<ve_iterator, ve_iterator>
 get_adjacent_edges(
@@ -196,8 +209,11 @@ public:
 
 	typedef typename parent_traits::fv_iterator fv_iterator;
 	typedef typename parent_traits::vv_iterator vv_iterator;
+// 	typedef typename hmira::adaptors::vv_iterator_adaptor_traits<OpenMeshExtended, mesh_traits<OpenMeshExtended> >::vv_iterator vv_iterator;
 	typedef typename parent_traits::ve_iterator ve_iterator;
 
+
+	
 	struct Face_has_normal_tag {};
 	struct Face_has_no_normal_tag {};
 	typedef typename boost::mpl::if_<

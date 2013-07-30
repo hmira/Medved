@@ -13,7 +13,7 @@ editing functions over polygon meshes as the operations over the graphs.\\
 \section{Euler operators}
 \label{sec:euler}
 
-The \emph{Euler operators} are the set of operators which create a polygon meshes. One of the advantages
+The \emph{Euler operators} are the set of operators which create a polygon meshes\cite{Havemann2005}. One of the advantages
 of these operators is that they are invertible. In the following description paragraphs,
 each operator is followed by its inverted operator.
 
@@ -160,13 +160,14 @@ faces (marked with orange) with the topology as shown on the picture.}
 
 \section{Converting between representations}
 
-In this section introduces some algorithms that convert one representation to another. Each 
+This section introduces some algorithms that convert one representation to another. Each 
 representation has its own capability.
 
 \subsection{Delaunay triangulation}
 
 Let $P$ be a set of points in the $d$-dimensional Euclidean space.
-Delanuay triangulation is triangulation such that no point $p \in P$ is inside the circum-hypersphere
+Delanuay triangulation\cite{Chew1989} is a triangulation such that
+no point $p \in P$ is inside the circum-hypersphere
 of any simplex in $DT(P)$. For better imagination, in case of $2$-dimensional space, no point
 structure is inside the circumcircle of any triangle of resulting structure.
 
@@ -183,7 +184,7 @@ have one of $2^8 = 256$ configurations. However, some configurations can fit to 
 reflective simmetry, or sign changed case.\\
 
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
 \includegraphics[scale=0.15]{../img/mar_cub_case0.eps}
 \includegraphics[scale=0.15]{../img/mar_cub_case1.eps}
 \includegraphics[scale=0.15]{../img/mar_cub_case2.eps}
@@ -208,7 +209,6 @@ reflective simmetry, or sign changed case.\\
 are labeled with red. The yellow triangles represent faces to be added to a mesh.}
 \label{fig:mc_cases}
 \end{figure}
-
 Finaly, all of them can be reduced to $15$ unique cases. The main idea of this algorithm is to
 place a set of faces for each cube in order to create a polygonal mesh with a corresponding shape.
 In other words, each configuration refers to the configuration of new faces to be added to a mesh.
@@ -226,7 +226,6 @@ the face is based on linear interpolation of corner values.\\
 \label{fig:mc_interpolation}
 \caption{Interpolated position of face}
 \end{figure}
-
 Let $v1$ and $v2$ be the values that represent the distances from the surface to the corners.
 Thus, we can calculate the value of coefficient $u$ from the following equation.
 
@@ -246,13 +245,13 @@ It that constructs an initially empty 3D grid and fills the
 grid elements that indicates whether the element is inside the object\cite{Cohen-Or1995}. There are several techniques
 to represent a boundary element. The simpliest one is to set the boundary element as completely filled, 
 thus we have a voxel map of values $0$ and $1$. The other ones store in voxels additional
-information that forms an alias-free voxelized object. \cite{Wang1993}\\
-
+information that forms an alias-free voxelized object\cite{Wang1993}.\\
+\\
 This algorithm can be divided into two phases: The first phase voxelizes the faces of triangle mesh and the
 second one fills the created object. Admittedly, before filling the object, the algorithm has to check
 whether the mesh forms an enclosed surface. If it does not form an enclosed surface, the second phase of
 algorithm is omitted.\\
-
+\\
 The first phase voxelizes faces one by one. Each face is processed similarly to the triangle 
 rasterization in 2D.
 First, the algorithm voxelizes the boundary edges and then runs the floodfill over the face. The filling
@@ -277,7 +276,6 @@ technique of the face is processed by the line-filling algorithm in the followin
 \item After second crossing a rasterized edge, stop filling (leave the face).
 
 \end{itemize}
-
 In the second phase, the algorithm fills the elements inside the object. The only problem is to
 determine whether the given voxel is inside or outside the object. As described above, the assumption of
 starting with a line outside the enclosed area gives us the right method. The

@@ -3,7 +3,7 @@
 There are a lot of libraries that offers the ability to represent the volume data
 and the basic manipulation with it. There are also lot of published algorithms
 that can be implemented.\\
-
+\\
 Our goal is to create a generic set of algorithms that can be used on any implementation
 of mesh that satisfies required concept. Before the algorithm is finally implemented,
 we must completely describe the concept of the algorithm nor the behavior of algorithm
@@ -17,18 +17,18 @@ of the algorithm are the variations of adding, removing and modifying the elemen
 of the mesh. In addition, the algorithms uses also a capabilities of querying
 in mesh such as getting all adjancent vertices of given vertex or getting all
 vertices in a container or any iterable structure.\\
-
+\\
 Such a capabilities of the mesh are critical for implementing an algorithm.
 The question then arises, ``Why do we implement the algorithms for meshes if
 the usage of required operations might have suffice?" The answer can be relatively simple:
 We are generally not able to determine how is a given structure controlled
 without giving additional information.\\
-
+\\
 Thus there is an option to build an algorithm working correctly over any structure
 that fullfills the criteria that has been presented by the algorithm. Nowadays in C++,
 we are able to build a template-based interface that modify a given structure according
 to algorithm requirements during a compile time.\\
-
+\\
 Before using this set of algorithms the user only defines a interface for chosen structure
 and pass it as parameter.
 
@@ -61,14 +61,14 @@ Now when we have the required attributes, we need to specify which \emph{operati
 
 \textbf{Question:}\\
 What if the structure does not have a method that flips the normal of a face?\\
-
+\\
 After all, the algorithm can be build without providing a method that flips a normal;
 it can flip the normal of a face by itself.
 There are two possible approaches of solving this question. The first: create separately
 next algorithm with different requirements. The second: build an \emph{adapter} that
 has the same functionality as required method that flips normals and use it as method
 in the algorithm described above instead required method.\\
-
+\\
 Both cases requires additional points of concept instead the ommited one.
 In order to reverse the normal of a face manually, it is required:
 
@@ -77,7 +77,6 @@ In order to reverse the normal of a face manually, it is required:
 \item getting the face normal
 \item setting the face normal
 \end{itemize}
-
 It is up to us how we design the algorithms and the level of implementation. As more sophisticated
 the adapters are than more cases of mesh implementation can be covered. If the compiler does not
 find the require methods and is able to build an adapter then does not bother the user and build

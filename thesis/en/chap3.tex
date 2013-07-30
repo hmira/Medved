@@ -1,8 +1,8 @@
 \chapter{Libraries}
 
-What we did not yet mentioned is the implemented data structures that fulfills the described rules.
-In this chapter there are introduced several libraries that are comonnly used. In following paragraphs
-is shown the corelation with the structures shown in the previous chapter.
+We did not yet mentioned the implemented data structures that fulfills the described rules.
+In this chapter, there are introduced several libraries that are comonnly used. In the following paragraphs,
+it is shown the corelation with the structures shown in the chapter \ref{chap:op_al}.
 
 \section{OpenMesh}
 
@@ -10,7 +10,8 @@ is shown the corelation with the structures shown in the previous chapter.
 and manipulating polygonal meshes. It is developed at the Computer Graphics Group, RWTH Aachen.
 \\
 \\
-Restricting to the meshes introduced in chapter 2, OpenMesh is considered as a half-edge structure.
+Restricting to the meshes introduced in the section \ref{sec:polyg_mesh},
+OpenMesh is considered as a half-edge structure.
 It is formed by kernel that set proper attributes such as triangular restriction or allowing to remove
 vertices from mesh.
 \\
@@ -25,3 +26,18 @@ linked list.\\
 
 \textbf{Traits}: Traits is the class that enhances the mesh functionality such as
 vertices removal or adding various attributes to elements.
+
+\section{Trimesh}
+
+Trimesh is the library designed to read, write, and manipulate with the triangle meshes\cite{trimesh}.\\
+\\
+Compared to the \emph{OpenMesh} library, Trimesh library emphasizes the efficiency
+and easy of use rather than the sophisticated design. The representation of the mesh
+is a modified face-vertex structure(see the description in the section \ref{sec:face-vertex}).
+The modification consist in the addition of 3 connectivity structures:
+\begin{itemize}
+\item \texttt{neighbors} - for each vertex, all adjacent vertices
+\item \texttt{adjacentfaces} - for each vertex, all adjacent faces
+\item \texttt{across\_edge} - for each face, the three faces attached to its edge. Since the
+faces are restricted to triangles, a given face is allowed to have only the triplet of adjacent faces.
+\end{itemize}

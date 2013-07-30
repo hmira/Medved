@@ -8,6 +8,7 @@ does not contain an operation that satisfies the criteria for complexity then
 the representation does not natively support the operation.
 
 \section{Efficient vs. Inefficient}
+\label{sec:eff_vs_ineff}
 
 The efficiency is a relative expression so that we need to define what is effective.
 If the operation does query on the local topology only then the scanning the whole structure
@@ -15,7 +16,8 @@ are considered in this case as ineffective. The acceptable complexity is the com
 of scanning the immediate surroundings.\\
 
 \textbf{Example:}\\
-Getting all adjacent verticies of a vertex in the face-vertex representation. \ref{sec:face-vertex}\\
+Getting all adjacent verticies of a vertex in the face-vertex representation. (see
+the section \ref{fig:comp_prim})\\
 
 \textbf{Analysis:}\\
 However the structure does not possess information about vertex adjacency
@@ -41,7 +43,7 @@ The limits for the operation are defined in the following paragraph.
 
 \section{Limits}
 
-For each operation mentioned in \ref{chap:op_al} has to be defined the specific limit
+For each operation mentioned in the chapter \ref{chap:op_al} has to be defined the specific limit
 of effectiveness. Before we specify the limits, we classify the operations in two categories:
 
 \begin{itemize}
@@ -51,7 +53,8 @@ about entire structure
 with no demans on the rest of elements in the structure
 \end{itemize}
 In the following analysis are involved operations that adds/removes an element(vertex, edge, face),
-Euler operators\ref{sec:euler}, advanced editing functions\ref{sec:edit_f},
+Euler operators (see the section \ref{sec:euler}), advanced editing functions (see the
+section \ref{sec:edit_f}),
 the getters on the surroundings of an element and the getters
 on the entire structure(e.g. getting all vertices).
 
@@ -65,13 +68,13 @@ on the entire structure(e.g. getting all vertices).
 \hline
 \textbf{Name of the operation} & \textbf{Allowed complexity} & \textbf{local/global}\\
 \hline
-Add vertex & $\mathcal{O}(V_{1})$ & \emph{local}\\
+Add vertex & $\mathcal{O}(1)$ & \emph{local}\\
 \hline
 Remove vertex & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
 Create edge from vertices& $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
-Remove edge & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+Remove edge & $\mathcal{O}(1)$ & \emph{local}\\
 \hline
 Create face from vertices& $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
@@ -95,9 +98,9 @@ face from the triplet of vertices the computational complexity is $3 \times V_{a
 \hline
 \textbf{Name of the operation} & \textbf{Allowed complexity} & \textbf{local/global}\\
 \hline
-MakeV & $\mathcal{O}(V_{1})$ & \emph{local}\\
+MakeV & $\mathcal{O}(1)$ & \emph{local}\\
 \hline
-KillV & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
+KillV & $\mathcal{O}(1)$ & \emph{local}\\
 \hline
 MakeEV & $\mathcal{O}(V_{adjacentV})$ & \emph{local}\\
 \hline
@@ -165,12 +168,12 @@ Get adjacent faces of the face& $\mathcal{O}(F_{adjacentF})$ & \emph{local}\\
 The operations listed above does not affect the mesh; only information about the
 structure is acquired. The allowed complexity does not permit scanning the entire structure.
 The operations cover operations that determines whether two elements are adjacent.
-E.g. the operation \emph{determine whether two vertices are adjacent} is covered by the
+E.g. the operation \emph{dethtermine whether two vertices are adjacent} is covered by the
 operation \emph{Get adjacent vertices of the vertex}.
 
 \begin{figure}[!hbf]
 \centering
-\textbf{Getters (surroundings)}\\
+\textbf{Getters (entire structure)}\\
 \vspace{2mm}
 \begin{tabular}{| c | c | c | c |}
 \hline
