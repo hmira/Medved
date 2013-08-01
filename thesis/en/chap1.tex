@@ -1,4 +1,4 @@
-\chapter{3D object representation}
+\chapter{3D Object Representation}
 
 This chapter contains the definitions of various three-dimensional object representations
 that are commonly used in applications. A geometric query or a different operation involving the
@@ -6,33 +6,33 @@ object might be more effectively formulated with one representation than another
 
 \section{Overview}
 
-The 3D object representations can be divided into two general categories
+The 3D object representations can be divided into two major categories
 
 \begin{itemize}
 \item \textbf{solid} - the object in this representation contains information about inner
-propreties of the object such as density or elasticity. It is mostly used in software for
+propreties of the object such as density and elasticity. It is mostly used in software for
 engineering simulations.
 
 \item \textbf{surface} - this representation works only with the surface of the object
-ignoring the properties of the volume. One of the advantages of this representation is
+ignoring the properties of the volume itself. One of the advantages of this representation is
 relatively simple visualisation. The surface description is entirely sufficient for graphical purposes.
 \end{itemize}
 
-\subsection{Voxel map}
+\subsection{Voxel Map}
 
 A \textbf{voxel} is a word made by joining '\textbf{Vo}lumetric' and 'Pi\textbf{xel}'. It represents
-the value on regular grid that forms a voxel map. The simpliest representation of a voxel map is
-normalized grid made of cube-shaped voxels with 0-1 values where 0 stands for that cube which is completely
+the value on regular grid that forms a voxel map. The simplest representation of a voxel map is
+a normalized grid made of cube-shaped voxels with 0-1 values where 0 stands for the cube that is completely
 outside of the object and 1 represents the case of crossing the surface or inclusion by the object.
 \\
 \\
 Each voxel can contain various properties such as color, material physical properties or
-in case of boundary voxels, surface description. Some implementation provide information about
+in case of boundary voxels, a surface description. Some implementations provide information about
 each corner of voxel separately in order to improve the accuracy.
-As it can be deduced from the overview, this representation perfectly fits the representation
+As it can be deduced from the overview, this representation is perfect for the representation
 of the solid objects.
 
-\subsection{Implicit surface}
+\subsection{Implicit Surface}
 An implicit surface\cite{Agin1972} is a surface defined implicitly by a function
 
 \begin{equation}
@@ -55,10 +55,10 @@ surface_{f(x,y,z)} =
 \caption{Implicit surface given by function $f(x,y,z) = \frac{1}{2}x^{2} + 3y^{2} + z^{2} = 1$}
 \end{figure}
 This representation has several advantages such as efficient checking whether a point is either
-inside or outside or efficient finding of an intersection with geometric primitives.
+inside or outside and efficient search for an intersection with geometric primitives.
 
 
-\subsection{Constructive solid geometry}
+\subsection{Constructive Solid Geometry}
 
 Known also as \emph{CSG tree}\cite{Zara2004}. This technique is used especially
 in the engineering software. It allows
@@ -73,20 +73,20 @@ software package.
 \\
 Thanks to the tree structure, CSG objects come with some convenient properties. The nodes that
 are higher in the tree hierarchy give us an approximation that can be used in various geometric
-algorithms with no need for searching its descendants.
+algorithms with no need to look for its descendants.
 
-\subsection{Point cloud}
+\subsection{Point Cloud}
 
-A point cloud is a set of points in three-dimensional coordinate system\cite{Zara2004}\cite{Agarwal2006}.
+A point cloud is a set of points in a three-dimensional coordinate system\cite{Zara2004}\cite{Agarwal2006}.
 The set can form the surface
 of an object or any other three dimensional figure. Every point is indepedent
-from each other, with no information about its topology. They are often converted to polygon mesh
+from one another, with no information about its topology. They are often converted to polygon mesh
 or triangle mesh models.
 
-\subsection{Polygonal mesh}
+\subsection{Polygonal Mesh}
 
 A polygonal mesh is a collection of vertices, edges and faces that defines the shape of the surface of
-the object\cite{Zara2004}. Some special implementations do not contain faces, these are
+the object\cite{Zara2004}. Some special implementations do not contain faces. These implementations are
 defined only by vertices and
 edges. Moreover, some cases do not consider the topology and the object is a raw set of polygons.
 Neverthless, a standard implementation is expected to contain a topology information about each vertex
@@ -94,26 +94,26 @@ and face.
 \\
 \\
 Each face is defined by planar polygon, in special cases by \emph{convex polygon} or \emph{triagle}.
-The polygonal mesh restricted to contain triangular faces only is called \emph{triangle mesh}.
-The main purpose of restriction is the rendering simplification. In general case, face is defined
+The polygonal mesh restricted to contain triangular faces only, is called \emph{triangle mesh}.
+The main purpose of the restriction is the rendering simplification. In general case, face is defined
 as the set of points that can contain a hole.
 \\
 \\
 There are several techniques to represent a topology of the mesh. Each of them has its own advantages
-that are reflected in efficiency of data storage and querying the surrounding elements. Several
+that are reflected in an efficiency of data storage and querying the surrounding elements. Several
 mesh representations are described in the next section.
 
 \section{Polygonal Mesh}
 \label{sec:polyg_mesh}
-The collection can be represented in a variety of ways, the main purpose of structure is to improve
+The collection can be represented in a variety of ways, the main purpose of the structure is to improve
 the efficiency of the queries. On the other hand we face the limitations such as memory. In some
 representations it is impossible to query the adjacent vertices of a vertex without iteration through
 entire container of vertices or faces.
 
-\subsection{Face-vertex mesh}
+\subsection{Face-Vertex Mesh}
 \label{sec:face-vertex}
 
-The simpliest representation that contains any information about topology of the polygonal
+The simplest representation that contains any information about topology of the polygonal
 mesh. A mesh is represented by a container of vertices and the container of sets of vertices that
 form faces\cite{Zara2004}. The face is represented by at least 3 vertices or more vertices that have to be
 coplanar.\\
@@ -149,13 +149,13 @@ the vertex. If the structure is not extended by face-normal-attribute, the verti
 clockwise/counter-clockwise order from the view of face normal. Whether the order is clockwise or counter-clockwise
 depends on the implementation of the mesh.
 
-\subsection{Winged-edge mesh}
+\subsection{Winged-Edge mesh}
 
 The representation described above contains no direct information about adjacency of faces. 
 In order to determine the adjacency of any two faces or vertices in constant complexity, we
 can build a structure that requires an extra storage. The winged edge structure\cite{Baumgart1972}
 provides information
-capable of determination edges that belong to a vertex. It also provides information which allows us
+capable of determining edges that belong to a vertex. It also provides information which allows us
 to determine the surrounding edges from the given face;
 in case of a triangle mesh, it returns the triplet of edges.
 Finally, the structure is named \emph{winged-edge} because of its
@@ -231,10 +231,10 @@ the \emph{first} and which as the \emph{second} in the pair that forms the edge 
 \end{itemize}
 
 One of possible solutions is to split the edge element into two \emph{half-edges}.
-The structure using or rather based on this representation is described in the next
+The structure using, or rather based on this representation, is described in the next
 paragraph.
 
-\subsection{Half-edge mesh}
+\subsection{Half-Edge mesh}
 
 The half-edge data structure is the structure capable of maintaining the incidence
 information of vertices, edges and faces\cite{Botsch2006}. Each edge is decomposed in two half-edges

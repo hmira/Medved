@@ -1,36 +1,36 @@
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
-As written in abstract, several libraries for 3D polygonal meshes manipulation exist.
+As written in abstract, there are several libraries for 3D polygonal meshes manipulation.
 Each of them has already implemented or imported implementation of mesh. But what if we want to use
-a different mesh implementation in one of them? We have two options: to build
+a different mesh implementation in one of them? We have two options: either to build
 the algorithm from the beginning on our mesh or to forcely import our mesh implementation into
 the implementation of a algorithm, which can be in cases of incompatibile basic operations
 used in the algorithm impossible.\\
 \\
 In fact, we are able to implement an algorithm without knowing an implementation of
 a given mesh. Nevertheless, in order to let the algorithm recognize the operation there
-have to be the specific requirements that have to be satisfied.
+have to be the specific requirements those have to be satisfied.
 %After observing the algorithms, we will find out that
 %knowing basic operations manipulating with the certain implementation of a polygonal mesh
 %make us capable of write most of known algorithms over polygonal mesh.\\
 After observing the algorithms, we will find out that
-knowing basic operations which manipulate with the certain implementations of the polygonal mesh
+the knowledge of basic operations which manipulate with the certain implementations of the polygonal mesh
 makes us capable of writing most of the known algorithms over the polygonal mesh.\\
 \\
 This thesis focuses on the fact that most of implemented algorithms implement the
 same concept of polygonal mesh. We analyze the representative set of algorithms that
 supports this statement and provide a solution that utilizes the observed facts.
 
-\section*{Algorithm decomposition}
+\section*{Algorithm Decomposition}
 
 This thesis explains how can be algorithms decomposed in smaller operations.
 The purpose of the decomposition is to show that some operations occur frequently
-and in fact, in some cases, those operations suffices for building a lot of algorithms.
+and in fact, in some cases, those operations suffices for building numerous algorithms.
 
-\section*{Goals of the thesis}
+\section*{Goals of the Thesis}
 
-The primary goal is to design a library of the generic algorithms that can be used on any
+The primary goal is to design a library of generic algorithms that can be used on any
 implementation of the polygonal mesh. We also have to consider that the implementation
 may contain several absences from the viewpoint of designing the algorithm. Therefore, for each
 algorithm we have to provide a simple and clear concept that is required by the algorithm
@@ -41,15 +41,15 @@ The secondary goal is to design the library in terms \emph{easy-to-expand}. In o
 whenever a new algorithm will be published, one can create the implementation inspired
 by the implementations of other algorithms in the library.
 
-\section*{Generic programming}
+\section*{Generic Programming}
 
 In C++, we are able to use the programming technique that allows us to write in terms
 \emph{to-be-specified-later} by using templates. In comparision with other programming languages
 the templates are pre-evaluated and the temporary source code is generated during the
-compile time what gives us a better performance while the binaries are executed.
+compile time. This gives us a better performance while the binaries are executed.
 We are thus able to write an algorithm
-without knowing the closer specification of instantiated type. The only information we have
-to know is whether the type used as parameter contains properties that are demanded in implementation.\\
+without knowing the closer specification of an instantiated type. The only information we have
+to know is whether the type used as parameter contains properties that are demanded in the implementation.\\
 \\
 The template metaprogramming technique gives us options to determine during the compile time whether
 a structure used as parameter contains required properties. Moreover, using this technique,
@@ -60,4 +60,4 @@ In this thesis, it is shown how we can analyze an implementation of the mesh dur
 Therefore we are able to determine whether it satisfies the concept of the implementation of
 an algorithm. Based on other operations that are contained in the structure, we can temporarily build a new
 operation that is not generally supported by the structure. Despite the risk of inefficiences in
-the resulting operation, we can use the algorithms that requires the generated operation.
+the resulting operation, we can use the algorithms that require the generated operation.

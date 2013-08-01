@@ -1,6 +1,6 @@
 \begin{appendices}
 
-\chapter{Running the implemented examples}
+\chapter{Running the Implemented Examples}
 
 The library has been tested on the OS \emph{Ubuntu 12.10} using compiler \texttt{g++ 4.7}
 and has been developed using the multi-platform developement tools only.
@@ -28,7 +28,7 @@ backgroundcolor=\color{black!5}
 \section{Installation}
 
 \begin{lstlisting}
-git clone https://github.com/hmira/Medved.git
+git clone https://github.com/hmira/hmiralib.git
 \end{lstlisting}
 
 \begin{lstlisting}
@@ -53,12 +53,12 @@ By running a command
 \end{lstlisting}
 the program prints a message that specifies the required parameters to run.
 
-\chapter{Templating by a custom polygon mesh}
+\chapter{Templating by a Custom Polygon Mesh}
 
-To make the library working, we must build a proper traits in order to let the library recognize
+To make the library work, we must build a proper traits in order to let the library recognize
 the required operations.\\
 \\
-Depending on the demanding algorithm, we must create the traits that satisfies the concept
+Depending on the demanding algorithm, we must create the traits that satisfy the concept
 of the algorithm. If the concept is not fulfilled the compiler throws an error.\\
 
 \textbf{Example:}
@@ -114,9 +114,9 @@ int main()
 }
 \end{lstlisting}
 
-\chapter{Expansion of the library}
+\chapter{Expansion of the Library}
 
-\section{Creating a new concept}
+\section{Creating a new Concept}
 
 Once we have an algorithm/adapter working, we have to create a concept following the convention
 provided by the library. In the concept it has to be contained the rules required for running the
@@ -195,7 +195,7 @@ of the algorithm.
 boost::function_requires<GenerateCubeConcept<TMesh, TMesh_Traits> >();
 \end{lstlisting}
 
-\section{Creating a new algorithm}
+\section{Creating a new Algorithm}
 
 The algorithm should be created from the elementary operations that are commonly used in the
 library. As more operations that are already used in the other algorithms

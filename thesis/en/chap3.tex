@@ -1,27 +1,27 @@
 \chapter{Libraries}
 
-We did not yet mentioned the implemented data structures that fulfills the described rules.
-In this chapter, there are introduced several libraries that are comonnly used. In the following paragraphs,
-it is shown the corelation with the structures shown in the chapter \ref{chap:op_al}.
+We did not yet mention the implemented data structures that fulfill the described rules.
+This chapter introduces several libraries that are comonnly used. The following paragraphs show 
+the corelation with the structures shown in the chapter \ref{chap:op_al}.
 
 \section{OpenMesh}
 
 \emph{OpenMesh}\cite{OMesh}\cite{Botsch2002} is an open-source generic data structure for representing
-and manipulating polygonal meshes. It is developed at the Computer Graphics Group, RWTH Aachen.
+and manipulating polygonal meshes. It has been developed at the Computer Graphics Group, RWTH Aachen.
 \\
 \\
 Restricting to the meshes introduced in the section \ref{sec:polyg_mesh},
 OpenMesh is considered as a half-edge structure.
-It is formed by kernel that set proper attributes such as triangular restriction or allowing to remove
+It is formed by the kernel that set proper attributes such as triangular restriction or allowing to remove
 vertices from mesh.
 \\
 To fully specify a mesh, several parameters can be given:\\
 
-\textbf{Face type}: Specifies whether to use a general polygonal mesh or the triangle mesh.\\
+\textbf{Face type}: Specifies whether to use a general polygonal mesh or a triangle mesh.\\
 
-\textbf{Kernel}: Stores the element of the mesh internally. User chooses from available
-kernels according to expected usage. For example the decimation algorithm requires
-efficient deletion/insertion thus the proper kernel for this case is kernel based on
+\textbf{Kernel}: Stores the element of the mesh internally. User chooses from the available
+kernels according to expected usage. For example, the decimation algorithm requires
+efficient deletion/insertion, thus the proper kernel for this case is the kernel based on
 linked list.\\
 
 \textbf{Traits}: Traits is the class that enhances the mesh functionality such as

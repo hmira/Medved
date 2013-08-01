@@ -1,14 +1,13 @@
 \chapter{Traits}
 \label{chap:traits}
 
-In this chapter are described the methods how are the required operations over mesh
-recognized by the library.\\
+This chapter describes the methods of the required operations recognition by the library.\\
 \\
 Our problem is that the class used as a template has unknown parameters and
-methods. Obviously, the library can not by itself classify the purpose of the members of
-the class used as template. The solution is to create a new class called \emph{traits}.\\
+methods. Obviously, the library can not classify the purpose of the members of
+the class used as template by itself. The solution is to create a new class called \emph{traits}.\\
 \\
-In traits are aggregated all useful types and methods in the way defined by the library.
+Traits aggregate all useful types and methods in the way defined by the library.
 It is used as a parameter in the templated algorithm and when a method from the traits is called it
 returns the result of the method from the mesh implementation or anything that has
 a user put into the traits.\\
@@ -103,7 +102,7 @@ bool generate_cube(TMesh& m)
 \label{code:traits}
 Without creating an instance, in the class \texttt{TMesh\_Traits} are obtained all
 methods and types required for the algorithm. In fact, a type can be named
-differently but in the traits class it must be named following the rules specified
+differently but in the traits class, it must be named following the rules specified
 by the interface.\\
 \\
 Assuming we have class named \texttt{my\_mesh}, the traits class will appear:

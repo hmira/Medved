@@ -1,21 +1,21 @@
 \chapter{Algorithms Decomposition}
 \label{chap:alg_decomp}
 
-In this chapter are decomposed the algorithms (see the chapter \ref{chap:op_al}) so that basic
+This chapter describes the decomposition of the algorithms (see the chapter \ref{chap:op_al}) so that basic
 operations over polygon
-mesh can be summarized. The word ``\emph{basic}" is relative according the chosen level.
-In this thesis is chosen such level that leads to the least count of operations in total.\\
+mesh can be summarized. The word ``\emph{basic}" is relative according to the chosen level.
+The level chosen in this thesis is such that leads to the least count of operations in total.\\
 \\
-If the mesh does not fulfill the concept of the algorithm \emph{adapters} can be used instead
+If the mesh does not fulfill the concept of the algorithm, \emph{adapters} can be used instead
 of the absent operators. An adapter behaves like an operator but in fact it is the algorithm that
-makes a desired step as a result. In the other words it is the operator implemented in terms
+makes a desired step as a result. In the other words it is the operator implemented in terms of
 brute-force. In some cases, lack of an operator can not be replaced by an adapter.\\
 \\
 The algorithms described in this chapter are only the small part of all algorithms. The emphasized
-algorithms are primarily the commonly used, the algorithms that changes the mesh topology and
+algorithms are primarily the ones that are commonly used ones; the algorithms that change the mesh topology and
 the conversion algorithm between voxel and polygon mesh representation.
 
-\section{Parallel processing}
+\section{Parallel Processing}
 
 Some algorithms have a passage that is repeated for every \emph{vertex}, or every \emph{face}, etc.
 According the design of an algorithm, it can be determined whether the repetition can be processed
@@ -31,9 +31,9 @@ If a loop has an option to be processed parallelly,
 in pseudocode, the loop is labelled with ``\textbf{parallel}".
 In the implementation, if the algorithm is not implemented parallelly, the algorithm remains correct.
 
-\section{Converting between representations}
+\section{Converting between Representations}
 
-\subsection{Marching cubes}
+\subsection{Marching Cubes}
 
 The algorithm has the specific requirements for the mesh and also for the voxel map (See algorithm
 description \ref{sub:march}). However the voxel map can be in various forms some special cases
@@ -96,8 +96,8 @@ is designed as follows:
 \subsection{Voxelization}
 
 Compared to the \emph{Marching cubes} algorithm, the requirements for the voxel map structure
-are more comprehensive. As mentioned in description (See the section \ref{sub:vox}),
-the algorithm consequently rasterizes
+are more comprehensive. As mentioned in the description (See the section \ref{sub:vox}),
+the algorithm consequently voxelizes
 the edges, the faces and finally fills the object.
 
 \begin{algorithm}[H]

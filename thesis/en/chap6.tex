@@ -9,8 +9,8 @@ functions or class methods\cite{Simonis2000}.\\
 \\
 Inspired by the adapters from the C++ standard library, we create a set of adapters
 for our generic algorithms library.
-In this chapter is described the purpose of adapters in the implementation of generic algorithms
-supported by several examples. It is primarily used in case of absence any required operation
+This chapter discribes the purpose of adapters in the implementation of generic algorithms
+supported by several examples. It is primarily used in case of the absence of any required operation
 used in algorithm.
 
 \section{Observation}
@@ -21,21 +21,21 @@ the other ones that are required for the adapter.\\
 \\
 That statement is supported in following paragraphs.
 
-\section{Get-adjacent-vertex-of-vertex adapter}
+\section{Get-Adjacent-Vertex-of-Vertex Adapter}
 
 If the polygonal mesh is not in a representation that contains direct information about adjacency of two
 vertices then the mesh can not effectively 
 get the adjacent vertices from a given vertex. Obviously, no algorithm that contains query for
-adjacent vertices of a vertex can not be working over such a structure.\\
+adjacent vertices of a vertex can be working over such a structure.\\
 \\
 However, using the brute-force, we can determine which ones from vertices are in adjacency with
 the queried vertex. In the other words, demanded vertices can be acquired after checking all
 faces that contain the queried vertex.
 
-\subsection{Concept of the adapter}
+\subsection{Concept of the Adapter}
 
 Assuming the structure is non-edge-based, we add an assumption that the structure is face-based
-so it supports the face structure that provides information about contained vertices in correct
+so it supports the face structure that provides information about contained vertices in the correct
 order. The points of the concept are as follows:
 
 \begin{itemize}
@@ -44,6 +44,6 @@ order. The points of the concept are as follows:
 \end{itemize}
 Finally, we can conclude that the point ``\emph{mesh is required to support getting all adjacent vertices
 of a vertex in the mesh}" can be substituted by these two points in a concept of any 
-algorithm. In the other hand, the complexity of the operation raises from 
+algorithm. On the other hand, the complexity of the operation raises from 
 $\mathcal{O}(V_{vertex})$ to $\mathcal{O}(F_{mesh})$ where the $F_{mesh}$ is the number of the
 faces in total and $V_{vertex}$ is the expected count of the adjacent vertices.

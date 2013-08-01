@@ -1,4 +1,4 @@
-\chapter{Operations and algorithms}
+\chapter{Operations and Algorithms}
 
 \label{chap:op_al}
 
@@ -7,10 +7,10 @@ an algorithm there is a short paragraph that summarizes required operations for 
 It is later used in hierarchical implementation of the algorithms.\\
 \\
 The article\cite{Grunbaum2007} proves that the mesh representation of a hole-free solid object can be
-treated as planar graph, and a polygon mesh as general unoriented graph. Therefore, we can generalize the
+treated as a planar graph, and a polygon mesh as general unoriented graph. Therefore, we can generalize the
 editing functions over polygon meshes as the operations over the graphs.\\
 
-\section{Euler operators}
+\section{Euler Operators}
 \label{sec:euler}
 
 The \emph{Euler operators} are the set of operators which create a polygon meshes\cite{Havemann2005}. One of the advantages
@@ -101,7 +101,7 @@ It creates a face by disposing the ring because of the addition of a new edge.
 
 \subsection{Kill Face and Make Ring}
 
-The operation creates a ring by disposing a face.
+The operation creates a ring by disposing of a face.
 
 \begin{figure}[H]
 \centering
@@ -111,7 +111,7 @@ The operation creates a ring by disposing a face.
 \end{figure}
 
 
-\section{Editing functions}
+\section{Editing Functions}
 \label{sec:edit_f}
 Some functions are designed to change size or shape of the object. Those functions are called 
 \emph{editing function}.
@@ -129,7 +129,7 @@ surroundings of the original vertex. This is a common operation of mesh editing 
 \centering
 \includegraphics[scale=0.2]{../img/truncate.eps}
 \caption{The red-marked vertex is a selected vertex to be truncated.
-The face filled by the orange color with the red borders is the resulting face created by the truncation}
+The face filled by the orange color with the red borders is the resulting face created by the truncation.}
 \end{figure}
 
 \subsection{Bevel}
@@ -142,7 +142,7 @@ creates the face from a given edge.\\
 \centering
 \includegraphics[scale=0.2]{../img/bevel.eps}
 \caption{The red-marked edge is a selected edge to be beveled. As in the previous case, the resulting
-face is filled by the orange color.}
+face is filled with the orange color.}
 \end{figure}
 
 \subsection{Extrude}
@@ -158,20 +158,20 @@ the face out the object creating new faces connecting the extruded face with the
 faces (marked with orange) with the topology as shown on the picture.}
 \end{figure}
 
-\section{Converting between representations}
+\section{Converting between Representations}
 
 This section introduces some algorithms that convert one representation to another. Each 
 representation has its own capability.
 
-\subsection{Delaunay triangulation}
+\subsection{Delaunay Triangulation}
 
 Let $P$ be a set of points in the $d$-dimensional Euclidean space.
 Delanuay triangulation\cite{Chew1989} is a triangulation such that
 no point $p \in P$ is inside the circum-hypersphere
 of any simplex in $DT(P)$. For better imagination, in case of $2$-dimensional space, no point
-structure is inside the circumcircle of any triangle of resulting structure.
+structure is inside the circumcircle of any triangle of the resulting structure.
 
-\subsection{Marching cubes}
+\subsection{Marching Cubes}
 \label{sub:march}
 
 Marching cubes algorithm converts a grid representation to a mesh \cite{Lorensen1987}. It iterates through
@@ -214,7 +214,7 @@ place a set of faces for each cube in order to create a polygonal mesh with a co
 In other words, each configuration refers to the configuration of new faces to be added to a mesh.
 However, we know that two adjoining elements share 4 corners, so the resulting faces are certainly
 continuous.
-If the corners contain any other information, except inside/out information, the position of 
+If the corners contain any other information, except the inside/out information, the position of 
 the faces in the mesh can be refined. Usually, it contains the information about a color or
 the distance from point to surface. In that case, placing or any other processing of
 the face is based on linear interpolation of corner values.\\
@@ -242,10 +242,10 @@ u = \frac{v1}{v1-v2}
 
 \emph{Voxelization} is the algorithm which is in 2D known as \emph{rasterization}.
 It that constructs an initially empty 3D grid and fills the
-grid elements that indicates whether the element is inside the object\cite{Cohen-Or1995}. There are several techniques
-to represent a boundary element. The simpliest one is to set the boundary element as completely filled, 
-thus we have a voxel map of values $0$ and $1$. The other ones store in voxels additional
-information that forms an alias-free voxelized object\cite{Wang1993}.\\
+grid elements that indicate whether the element is inside the object\cite{Cohen-Or1995}. There are several techniques how to
+represent a boundary element. The simpliest one is to set the boundary element as completely filled, 
+thus we have a voxel map of values $0$ and $1$. The other ones store additional
+information in voxels that form an alias-free voxelized object\cite{Wang1993}.\\
 \\
 This algorithm can be divided into two phases: The first phase voxelizes the faces of triangle mesh and the
 second one fills the created object. Admittedly, before filling the object, the algorithm has to check
@@ -254,7 +254,7 @@ algorithm is omitted.\\
 \\
 The first phase voxelizes faces one by one. Each face is processed similarly to the triangle 
 rasterization in 2D.
-First, the algorithm voxelizes the boundary edges and then runs the floodfill over the face. The filling
+First, the algorithm voxelizes boundary edges and then runs the floodfill over the face. The filling
 technique of the face is processed by the line-filling algorithm in the following steps. 
 
 \begin{figure}

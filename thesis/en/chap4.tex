@@ -1,58 +1,58 @@
-\chapter{Designing the library}
+\chapter{Designing the Library}
 
-There are a lot of libraries that offers the ability to represent the volume data
-and the basic manipulation with it. There are also lot of published algorithms
-that can be implemented.\\
+There are a lot of libraries that offer the ability to represent the volume data
+and the basic manipulation with it. There are a lot of published algorithms
+that can be implemented as well.\\
 \\
-Our goal is to create a generic set of algorithms that can be used on any implementation
-of mesh that satisfies required concept. Before the algorithm is finally implemented,
-we must completely describe the concept of the algorithm nor the behavior of algorithm
-on specified mesh. The point of this goal is \emph{to think generally} regardless of
+Our goal is to create a generic set of algorithms that can be used over any implementation
+of mesh that satisfies a required concept. Before the algorithm is finally implemented,
+we must completely describe the concept of the algorithm and the behavior of the algorithm
+on a closely unspecified mesh. The point of this goal is \emph{to think generally} regardless of
 the specification of a potentionally used mesh.\\
 
 \section{Observation}
 
-Observing the algorithms step-by-step we can see that a single steps
+Observing the algorithms step-by-step, we can see that single steps
 of the algorithm are the variations of adding, removing and modifying the elements
-of the mesh. In addition, the algorithms uses also a capabilities of querying
+of the mesh. In addition, the algorithms also uses a capabilities of querying
 in mesh such as getting all adjancent vertices of given vertex or getting all
 vertices in a container or any iterable structure.\\
 \\
-Such a capabilities of the mesh are critical for implementing an algorithm.
+Such capabilities of the mesh are critical for implementing an algorithm.
 The question then arises, ``Why do we implement the algorithms for meshes if
-the usage of required operations might have suffice?" The answer can be relatively simple:
+the usage of required operations might suffice?" The answer can be relatively simple:
 We are generally not able to determine how is a given structure controlled
-without giving additional information.\\
+without being provided the an additional information.\\
 \\
-Thus there is an option to build an algorithm working correctly over any structure
+Thus there is an option to build a correctly working algorithm over any structure
 that fullfills the criteria that has been presented by the algorithm. Nowadays in C++,
-we are able to build a template-based interface that modify a given structure according
+we are able to build a template-based interface that modifies a given structure according
 to algorithm requirements during a compile time.\\
 \\
-Before using this set of algorithms the user only defines a interface for chosen structure
-and pass it as parameter.
+Before using this set of algorithms, the user only defines an interface for chosen structure
+and passes it as a parameter.
 
-\section{Concepts and algorithms}
+\section{Concepts and Algorithms}
 
-Concept is specific according the requirements of an algorithm. Let us provide an example
-algorithm and then we build a structure concept that requires the algorithm in order to work 
+The concept is specific according to the requirements of an algorithm. Let us provide an example
+of an algorithm and then build a structure concept that requires the algorithm in order to work 
 correctly.\\
 
 \textbf{Example:}\\
-The algorithm, that flips normal on each face of a given mesh.\\
+The algorithm that flips normal on each face of a given mesh.\\
 
 \textbf{Solution:}\\
 Before analyzing the algorithm, we can see that input is a mesh (not closely specified)
 that returns modified mesh. The idea of the algorithm is simple; pick all faces
-and flip the normal of each one. Obviously, the mesh is required to have a faces. This is not an
-unnecessary point because there are several implementations of mesh without faces; e.g.
+and flip the normal of each one. Obviously, the mesh is required to have faces. This is not an
+unnecessary note, because there are several implementations of mesh without faces; e.g.
 vertex-edge mesh. Finally, let us summarize what \emph{attributes} are required by the algorithm.
 
 \begin{itemize}
 \item faces of a mesh
 \end{itemize}
 
-Now when we have the required attributes, we need to specify which \emph{operations} are required.
+Now, when we have the required attributes, we need to specify which \emph{operations} are required.
 
 \begin{itemize}
 \item flipping the normal of a face 
@@ -64,21 +64,21 @@ What if the structure does not have a method that flips the normal of a face?\\
 \\
 After all, the algorithm can be build without providing a method that flips a normal;
 it can flip the normal of a face by itself.
-There are two possible approaches of solving this question. The first: create separately
-next algorithm with different requirements. The second: build an \emph{adapter} that
-has the same functionality as required method that flips normals and use it as method
-in the algorithm described above instead required method.\\
+There are two possible approaches to solving this question. The first: create the
+next algorithm with different requirements separately. The second: build an \emph{adapter} that
+has the same functionality as a required method that flips normals and use it as method
+in the algorithm described above instead a required method.\\
 \\
-Both cases requires additional points of concept instead the ommited one.
-In order to reverse the normal of a face manually, it is required:
+Both cases require additional points of the concept instead the ommited one.
+In order to reverse the normal of a face manually, the following is required:
 
 \begin{itemize}
 \item the normal of a face
 \item getting the face normal
 \item setting the face normal
 \end{itemize}
-It is up to us how we design the algorithms and the level of implementation. As more sophisticated
-the adapters are than more cases of mesh implementation can be covered. If the compiler does not
-find the require methods and is able to build an adapter then does not bother the user and build
+It is up to us how do we design the algorithms and the level of the implementation. The more sophisticated
+the adapters are, the bigger the number of cases of mesh implementation can be covered. If the compiler does not
+find the required methods and it is able to build an adapter, then it does not bother the user and it builds
 a modified method. Naturally, adapter may have own requirements therefore we can assume that
 some point of concepts can be replaced with different ones.
